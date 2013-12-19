@@ -1,38 +1,75 @@
+{% load static %}
 <html>
     <head>
         <title>Scilab on Cloud</title>
-        <link href="/static/website/css/base.css" rel="stylesheet"/>
-        <link href="/static/website/css/skeleton.css" rel="stylesheet"/>
-        <link href="/static/website/css/layout.css" rel="stylesheet"/>
-        <link href="/static/website/css/main.css" rel="stylesheet"/>
+        <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
+        <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
+        <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
+        <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
+        <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
     </head>
     <body>
         <div id="header-wrapper">
             <div id="header-inner">
                 <div id="topbar">
-                    Scilab on Cloud
-                </div>
+                    <img id="home-logo" src="{% static 'website/images/home-logo.png' %}">
+                    <span id="title">
+                        Scilab on Cloud
+                    </span>
+
+                    <div id="navlinks">
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Invitation</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                            <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
+                        </ul>
+                    </div> <!-- /#navlinks -->
+                </div> <!-- /#topbar -->
             </div> <!-- /#header-inner -->
         </div> <!-- /#header-wrapper -->
 
         <div id="content-wrapper">
             <div id="content-inner">
                 <div id="selectors">
-                    <select><option></option></select>
-                    <select><option></option></select>
-                    <select><option></option></select>
-                    <select><option></option></select>
+                    <div id="category-wrapper">
+                        <label>Category: </label>
+                        <select><option>Select Category</option></select> 
+                    </div>
+                    <div id="book-wrapper">
+                        <label>Book: </label>
+                        <select><option>Select Book</option></select> 
+                    </div>
+                    <div id="chapter-wrapper">
+                        <label>Chapter: </label>
+                        <select><option>Select Chapter</option></select> 
+                    </div>
+                    <div id="example-wrapper">
+                        <label>Example: </label>
+                        <select><option>Select Example</option></select> 
+                    </div>
                 </div>
                 <div id="content">
-
                     <div id="input">
-                        <span>Scilab Code</span>
-                        <textarea></textarea>
+                        <label>
+                            Scilab Code 
+                            <span id="controls">
+                                <a href="#" id="toggle">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                                <a href="#" id="fullscreen">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </span> <!-- /#controls -->
+                        </label>
+                        <form>
+                            <textarea id="code"></textarea>
+                        </form>
                     </div><!-- /#input -->
                     <a id="execute" class="button">Execute</a>
 
                     <div id="output">
-                        <span>Result</span>
+                        <label>Result</label>
                         <textarea></textarea>
                     </div> <!-- /#output -->
                     <a id="bug" class="button">Report bug / Give Feedback</a>
@@ -45,9 +82,46 @@
                             Scilab Trademark.
                         </small>
                         Copyright IIT Bombay
-                    </div>
+                    </div> <!-- /#credits -->
                 </div> <!-- /#content -->
             </div> <!-- /#content-inner -->
         </div> <!-- /#content-wrapper -->
+
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="{% static 'website/js/codemirror.js'%}"></script>
+    <script src="{% static 'website/js/javascript.js'%}"></script>
+    <script src="{% static 'website/js/fullscreen.js'%}"></script>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            theme: "default",
+            extraKeys: {
+               "F11": function(cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+               },
+               "Esc": function(cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+               }
+             }
+        });
+
+        $(document).ready(function() {
+            $fullscreen = $("#fullscreen");
+            $toggle = $("#toggle");
+
+            $fullscreen.click(function(e) {
+                editor.setOption("fullScreen", !editor.getOption("fullScreen"));
+                editor.focus();
+            });
+            $toggle.click(function() {
+                if(editor.getOption("theme") == "monokai") {
+                    editor.setOption("theme", "default");
+                } else{
+                    editor.setOption("theme", "monokai");
+                }
+            });
+        });
+    </script>
     </body>
 </html>

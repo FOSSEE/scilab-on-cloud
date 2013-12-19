@@ -3,7 +3,11 @@
     clear: both;
 }
 select {
+    display: inline;
     margin-bottom: 15px;
+}
+.CodeMirror {
+    height: 99%;
 }
 /* Main Styles */
 body, html {
@@ -14,12 +18,48 @@ body, html {
     position: relative;
     width: 100%;
 }
-#topbar{
+#topbar {
     min-height: 50px;
     background: #4E3419;
+    color: #ffffff;
+    font-family: monospace;
+}
+#topbar #home-logo {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    width: 30px;
+}
+#topbar #title {
+    position: absolute;
+    left: 55px;
+    top: 15px;
+    font-size: 1.3em;
+}
+#navlinks ul {
+    float: right;
+    color: #ffffff;
+    margin-right: 15px;
+}
+#navlinks ul li {
+    margin: 15px 15px 15px 15px;
+    float: left;
+}
+#navlinks ul li a{
+    margin:0;
+    text-decoration: none;
+    color: #ffffff;
+}
+#navlinks #scilab-logo {
+    width: 90px;
+    margin: 5px 0 0 0;
 }
 #selectors {
-    margin: 15px 0 0 15px;
+    margin: 10px 0 0 15px;
+}
+#selectors label {
+    display: inline-block;
+    min-width: 75px;
 }
 #content {
     position: absolute;
@@ -28,7 +68,7 @@ body, html {
     width: 100%;
     min-height: 400px;
     bottom: 50px;
-    background: #f5f5f5;
+    background: #eeeeee;
 }
 #input {
     position: absolute;
@@ -45,6 +85,17 @@ body, html {
     right: 15px;
     width: 48%;
     height: auto;
+}
+#controls {
+    position: absolute;
+    right: 0px;
+}
+#controls a {
+    text-decoration: none;
+}
+#controls img {
+    width: 12px;
+    margin: 0 0 0 5px;
 }
 #input textarea, #output textarea{
     position: absolute;
