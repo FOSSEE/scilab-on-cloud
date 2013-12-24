@@ -1,0 +1,9 @@
+{% if chapters %}
+<label>Chapter: </label>
+<select id="chapters">
+    <option value="">Select Chapter</option>
+{% for chapter in chapters %}
+    <option value="{{ chapter.id }}">{{ chapter.number }} - {{ chapter.name }}</option>
+{% endfor %}
+</select>
+{% endif %}

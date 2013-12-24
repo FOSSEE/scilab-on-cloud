@@ -1,0 +1,9 @@
+{% if books %}
+<label>Book: </label>
+<select id="books">
+    <option value="">Select Book</option>
+{% for book in books %}
+    <option value="{{ book.id }}">{{ book.book }}</option>
+{% endfor %}
+</select>
+{% endif %}

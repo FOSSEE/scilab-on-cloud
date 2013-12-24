@@ -34,43 +34,59 @@
                 <div id="selectors">
                     <div id="category-wrapper">
                         <label>Category: </label>
-                        <select><option>Select Category</option></select> 
+                        <select id="categories">
+                            <option value="">Select Category</option>
+                            <option value="10">Analog Electronics</option>
+                            <option value="3">Chemical Engineering</option>
+                            <option value="12">Computer Programming</option>
+                            <option value="2">Control Theory &amp; Control Systems</option>
+                            <option value="7">Digital Communications</option>
+                            <option value="11">Digital Electronics</option>
+                            <option value="8">Electrical Technology</option>
+                            <option value="1">Fluid Mechanics</option>
+                            <option value="9">Mathematics &amp; Pure Science</option>
+                            <option value="5">Mechanical Engineering</option>
+                            <option value="6">Signal Processing</option>
+                            <option value="4">Thermodynamics</option>
+                            <option value="13">Others</option>
+                        </select> 
                     </div>
-                    <div id="book-wrapper">
-                        <label>Book: </label>
-                        <select><option>Select Book</option></select> 
-                    </div>
-                    <div id="chapter-wrapper">
-                        <label>Chapter: </label>
-                        <select><option>Select Chapter</option></select> 
-                    </div>
-                    <div id="example-wrapper">
-                        <label>Example: </label>
-                        <select><option>Select Example</option></select> 
-                    </div>
+                    <div id="books-wrapper"></div>
+                    <div id="chapters-wrapper"></div>
+                    <div id="examples-wrapper"></div>
                 </div>
                 <div id="content">
                     <div id="input">
                         <label>
                             Scilab Code 
                             <span id="controls">
-                                <a href="#" id="toggle">
+                                <a href="#" id="toggle-code">
                                     <img src="{% static 'website/images/icon-toggle.png'%}">
                                 </a>
-                                <a href="#" id="fullscreen">
+                                <a href="#" id="fullscreen-code">
                                     <img src="{% static 'website/images/icon-fullscreen.png'%}">
                                 </a>
                             </span> <!-- /#controls -->
                         </label>
                         <form>
-                            <textarea id="code"></textarea>
+                            <textarea id="code" placeholder="Write a new code or select existing from above category..."></textarea>
                         </form>
                     </div><!-- /#input -->
                     <a id="execute" class="button">Execute</a>
 
                     <div id="output">
-                        <label>Result</label>
-                        <textarea></textarea>
+                        <label>
+                            Result
+                            <span id="controls">
+                                <a href="#" id="toggle-result">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                                <a href="#" id="fullscreen-result">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </span> <!-- /#controls -->
+                        </label>
+                        <textarea id="result"></textarea>
                     </div> <!-- /#output -->
                     <a id="bug" class="button">Report bug / Give Feedback</a>
 
@@ -88,9 +104,11 @@
         </div> <!-- /#content-wrapper -->
 
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="{% static 'website/js/cloud.js'%}"></script>
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
+    <script src="{% static 'website/js/placeholder.js'%}"></script>
     <script>
         var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             lineNumbers: true,
@@ -105,23 +123,20 @@
                }
              }
         });
-
-        $(document).ready(function() {
-            $fullscreen = $("#fullscreen");
-            $toggle = $("#toggle");
-
-            $fullscreen.click(function(e) {
-                editor.setOption("fullScreen", !editor.getOption("fullScreen"));
-                editor.focus();
-            });
-            $toggle.click(function() {
-                if(editor.getOption("theme") == "monokai") {
-                    editor.setOption("theme", "default");
-                } else{
-                    editor.setOption("theme", "monokai");
-                }
-            });
+        var result = CodeMirror.fromTextArea(document.getElementById("result"), {
+            lineWrapping: true,
+            theme: "default",
+            extraKeys: {
+               "F11": function(cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+               },
+               "Esc": function(cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+               }
+             }
         });
+
     </script>
+    {% csrf_token %}
     </body>
 </html>
