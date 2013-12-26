@@ -88,6 +88,7 @@ $(document).ready(function() {
     $("#execute").click(function() {
         var csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val();
         var code = editor.getValue();
+        $("body").css("cursor", "wait");
         $.ajax({
             url:"/ajax-execute/",
             type: "POST",
@@ -97,6 +98,7 @@ $(document).ready(function() {
             },
             dataType: "text",
             success: function(data) {
+                $("body").css("cursor", "auto");
                 result.setValue(data);
             }
         });

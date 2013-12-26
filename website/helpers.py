@@ -6,7 +6,11 @@ import subprocess
 from soc.settings import PROJECT_DIR
  
 def scilab_run(code, token):
+    #Remove all clear;
+    code = code.replace('clear','')
+    code = code.replace(r'clear.*all','')
     plot_exists = False
+
     #Finding the plot and appending xs2jpg function
     p = re.compile(r'.*plot.*\(.*,.*,*\).*\n')
     if p.search(code):
@@ -28,69 +32,36 @@ def scilab_run(code, token):
             start = end
         code += temp[end:]
 
-    # Create a file for the current request
-    canvas_off = """
-    function turnCanvasOff()
-       m = getscilabmode();
-       if (m=="STD"|m=="NW") then
-           previousDisp = disp;
-           prot = funcprot();
-           funcprot(0);
-           deff("disp(str)", "");
-           usecanvas(%f);
-           disp = previousDisp;
-           funcprot(prot);
-       end
-    endfunction
-    turnCanvasOff();
-    clear turnCanvasOff;
-    """
+    #Check whether to load scimax / maxima
+    if 'syms' in code or 'Syms' in code:
+        code = code.replace('syms', 'Syms')
+        code = 'exec(\'/home/cheese/scimax/loader.sce\');\nmaxinit\n' + code
 
     file_path = PROJECT_DIR + '/static/tmp/' + token + '.sci'
 
+    #thanks @prathamesh920 github
+    #traps even syntax errors eg: endfunton
     f = open(file_path, "w")
-    f.write("mode(-1);\nlines(0);\nmode(-1);\ntry\nmode(2);\n")
-    f.write('lines(0)\n')
-    f.write(canvas_off)
+    f.write('mode(2);\n')
     f.write(code)
-    f.write('\nexit')
-    f.write("\nmode(-1);\nexit();\ncatch\nmode(-1);\ndisp(lasterror());\nexit();")
+    f.write('\nquit();')
     f.close()
     
-    if plot_exists:
-        cmd = 'export DISPLAY=:99 && '
-        cmd +=  'xvfb-run -a cat {0}'.format(file_path) + ' | scilab-adv-cli -nw -nb'
-        print "############################"
-        print cmd
-    else:
-        cmd = 'cat {0}'.format(file_path) + ' | scilab-adv-cli -nw'
+
+    #this makes it possible to execute scilab without the problem of \
+    #getting stuck in the prompt in case of error
+    cmd = 'printf "lines(0)\nexec(\'{0}\',2);\nquit();"'.format(file_path)
+    cmd += ' | /home/cheese/scilab-5.4.1/bin/scilab-adv-cli -nw'
+    print cmd
 
     output = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     ).communicate()[0]
+
     #os.remove(file_path)
     output = trim(output)
     return output
 
 def trim(output):
-    atoms_banner = """
-    Start Image Processing Tool 2
-        Load macros
-        Load help
-
-    SIVP - Scilab Image and Video Processing Toolbox
-        Load macros
-        Load gateways
-        Load help
-        Load demos
-
-
-     
-     Start identification   
-     
-     Load macros   
-     
-     Load help   
-    """
-    output = output.replace(atoms_banner, '')
+    #for future use
     return output
