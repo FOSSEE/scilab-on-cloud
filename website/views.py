@@ -7,7 +7,8 @@ from django.db.models import Q
 from website.helpers import scilab_run
 from website.models import TextbookCompanionPreference,\
     TextbookCompanionProposal, TextbookCompanionChapter,\
-    TextbookCompanionExample
+    TextbookCompanionExample, TextbookCompanionExampleFiles,\
+    TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
 
 def index(request):
     context = {}
@@ -22,11 +23,11 @@ def ajax_books(request):
         if category_id:
             ids = TextbookCompanionProposal.objects.using('scilab')\
                 .filter(proposal_status=3).values('id')
-
+            
             books = TextbookCompanionPreference.objects.using('scilab')\
                 .filter(category=category_id).filter(approval_status=1)\
                 .filter(proposal_id__in=ids).order_by('book')
-
+            
             context = {
                 'books': books
             }
@@ -54,11 +55,26 @@ def ajax_examples(request):
         if chapter_id:
             examples = TextbookCompanionExample.objects.using('scilab')\
                 .filter(chapter_id=chapter_id).order_by('number')
-
+            
             context = {
                 'examples': examples
             }
     return render(request, 'website/templates/ajax-examples.html', context)
+
+@csrf_exempt
+def ajax_code(request):
+    if request.method == "POST":
+        example_id = request.POST['example_id']
+        example = TextbookCompanionExampleFiles.objects.using('scilab')\
+            .get(id=example_id)
+        
+        example_path = '/var/www/scilab_in/uploads/' + example.filepath
+        f = open(example_path)
+        code = f.readlines()
+        f.close()
+        
+        print code
+        return HttpResponse(code)
 
 def ajax_execute(request):
     if request.method == "POST":

@@ -84,6 +84,20 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on("change", "#examples", function(){
+        $.ajax({
+            url: "/ajax-code/",
+            type: "POST",
+            data: {
+                example_id: $("#examples").val()
+            },
+            dataType: "html",
+            success: function(data) {
+                editor.setValue(data);
+            }
+        });
+    });
+
     /* Execute the code */
     $("#execute").click(function() {
         var csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val();

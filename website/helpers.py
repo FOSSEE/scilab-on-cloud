@@ -5,10 +5,17 @@ import subprocess
 
 from soc.settings import PROJECT_DIR
  
-def scilab_run(code, token):
+def scilab_run(code, token): 
+    #Check for system commands
+    system_commands = re.compile(
+        'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)'
+    )
+    if system_commands.search(code):
+        return "System Commands not allowed"
+
     #Remove all clear;
-    code = code.replace('clear','')
-    code = code.replace(r'clear.*all','')
+    code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
+
     plot_exists = False
 
     #Finding the plot and appending xs2jpg function
@@ -43,7 +50,7 @@ def scilab_run(code, token):
     #traps even syntax errors eg: endfunton
     f = open(file_path, "w")
     f.write('mode(2);\n')
-    f.write(code)
+    f.write(unicode(code))
     f.write('\nquit();')
     f.close()
     
@@ -64,4 +71,6 @@ def scilab_run(code, token):
 
 def trim(output):
     #for future use
+    output = re.sub(r'\n \n \n', '\n', output)
+    #print repr(output)
     return output

@@ -1,6 +1,5 @@
 from django.db import models
 
-
 """
 Models from Scilab Database created using inspectdb
 Use it with the "scilab" database eg:using("scilab") 
@@ -68,3 +67,37 @@ class TextbookCompanionExample(models.Model):
     class Meta:
         db_table = 'textbook_companion_example'
 
+class TextbookCompanionExampleFiles(models.Model):
+    id = models.IntegerField(primary_key=True)
+    example_id = models.IntegerField()
+    filename = models.CharField(max_length=255L)
+    filepath = models.CharField(max_length=500L)
+    filemime = models.CharField(max_length=255L)
+    filesize = models.IntegerField()
+    filetype = models.CharField(max_length=1L)
+    caption = models.CharField(max_length=100L)
+    timestamp = models.IntegerField()
+    class Meta:
+        db_table = 'textbook_companion_example_files'
+
+class TextbookCompanionExampleDependency(models.Model):
+    id = models.IntegerField(primary_key=True)
+    example_id = models.IntegerField()
+    dependency_id = models.IntegerField()
+    approval_status = models.IntegerField()
+    timestamp = models.IntegerField()
+    class Meta:
+        db_table = 'textbook_companion_example_dependency'
+
+class TextbookCompanionDependencyFiles(models.Model):
+    id = models.IntegerField(primary_key=True)
+    preference_id = models.IntegerField()
+    filename = models.CharField(max_length=255L)
+    filepath = models.CharField(max_length=500L)
+    filemime = models.CharField(max_length=255L)
+    filesize = models.IntegerField()
+    caption = models.CharField(max_length=100L)
+    description = models.TextField()
+    timestamp = models.IntegerField()
+    class Meta:
+        db_table = 'textbook_companion_dependency_files'

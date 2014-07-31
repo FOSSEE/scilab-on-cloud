@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     url(r'^ajax-books/$', 'website.views.ajax_books', name='ajax_books'),
     url(r'^ajax-chapters/$', 'website.views.ajax_chapters', name='ajax_chapters'),
     url(r'^ajax-examples/$', 'website.views.ajax_examples', name='ajax_examples'),
+    url(r'^ajax-code/$', 'website.views.ajax_code', name='ajax_code'),
     url(r'^ajax-execute/$', 'website.views.ajax_execute', name='ajax_execute'),
 )
