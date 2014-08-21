@@ -99,6 +99,8 @@ $(document).ready(function() {
     });
 
     /* Execute the code */
+    $lightbox_wrapper  = $("#lightbox-me-wrapper");
+    $lightbox = $("#lightbox-me");
     $("#execute").click(function() {
         var csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val();
         var code = editor.getValue();
@@ -108,13 +110,22 @@ $(document).ready(function() {
             type: "POST",
             data: {
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
-                code: code
+                code: code,
+                example_id: $("#examples").val()
             },
             dataType: "text",
             success: function(data) {
                 $("body").css("cursor", "auto");
-                result.setValue(data);
+                $data = $(data);
+                var output = $data.find("#output").html();
+                var plot = $data.find("#plot").html();
+                result.setValue(output);
+                if(plot) {
+                    $lightbox.html(plot);
+                    $lightbox_wrapper.lightbox_me({centered: true});
+                }
             }
         });
     });
+
 });

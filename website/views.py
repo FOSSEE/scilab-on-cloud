@@ -66,19 +66,25 @@ def ajax_code(request):
     if request.method == "POST":
         example_id = request.POST['example_id']
         example = TextbookCompanionExampleFiles.objects.using('scilab')\
-            .get(id=example_id)
+            .get(example_id=example_id, filetype='S')
         
         example_path = '/var/www/scilab_in/uploads/' + example.filepath
+        
         f = open(example_path)
         code = f.readlines()
         f.close()
-        
-        print code
         return HttpResponse(code)
 
 def ajax_execute(request):
     if request.method == "POST":
         code = request.POST['code']
+        example_id = request.POST.get('example_id', None)
         token = request.POST['csrfmiddlewaretoken']
-        result = scilab_run(code, token)
-        return HttpResponse(result)
+        data = scilab_run(code, token, example_id)
+        return render(request, 'website/templates/ajax-execute.html', data)
+
+
+
+
+
+

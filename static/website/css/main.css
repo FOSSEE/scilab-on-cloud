@@ -130,3 +130,8 @@ body, html {
     font-size: .6em;
     display: block;
 }
+#lightbox-me-wrapper {
+    padding: 35px;
+    background: #ffffff;
+    box-shadow: 0 0 10px #ffffff;
+}
