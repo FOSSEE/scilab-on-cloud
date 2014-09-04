@@ -82,9 +82,3 @@ def ajax_execute(request):
         token = request.POST['csrfmiddlewaretoken']
         data = scilab_run(code, token, example_id)
         return render(request, 'website/templates/ajax-execute.html', data)
-
-
-
-
-
-

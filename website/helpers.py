@@ -1,14 +1,12 @@
-import os
-import re
-import time
-import subprocess
+import os, re, sys, time, subprocess
 
 from soc.settings import PROJECT_DIR
+from timeout import TimerTask
  
 def scilab_run(code, token, example_id): 
     #Check for system commands
     system_commands = re.compile(
-        'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)'
+        'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
     )
     if system_commands.search(code):
         return "System Commands not allowed"
@@ -36,7 +34,6 @@ def scilab_run(code, token, example_id):
 
     file_path = PROJECT_DIR + '/static/tmp/' + token + '.sci'
 
-    #thanks @prathamesh920 github
     #traps even syntax errors eg: endfunton
     f = open(file_path, "w")
     f.write('mode(2);\n')
@@ -50,11 +47,10 @@ def scilab_run(code, token, example_id):
     cmd = 'printf "lines(0)\nexec(\'{0}\',2);\nquit();"'.format(file_path)
     cmd += ' | /home/cheese/scilab-5.4.1/bin/scilab-adv-cli -nw'
 
-    output = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
-    ).communicate()[0]
+    task = TimerTask(cmd, timeout=10)
+    output = task.run().communicate()[0]
+    e = task.wait()
 
-    #os.remove(file_path)
     output = trim(output)
     data = {
         'output': output,
