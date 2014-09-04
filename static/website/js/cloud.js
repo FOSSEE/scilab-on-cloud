@@ -111,6 +111,8 @@ $(document).ready(function() {
             data: {
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
                 code: code,
+                book_id: $("#books").val(),
+                chapter_id: $("#chapters").val(),
                 example_id: $("#examples").val()
             },
             dataType: "text",
@@ -127,5 +129,4 @@ $(document).ready(function() {
             }
         });
     });
-
 });

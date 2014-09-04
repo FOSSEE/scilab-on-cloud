@@ -3,7 +3,7 @@ import os, re, sys, time, subprocess
 from soc.settings import PROJECT_DIR
 from timeout import TimerTask
  
-def scilab_run(code, token, example_id): 
+def scilab_run(code, token, book_id, dependency_exists): 
     #Check for system commands
     system_commands = re.compile(
         'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
@@ -37,14 +37,16 @@ def scilab_run(code, token, example_id):
     #traps even syntax errors eg: endfunton
     f = open(file_path, "w")
     f.write('mode(2);\n')
+    if dependency_exists:
+        f.write('getd("/var/www/scilab_in/uploads/{0}/DEPENDENCIES/");'.format(book_id))
+    f.write('lines(0);\n')
     f.write(unicode(code))
     f.write('\nquit();')
     f.close()
     
-
     #this makes it possible to execute scilab without the problem of \
     #getting stuck in the prompt in case of error
-    cmd = 'printf "lines(0)\nexec(\'{0}\',2);\nquit();"'.format(file_path)
+    cmd = 'printf "exec(\'{0}\',2);\nquit();"'.format(file_path)
     cmd += ' | /home/cheese/scilab-5.4.1/bin/scilab-adv-cli -nw'
 
     task = TimerTask(cmd, timeout=10)

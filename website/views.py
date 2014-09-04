@@ -78,7 +78,11 @@ def ajax_code(request):
 def ajax_execute(request):
     if request.method == "POST":
         code = request.POST['code']
+        book_id = request.POST.get('book_id', None)
+        chapter_id = request.POST.get('chapter_id ', None)
         example_id = request.POST.get('example_id', None)
         token = request.POST['csrfmiddlewaretoken']
-        data = scilab_run(code, token, example_id)
+        dependency_exists = TextbookCompanionExampleDependency.objects.using('scilab')\
+            .filter(example_id=example_id).exists()
+        data = scilab_run(code, token, book_id, dependency_exists)
         return render(request, 'website/templates/ajax-execute.html', data)
