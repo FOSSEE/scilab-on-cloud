@@ -6,6 +6,7 @@ select {
     display: inline;
     margin-bottom: 15px;
     min-width: 220px;
+    max-width: 40%;
     width: auto;
 }
 .CodeMirror {

@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
         lineWrapping: true,
@@ -34,14 +33,16 @@ $(document).ready(function() {
     $fullscreen_code.click(function(e) {
         editor.setOption("fullScreen", !editor.getOption("fullScreen"));
         editor.focus();
+        e.preventDefault();
     });
 
-    $toggle_code.click(function() {
+    $toggle_code.click(function(e) {
         if(editor.getOption("theme") == "monokai") {
             editor.setOption("theme", "default");
         } else{
             editor.setOption("theme", "monokai");
         }
+        e.preventDefault();
     });
 
     $fullscreen_result = $("#fullscreen-result");
@@ -50,14 +51,16 @@ $(document).ready(function() {
     $fullscreen_result.click(function(e) {
         result.setOption("fullScreen", !result.getOption("fullScreen"));
         result.focus();
+        e.preventDefault();
     });
 
-    $toggle_result.click(function() {
+    $toggle_result.click(function(e) {
         if(result.getOption("theme") == "monokai") {
             result.setOption("theme", "default");
         } else{
             result.setOption("theme", "monokai");
         }
+        e.preventDefault();
     });
 
     /* 
@@ -113,4 +116,26 @@ $(document).ready(function() {
             example_id: $("#examples").val() || 0
         });
     });
+
+    /* Download book, chapter, example */
+    $(document).on("click", "#download-book", function(e) {
+        window.location = "http://scilab.in/download/book/" + $("#books").val();
+        e.preventDefault();
+    });
+
+    $(document).on("click", "#download-chapter", function(e) {
+        window.location = "http://scilab.in/download/chapter/" + $("#chapters").val();
+        e.preventDefault();
+    });
+
+    $(document).on("click", "#download-example", function(e) {
+        window.location = "http://scilab.in/download/example/" + $("#examples").val();
+        e.preventDefault();
+    });
+
+    /* Ajax loader */
+    function ajax_loader(ele) {
+
+    }
+    ajax_loader("#categories");
 });
