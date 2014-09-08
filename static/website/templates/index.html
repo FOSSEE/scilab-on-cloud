@@ -1,4 +1,5 @@
 {% load static %}
+{% load dajaxice_templatetags %}
 <html>
     <head>
         <title>Scilab on Cloud</title>
@@ -7,6 +8,7 @@
         <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
         <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
         <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
+        {% dajaxice_js_import %}
     </head>
     <body>
         <div id="header-wrapper">
@@ -24,11 +26,11 @@
                             <li><a href="#">Contact Us</a></li>
                             <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
                         </ul>
+                        <div class="clearfix"></div>
                     </div> <!-- /#navlinks -->
                 </div> <!-- /#topbar -->
             </div> <!-- /#header-inner -->
         </div> <!-- /#header-wrapper -->
-
         <div id="content-wrapper">
             <div id="content-inner">
                 <div id="selectors">
@@ -49,7 +51,8 @@
                             <option value="6">Signal Processing</option>
                             <option value="4">Thermodynamics</option>
                             <option value="13">Others</option>
-                        </select> 
+                        </select>
+                        <a href="#" class="extra-link" id="contributor">Contributor</a>
                     </div>
                     <div id="books-wrapper"></div>
                     <div id="chapters-wrapper"></div>
@@ -103,43 +106,18 @@
             </div> <!-- /#content-inner -->
         </div> <!-- /#content-wrapper -->
 
-        <div id="lightbox-me-wrapper">
-            <div id="lightbox-me"></div>
-        </div> <!-- /#lightbox-me-wrapper -->
+    <div id="lightbox-me-wrapper">
+        <div id="lightbox-me"></div>
+    </div> <!-- /#lightbox-me-wrapper -->
+
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="{% static '/static/dajax/jquery.dajax.core.js' %}"></script>
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
     <script src="{% static 'website/js/placeholder.js'%}"></script>
     <script src="{% static 'website/js/lightbox_me.js'%}"></script>
     <script src="{% static 'website/js/cloud.js'%}"></script>
-    <script>
-        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-            lineNumbers: true,
-            lineWrapping: true,
-            theme: "default",
-            extraKeys: {
-               "F11": function(cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-               },
-               "Esc": function(cm) {
-                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-               }
-             }
-        });
-        var result = CodeMirror.fromTextArea(document.getElementById("result"), {
-            lineWrapping: true,
-            theme: "default",
-            extraKeys: {
-               "F11": function(cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-               },
-               "Esc": function(cm) {
-                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-               }
-             }
-        });
-    </script>
     {% csrf_token %}
     </body>
 </html>

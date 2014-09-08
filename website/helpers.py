@@ -61,6 +61,6 @@ def scilab_run(code, token, book_id, dependency_exists):
     return data
 
 def trim(output):
-    #for future use
-    output = re.sub(r'\n \n \n', '\n', output)
+    output = [line for line in output.split('\n') if line.strip() != '']
+    output = '\n'.join(output)
     return output

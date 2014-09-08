@@ -1,4 +1,32 @@
 $(document).ready(function() {
+
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        lineNumbers: true,
+        lineWrapping: true,
+        theme: "default",
+        extraKeys: {
+           "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+           },
+           "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+           }
+         }
+    });
+
+    var result = CodeMirror.fromTextArea(document.getElementById("result"), {
+        lineWrapping: true,
+        theme: "default",
+        extraKeys: {
+           "F11": function(cm) {
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+           },
+           "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+           }
+         }
+    });
+
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
     $toggle_code = $("#toggle-code");
@@ -7,6 +35,7 @@ $(document).ready(function() {
         editor.setOption("fullScreen", !editor.getOption("fullScreen"));
         editor.focus();
     });
+
     $toggle_code.click(function() {
         if(editor.getOption("theme") == "monokai") {
             editor.setOption("theme", "default");
@@ -22,6 +51,7 @@ $(document).ready(function() {
         result.setOption("fullScreen", !result.getOption("fullScreen"));
         result.focus();
     });
+
     $toggle_result.click(function() {
         if(result.getOption("theme") == "monokai") {
             result.setOption("theme", "default");
@@ -32,101 +62,55 @@ $(document).ready(function() {
 
     /* 
      * Selectors function 
-     * Write the queries using live
+     * Write the queries using .on()
     */
-    $("#categories").change(function() {
+    $(document).on("change", "#categories", function() {
         $("#books-wrapper").html("");
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
-
-        $.ajax({
-            url: "/ajax-books/",
-            type: "POST",
-            data: {
-                category_id: $(this).val()
-            },
-            dataType: "html",
-            success: function(data) {
-                $("#books-wrapper").html(data);
-            }
-        });
+        Dajaxice.website.books(Dajax.process, {category_id: $(this).val()});
     });
 
-    $(document).on("change", "#books", function(){
+    $(document).on("change", "#books", function() {
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
-
-        $.ajax({
-            url: "/ajax-chapters/",
-            type: "POST",
-            data: {
-                book_id: $("#books").val()
-            },
-            dataType: "html",
-            success: function(data) {
-                $("#chapters-wrapper").html(data);
-            }
-        });
+        Dajaxice.website.chapters(Dajax.process, {book_id: $(this).val()});
     });
 
-    $(document).on("change", "#chapters", function(){
+    $(document).on("change", "#chapters", function() {
         $("#examples-wrapper").html("");
-        $.ajax({
-            url: "/ajax-examples/",
-            type: "POST",
-            data: {
-                chapter_id: $("#chapters").val()
-            },
-            dataType: "html",
-            success: function(data) {
-                $("#examples-wrapper").html(data);
-            }
-        });
+        Dajaxice.website.examples(Dajax.process, {chapter_id: $(this).val()});
     });
 
-    $(document).on("change", "#examples", function(){
-        $.ajax({
-            url: "/ajax-code/",
-            type: "POST",
-            data: {
-                example_id: $("#examples").val()
-            },
-            dataType: "html",
-            success: function(data) {
-                editor.setValue(data);
-            }
-        });
+    $(document).on("change", "#examples", function() {
+        Dajaxice.website.code(function(data) {
+            editor.setValue(data.code);
+        }, {example_id: $(this).val()});
     });
 
     /* Execute the code */
     $lightbox_wrapper  = $("#lightbox-me-wrapper");
     $lightbox = $("#lightbox-me");
-    $("#execute").click(function() {
-        var csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val();
-        var code = editor.getValue();
+    $(document).on("click", "#execute", function() {
         $("body").css("cursor", "wait");
-        $.ajax({
-            url:"/ajax-execute/",
-            type: "POST",
-            data: {
-                csrfmiddlewaretoken: csrfmiddlewaretoken,
-                code: code,
-                book_id: $("#books").val(),
-                chapter_id: $("#chapters").val(),
-                example_id: $("#examples").val()
-            },
-            dataType: "text",
-            success: function(data) {
-                $("body").css("cursor", "auto");
-                $data = $(data);
-                var output = $data.find("#output").html();
-                var plot = $data.find("#plot").html();
-                result.setValue(output);
-                if(plot) {
-                    $lightbox.html(plot);
-                    $lightbox_wrapper.lightbox_me({centered: true});
-                }
+        Dajaxice.website.execute(function(data) {
+            $("body").css("cursor", "auto");
+            result.setValue(data.output);
+            if(data.plot_path) {
+                $plot = $("<img>");
+                $plot.attr({
+                    src: data.plot_path,
+                    width: 400
+                });
+                $lightbox.html($plot);
+                $lightbox_wrapper.lightbox_me({centered: true});
             }
+        }, {
+            token: $("[name='csrfmiddlewaretoken']").val(),
+            code: editor.getValue(),
+            book_id: $("#books").val() || 0,
+            chapter_id: $("#chapters").val() || 0,
+            example_id: $("#examples").val() || 0
         });
     });
 });
