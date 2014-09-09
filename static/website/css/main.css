@@ -133,14 +133,19 @@ body, html {
     font-size: .6em;
     display: block;
 }
-#lightbox-me-wrapper {
+#plotbox-wrapper,
+#databox-wrapper {
     padding: 35px;
     background: #ffffff;
-    box-shadow: 0 0 10px #ffffff;
+    -webkit-box-shadow: 0 0 10px #ffffff;
+       -moz-box-shadow: 0 0 10px #ffffff;
+         -o-box-shadow: 0 0 10px #ffffff;
+            box-shadow: 0 0 10px #ffffff;
 }
 a.extra-link {
     float: right;
     color: #aaaaaa;
+    display: none;
 }
 .ajax-loader {
     position: relative;
@@ -151,4 +156,11 @@ a.extra-link {
     height: 11px;
     background: url("../images/ajax-loader.gif");
     background-size: cover;
+}
+table  {
+    border: 1px solid #cccccc;
+}
+table td {
+    padding: 5px 10px;
+    border: 1px solid #cccccc;
 }

@@ -80,3 +80,18 @@ def execute(request, token, code, book_id, chapter_id, example_id):
         .filter(example_id=example_id).exists()
     data = scilab_run(code, token, book_id, dependency_exists)
     return simplejson.dumps(data)
+
+@dajaxice_register
+def contributor(request, book_id):
+    dajax = Dajax()
+    preference = TextbookCompanionPreference.objects.using('scilab')\
+        .get(id=book_id)
+    proposal = TextbookCompanionProposal.objects.using('scilab')\
+        .get(id=preference.proposal_id)
+    context = {
+        "preference": preference,
+        "proposal": proposal,
+    }
+    contributor = render_to_string('website/templates/ajax-contributor.html', context)
+    dajax.assign('#databox', 'innerHTML', contributor)
+    return dajax.json()

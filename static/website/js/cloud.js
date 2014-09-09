@@ -71,6 +71,7 @@ $(document).ready(function() {
         $("#books-wrapper").html("");
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
+        $("#contributor").hide();
         ajax_loader(this);
         Dajaxice.website.books(function(data) {
             Dajax.process(data);
@@ -81,6 +82,8 @@ $(document).ready(function() {
     $(document).on("change", "#books", function() {
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
+        $("#contributor").show();
+        $("#download-book").show();
         ajax_loader(this);
         Dajaxice.website.chapters(function(data) { 
             Dajax.process(data);
@@ -90,6 +93,7 @@ $(document).ready(function() {
 
     $(document).on("change", "#chapters", function() {
         $("#examples-wrapper").html("");
+        $("#download-chapter").show();
         ajax_loader(this);
         Dajaxice.website.examples(function(data) { 
             Dajax.process(data);
@@ -99,6 +103,7 @@ $(document).ready(function() {
 
     $(document).on("change", "#examples", function() {
         ajax_loader(this);
+        $("#download-example").show();
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
             ajax_loader("clear");
@@ -106,8 +111,8 @@ $(document).ready(function() {
     });
 
     /* Execute the code */
-    $lightbox_wrapper  = $("#lightbox-me-wrapper");
-    $lightbox = $("#lightbox-me");
+    $plotbox_wrapper  = $("#plotbox-wrapper");
+    $plotbox = $("#plotbox");
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
         Dajaxice.website.execute(function(data) {
@@ -119,8 +124,8 @@ $(document).ready(function() {
                     src: data.plot_path,
                     width: 400
                 });
-                $lightbox.html($plot);
-                $lightbox_wrapper.lightbox_me({centered: true});
+                $plotbox.html($plot);
+                $plotbox_wrapper.lightbox_me({centered: true});
             }
         }, {
             token: $("[name='csrfmiddlewaretoken']").val(),
@@ -155,4 +160,13 @@ $(document).ready(function() {
             $(key).after("<span class='ajax-loader'></span>");
         }
     }
+
+    /* Contributor details */
+    $(document).on("click", "#contributor", function(e) {
+        Dajaxice.website.contributor(function(data) {
+            Dajax.process(data);
+            $("#databox-wrapper").lightbox_me({centered: true});
+        }, {book_id: $("#books").val()});
+        e.preventDefault();
+    });
 });

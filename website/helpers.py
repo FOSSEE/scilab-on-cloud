@@ -17,7 +17,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     plot_exists = False
 
     #Finding the plot and appending xs2jpg function
-    p = re.compile(r'.*plot.*\(.*,.*,*\).*\n|bode\(.*,.*\)')
+    p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)')
 
     plot_path = ''
     if p.search(code):
@@ -49,7 +49,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     cmd = 'printf "exec(\'{0}\',2);\nquit();"'.format(file_path)
     cmd += ' | /home/cheese/scilab-5.4.1/bin/scilab-adv-cli -nw'
 
-    task = TimerTask(cmd, timeout=10)
+    task = TimerTask(cmd, timeout=15)
     output = task.run().communicate()[0]
     e = task.wait()
 
