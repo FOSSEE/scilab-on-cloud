@@ -95,3 +95,10 @@ def contributor(request, book_id):
     contributor = render_to_string('website/templates/ajax-contributor.html', context)
     dajax.assign('#databox', 'innerHTML', contributor)
     return dajax.json()
+
+@dajaxice_register
+def node(request, key):
+    dajax = Dajax()
+    data = render_to_string("website/templates/node-{0}.html".format(key))
+    dajax.assign('#databox', 'innerHTML', data)
+    return dajax.json()

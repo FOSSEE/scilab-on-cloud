@@ -169,4 +169,12 @@ $(document).ready(function() {
         }, {book_id: $("#books").val()});
         e.preventDefault();
     });
+
+    $(document).on("click", ".node", function(e){
+        Dajaxice.website.node(function(data) {
+            Dajax.process(data);
+            $("#databox-wrapper").lightbox_me({centered: true});
+        }, {key: $(this).data("key")});
+        e.preventDefault();
+    });
 });
