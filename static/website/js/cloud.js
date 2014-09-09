@@ -71,23 +71,37 @@ $(document).ready(function() {
         $("#books-wrapper").html("");
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
-        Dajaxice.website.books(Dajax.process, {category_id: $(this).val()});
+        ajax_loader(this);
+        Dajaxice.website.books(function(data) {
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {category_id: $(this).val()});
     });
 
     $(document).on("change", "#books", function() {
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
-        Dajaxice.website.chapters(Dajax.process, {book_id: $(this).val()});
+        ajax_loader(this);
+        Dajaxice.website.chapters(function(data) { 
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {book_id: $(this).val()});
     });
 
     $(document).on("change", "#chapters", function() {
         $("#examples-wrapper").html("");
-        Dajaxice.website.examples(Dajax.process, {chapter_id: $(this).val()});
+        ajax_loader(this);
+        Dajaxice.website.examples(function(data) { 
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {chapter_id: $(this).val()});
     });
 
     $(document).on("change", "#examples", function() {
+        ajax_loader(this);
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
+            ajax_loader("clear");
         }, {example_id: $(this).val()});
     });
 
@@ -95,9 +109,9 @@ $(document).ready(function() {
     $lightbox_wrapper  = $("#lightbox-me-wrapper");
     $lightbox = $("#lightbox-me");
     $(document).on("click", "#execute", function() {
-        $("body").css("cursor", "wait");
+        $("#execute-inner").html("Executing...");
         Dajaxice.website.execute(function(data) {
-            $("body").css("cursor", "auto");
+            $("#execute-inner").html("Execute");
             result.setValue(data.output);
             if(data.plot_path) {
                 $plot = $("<img>");
@@ -134,8 +148,11 @@ $(document).ready(function() {
     });
 
     /* Ajax loader */
-    function ajax_loader(ele) {
-
+    function ajax_loader(key) {
+        if(key == "clear") {
+            $(".ajax-loader").remove();
+        } else {
+            $(key).after("<span class='ajax-loader'></span>");
+        }
     }
-    ajax_loader("#categories");
 });

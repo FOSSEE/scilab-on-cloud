@@ -17,7 +17,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     plot_exists = False
 
     #Finding the plot and appending xs2jpg function
-    p = re.compile(r'.*plot.*\(.*,.*,*\).*\n')
+    p = re.compile(r'.*plot.*\(.*,.*,*\).*\n|bode\(.*,.*\)')
 
     plot_path = ''
     if p.search(code):
