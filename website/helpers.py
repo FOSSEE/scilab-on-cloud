@@ -2,6 +2,7 @@ import os, re, sys, time, subprocess
 
 from soc.settings import PROJECT_DIR
 from timeout import TimerTask
+from soc.config import SCILAB_BIN, SCIMAX_LOADER, UPLOADS_PATH
  
 def scilab_run(code, token, book_id, dependency_exists): 
     #Check for system commands
@@ -30,7 +31,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     #Check whether to load scimax / maxima
     if 'syms' in code or 'Syms' in code:
         code = code.replace('syms', 'Syms')
-        code = 'exec(\'/home/cheese/scimax/loader.sce\');\nmaxinit\n' + code
+        code = 'exec(\'{0}\');\nmaxinit\n'.format(SCIMAX_LOADER) + code
 
     file_path = PROJECT_DIR + '/static/tmp/' + token + '.sci'
 
@@ -38,7 +39,9 @@ def scilab_run(code, token, book_id, dependency_exists):
     f = open(file_path, "w")
     f.write('mode(2);\n')
     if dependency_exists:
-        f.write('getd("/var/www/scilab_in/uploads/{0}/DEPENDENCIES/");'.format(book_id))
+        f.write(
+            'getd("{0}/{1}/DEPENDENCIES/");'.format(UPLOADS_PATH, book_id)
+        )
     f.write('lines(0);\n')
     f.write(unicode(code))
     f.write('\nquit();')
@@ -47,7 +50,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     #this makes it possible to execute scilab without the problem of \
     #getting stuck in the prompt in case of error
     cmd = 'printf "exec(\'{0}\',2);\nquit();"'.format(file_path)
-    cmd += ' | /home/cheese/scilab-5.4.1/bin/scilab-adv-cli -nw'
+    cmd += ' | {0} -nw'.format(SCILAB_BIN)
 
     task = TimerTask(cmd, timeout=15)
     output = task.run().communicate()[0]
