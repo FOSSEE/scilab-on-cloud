@@ -1,6 +1,7 @@
 from dajax.core import Dajax
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
+from dajaxice.utils import deserialize_form
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render 
@@ -14,6 +15,7 @@ from website.models import TextbookCompanionPreference,\
     TextbookCompanionProposal, TextbookCompanionChapter,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
+from website.forms import BugForm
 
 @dajaxice_register
 def books(request, category_id):
@@ -101,4 +103,42 @@ def node(request, key):
     dajax = Dajax()
     data = render_to_string("website/templates/node-{0}.html".format(key))
     dajax.assign('#databox', 'innerHTML', data)
+    return dajax.json()
+
+@dajaxice_register
+def bug_form(request):
+    dajax = Dajax()
+    context = {}
+    form = BugForm()
+    context['form'] = BugForm()
+    context.update(csrf(request))
+    form = render_to_string('website/templates/bug-form.html', context)
+    dajax.assign('#bug-form-wrapper', 'innerHTML', form)
+    return dajax.json()
+
+@dajaxice_register
+def bug_form_submit(request, form):
+    dajax = Dajax()
+    form = BugForm(deserialize_form(form))
+    if form.is_valid():
+        dajax.remove_css_class('#bug-form input', 'error')
+        dajax.remove_css_class('#bug-form select', 'error')
+        dajax.remove_css_class('#bug-form textarea', 'error')
+        dajax.remove('.error-message')
+        dajax.alert('Forms valid')
+    else:
+        dajax.remove_css_class('#bug-form input', 'error')
+        dajax.remove_css_class('#bug-form select', 'error')
+        dajax.remove_css_class('#bug-form textarea', 'error')
+        dajax.remove('.error-message')
+        for error in form.errors:
+            dajax.add_css_class('#id_{0}'.format(error), 'error')
+        for field in form:
+            for error in field.errors:
+                message = '<div class="error-message">* {0}</div>'.format(error)
+                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message) 
+        # non field errors
+        if form.non_field_errors():
+            message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
+            dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()

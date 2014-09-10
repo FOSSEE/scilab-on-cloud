@@ -134,7 +134,8 @@ body, html {
     display: block;
 }
 #plotbox-wrapper,
-#databox-wrapper {
+#databox-wrapper,
+#bug-form-wrapper {
     padding: 35px;
     background: #ffffff;
     -webkit-box-shadow: 0 0 10px #ffffff;
@@ -169,4 +170,28 @@ table  {
 table td {
     padding: 5px 10px;
     border: 1px solid #cccccc;
+}
+.error {
+    border: 2px solid tomato !important;
+}
+#bug-form {
+    width: 400px;
+}
+#bug-form .wrapper {
+    margin-bottom: 15px;
+}
+#bug-form input[type=text],
+#bug-form select,
+#bug-form textarea{
+    width: 80%;
+    max-width: none;
+    margin-bottom: 0;
+}
+#bug-form #id_email_wrapper {
+    display: none;
+}
+#bug-form #non-field-errors .error-message{
+    border: 1px solid tomato;
+    width: 80%;
+    padding: 5px;
 }
