@@ -10,7 +10,9 @@ def scilab_run(code, token, book_id, dependency_exists):
         'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
     )
     if system_commands.search(code):
-        return "System Commands not allowed"
+        return { 
+            'output': 'System Commands not allowed',
+        }
 
     #Remove all clear;
     code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
