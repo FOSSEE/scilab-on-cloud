@@ -16,6 +16,7 @@ from website.models import TextbookCompanionPreference,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
 from website.forms import BugForm
+from soc.config import UPLOADS_PATH
 
 @dajaxice_register
 def books(request, category_id):
@@ -70,7 +71,7 @@ def examples(request, chapter_id):
 def code(request, example_id):
     example = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
-    example_path = '/var/www/scilab_in/uploads/' + example.filepath
+    example_path = UPLOADS_PATH + '/' + example.filepath
     f = open(example_path)
     code = f.read()
     f.close()
