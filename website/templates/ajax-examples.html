@@ -1,0 +1,10 @@
+{% if examples %}
+<label>Example: </label>
+<select id="examples">
+    <option value="">Select Example</option>
+{% for example in examples %}
+    <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
+{% endfor %}
+</select>
+{% endif %}
+<a href="#" class="extra-link" id="download-example">Download Example</a>
