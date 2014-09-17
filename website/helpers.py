@@ -2,7 +2,7 @@ import os, re, sys, time, subprocess
 
 from soc.settings import PROJECT_DIR
 from timeout import TimerTask
-from soc.config import SCILAB_BIN, SCIMAX_LOADER, UPLOADS_PATH
+from soc.config import SCILAB_BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH
  
 def scilab_run(code, token, book_id, dependency_exists): 
     #Check for system commands
@@ -52,7 +52,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     #this makes it possible to execute scilab without the problem of \
     #getting stuck in the prompt in case of error
     cmd = 'printf "exec(\'{0}\',2);\nquit();"'.format(file_path)
-    cmd += ' | {0} -nw'.format(SCILAB_BIN)
+    cmd += ' | {0} {1}'.format(SCILAB_BIN, SCILAB_FLAGS)
 
     task = TimerTask(cmd, timeout=15)
     output = task.run().communicate()[0]
