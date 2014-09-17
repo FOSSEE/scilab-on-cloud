@@ -14,7 +14,7 @@ import tornado.web
 import tornado.wsgi
 import os
 
-define('port', type=int, default=8000)
+define('port', type=int, default=8080)
 
 # Custom settings
 from soc.settings import PROJECT_DIR
