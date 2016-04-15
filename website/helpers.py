@@ -20,15 +20,16 @@ def scilab_run(code, token, book_id, dependency_exists):
     plot_exists = False
 
     #Finding the plot and appending xs2jpg function
-    p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
+    #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
+    p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
 
     plot_path = ''
     if p.search(code):
         plot_exists = True
         code = code + '\n'
         current_time = time.time()
-        plot_path = PROJECT_DIR + '/static/tmp/{0}.jpg'.format(str(current_time))
-        code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
+        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'.format(str(current_time))
+        #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
     #Check whether to load scimax / maxima
     if 'syms' in code or 'Syms' in code:
@@ -39,6 +40,8 @@ def scilab_run(code, token, book_id, dependency_exists):
 
     #traps even syntax errors eg: endfunton
     f = open(file_path, "w")
+    f.write('driver("PNG");\n')
+    f.write('xinit("{0}");\n'.format(plot_path))
     f.write('mode(2);\n')
     if dependency_exists:
         f.write(
@@ -46,6 +49,7 @@ def scilab_run(code, token, book_id, dependency_exists):
         )
     f.write('lines(0);\n')
     f.write(unicode(code))
+    f.write('\nxend();')
     f.write('\nquit();')
     f.close()
     
