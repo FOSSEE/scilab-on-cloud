@@ -21,11 +21,7 @@ from soc.config import UPLOADS_PATH
 from github import Github
 import base64
 
-GITHUB_TOKEN = '08cac6e0e26cf1173b631faea6a14353b1d06618'
-# g = 0
-# FOSSEE = 0
-# repo = 0
-# file_path = 0
+GITHUB_TOKEN = '<GITHUB_ACCESS_TOKEN>'
 
 g = Github(GITHUB_TOKEN)
 FOSSEE = g.get_organization('FOSSEE') 
