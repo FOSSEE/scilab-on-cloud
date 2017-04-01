@@ -22,6 +22,14 @@ from github import Github
 import base64
 
 GITHUB_TOKEN = '08cac6e0e26cf1173b631faea6a14353b1d06618'
+# g = 0
+# FOSSEE = 0
+# repo = 0
+# file_path = 0
+
+g = Github(GITHUB_TOKEN)
+FOSSEE = g.get_organization('FOSSEE') 
+repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
 
 @dajaxice_register
 def books(request, category_id):
@@ -69,7 +77,6 @@ def examples(request, chapter_id):
             'examples': examples
         }
 
-    print('examples')
     examples = render_to_string('website/templates/ajax-examples.html', context)
     dajax.assign('#examples-wrapper', 'innerHTML', examples)
     return dajax.json()
@@ -81,12 +88,14 @@ def revisions(request, example_id):
     example = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
 
-    context = {
-        'revisions': [
-            {"id" : '6a34df'},
-            {"id" : '3f5gr3'}
-        ]
-    }
+    revisions = repo.get_commits(path=example.filepath)
+    request.session['filepath'] = example.filepath;
+
+    context = {'revisions': []}
+    for commit in revisions:
+        print(commit.sha)
+        context['revisions'].append({'id': commit.sha})
+
     revisions = render_to_string('website/templates/ajax-revisions.html', context)
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
@@ -94,18 +103,9 @@ def revisions(request, example_id):
 
 @dajaxice_register
 def code(request, revision_id):
-
-    g = Github(GITHUB_TOKEN)
-    FOSSEE = g.get_organization('FOSSEE')  
-    repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
-    # file = repo.get_file_contents(example.filepath)
-
-    # code = base64.b64decode(file.content)
-    code = 'coming soon...' + revision_id
-    # example_path = UPLOADS_PATH + '/' + example.filepath
-    # f = open(example_path)
-    # code = f.read()
-    # f.close()
+    file_path = request.session['filepath']
+    file = repo.get_file_contents(path=file_path, ref=revision_id)
+    code = base64.b64decode(file.content)
     return simplejson.dumps({'code': code})
 
 

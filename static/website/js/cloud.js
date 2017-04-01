@@ -26,6 +26,9 @@ $(document).ready(function() {
          }
     });
 
+    // file path of current file
+    var file_path = 0
+
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
     $toggle_code = $("#toggle-code");
