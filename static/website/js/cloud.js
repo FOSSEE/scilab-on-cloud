@@ -71,6 +71,7 @@ $(document).ready(function() {
         $("#books-wrapper").html("");
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
+        $("#revisions-wrapper").html("");
         $("#contributor").hide();
         ajax_loader(this);
         Dajaxice.website.books(function(data) {
@@ -82,6 +83,7 @@ $(document).ready(function() {
     $(document).on("change", "#books", function() {
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
+        $("#revisions-wrapper").html("");
         $("#contributor").show();
         $("#download-book").show();
         ajax_loader(this);
@@ -93,6 +95,7 @@ $(document).ready(function() {
 
     $(document).on("change", "#chapters", function() {
         $("#examples-wrapper").html("");
+        $("#revisions-wrapper").html("");
         $("#download-chapter").show();
         ajax_loader(this);
         Dajaxice.website.examples(function(data) { 
@@ -102,12 +105,22 @@ $(document).ready(function() {
     });
 
     $(document).on("change", "#examples", function() {
-        ajax_loader(this);
+        $("#revisions-wrapper").html("");
         $("#download-example").show();
+        ajax_loader(this);
+        Dajaxice.website.revisions(function(data) { 
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {example_id: $(this).val()});
+    });
+
+    $(document).on("change", "#revisions", function() {
+        ajax_loader(this);
+        // $("#download-example").show();
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
             ajax_loader("clear");
-        }, {example_id: $(this).val()});
+        }, {revision_id: $(this).val()});
     });
 
     /* Execute the code */

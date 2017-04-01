@@ -43,12 +43,14 @@ var Dajaxice = {
 
     examples: function(callback_function, argv, custom_settings){
         return Dajaxice.call('website.examples', 'POST', callback_function, argv, custom_settings);
-    }
+    },
 
-
-    
-    
+    // new
+    revisions: function(callback_function, argv, custom_settings){
+        return Dajaxice.call('website.revisions', 'POST', callback_function, argv, custom_settings);
     }
+    
+}
     
 ,
     

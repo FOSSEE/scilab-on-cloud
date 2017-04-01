@@ -9,3 +9,4 @@
 *.pyc
 config.py
 tmp/
+local.py

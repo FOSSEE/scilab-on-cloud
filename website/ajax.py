@@ -18,6 +18,11 @@ from website.models import TextbookCompanionPreference,\
 from website.forms import BugForm
 from soc.config import UPLOADS_PATH
 
+from github import Github
+import base64
+
+GITHUB_TOKEN = '08cac6e0e26cf1173b631faea6a14353b1d06618'
+
 @dajaxice_register
 def books(request, category_id):
     dajax = Dajax()
@@ -63,19 +68,46 @@ def examples(request, chapter_id):
         context = {
             'examples': examples
         }
+
+    print('examples')
     examples = render_to_string('website/templates/ajax-examples.html', context)
     dajax.assign('#examples-wrapper', 'innerHTML', examples)
     return dajax.json()
 
 @dajaxice_register
-def code(request, example_id):
+def revisions(request, example_id):
+    dajax = Dajax()
+    print('revisions')
     example = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
-    example_path = UPLOADS_PATH + '/' + example.filepath
-    f = open(example_path)
-    code = f.read()
-    f.close()
+
+    context = {
+        'revisions': [
+            {"id" : '6a34df'},
+            {"id" : '3f5gr3'}
+        ]
+    }
+    revisions = render_to_string('website/templates/ajax-revisions.html', context)
+    dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
+    return dajax.json()
+
+
+@dajaxice_register
+def code(request, revision_id):
+
+    g = Github(GITHUB_TOKEN)
+    FOSSEE = g.get_organization('FOSSEE')  
+    repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
+    # file = repo.get_file_contents(example.filepath)
+
+    # code = base64.b64decode(file.content)
+    code = 'coming soon...' + revision_id
+    # example_path = UPLOADS_PATH + '/' + example.filepath
+    # f = open(example_path)
+    # code = f.read()
+    # f.close()
     return simplejson.dumps({'code': code})
+
 
 @dajaxice_register
 def execute(request, token, code, book_id, chapter_id, example_id):

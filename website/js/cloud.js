@@ -102,12 +102,22 @@ $(document).ready(function() {
     });
 
     $(document).on("change", "#examples", function() {
+        $("#revisions-wrapper").html("");
+        // $("#download-example").hide();
         ajax_loader(this);
-        $("#download-example").show();
+        Dajaxice.website.revisions(function(data) { 
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {example_id: $(this).val()});
+    });
+
+    $(document).on("change", "#revisions", function() {
+        ajax_loader(this);
+        // $("#download-example").show();
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
             ajax_loader("clear");
-        }, {example_id: $(this).val()});
+        }, {revision_id: $(this).val()});
     });
 
     /* Execute the code */

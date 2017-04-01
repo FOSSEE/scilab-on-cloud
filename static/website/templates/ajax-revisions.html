@@ -1,0 +1,9 @@
+{% if revisions %}
+<label>Revision: </label>
+<select id="revisions">
+    <option value="">Select a revision</option>
+{% for revision in revisions %}
+    <option value="{{ revision.id }}">{{ revision.id }}</option>
+{% endfor %}
+</select>
+{% endif %}
