@@ -17,15 +17,17 @@ from website.models import TextbookCompanionPreference,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
 from website.forms import BugForm
 from soc.config import UPLOADS_PATH
+from soc.config import GITHUB_ACCESS_TOKEN
 
 from github import Github
 import base64
 
-GITHUB_TOKEN = '<GITHUB_ACCESS_TOKEN>'
+g = Github(GITHUB_ACCESS_TOKEN)
+# FOSSEE = g.get_organization('FOSSEE') 
+# repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
 
-g = Github(GITHUB_TOKEN)
-FOSSEE = g.get_organization('FOSSEE') 
-repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
+user = g.get_user('vinayakvivek')
+repo = user.get_repo('Scilab-TBC-Uploads')
 
 @dajaxice_register
 def books(request, category_id):

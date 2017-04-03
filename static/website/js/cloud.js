@@ -26,9 +26,6 @@ $(document).ready(function() {
          }
     });
 
-    // file path of current file
-    var file_path = 0
-
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
     $toggle_code = $("#toggle-code");
@@ -119,7 +116,6 @@ $(document).ready(function() {
 
     $(document).on("change", "#revisions", function() {
         ajax_loader(this);
-        // $("#download-example").show();
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
             ajax_loader("clear");
