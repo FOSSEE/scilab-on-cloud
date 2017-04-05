@@ -22,6 +22,7 @@ from soc.config import GITHUB_ACCESS_TOKEN
 from github import Github
 import base64
 
+
 g = Github(GITHUB_ACCESS_TOKEN)
 # FOSSEE = g.get_organization('FOSSEE') 
 # repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
@@ -44,6 +45,9 @@ def books(request, category_id):
         context = {
             'books': books
         }
+
+    # request.session['repo'] = repo
+
     books = render_to_string('website/templates/ajax-books.html', context)
     dajax.assign('#books-wrapper', 'innerHTML', books)
     return dajax.json()
@@ -87,7 +91,7 @@ def revisions(request, example_id):
         .get(example_id=example_id, filetype='S')
 
     revisions = repo.get_commits(path=example.filepath)
-    request.session['filepath'] = example.filepath;
+    request.session['filepath'] = example.filepath
 
     context = {'revisions': []}
     for commit in revisions:
