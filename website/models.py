@@ -1,5 +1,6 @@
 from django.db import models
 
+
 """
 Models from Scilab Database created using inspectdb
 Use it with the "scilab" database eg:using("scilab") 
