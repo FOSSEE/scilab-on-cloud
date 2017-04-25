@@ -10,3 +10,4 @@
 config.py
 tmp/
 local.py
+soc/config.py
