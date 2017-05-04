@@ -125,6 +125,7 @@ $(document).ready(function() {
     /* Execute the code */
     $plotbox_wrapper  = $("#plotbox-wrapper");
     $plotbox = $("#plotbox");
+
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
         Dajaxice.website.execute(function(data) {
@@ -207,5 +208,14 @@ $(document).ready(function() {
 
     $(document).on("click", "#bug-form #id_notify", function() {
         $("#id_email_wrapper").toggle(this.checked);
+    });
+
+    // submit revision handling
+    $(document).on("click", "#submit-revision", function(e) {
+        Dajaxice.website.submit_revision(function(data) {
+            Dajax.process(data);
+            $("#submit-revision-wrapper").lightbox_me({centered: false});
+        });
+        e.preventDefault();
     });
 });

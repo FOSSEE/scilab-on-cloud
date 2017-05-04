@@ -177,3 +177,19 @@ def bug_form_submit(request, form):
             message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
             dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()
+
+# submit revision
+@dajaxice_register
+def submit_revision(request):
+    dajax = Dajax()
+    context = {}
+    data = render_to_string('website/templates/submit-revision.html', context)
+    dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
+    return dajax.json()
+
+
+
+
+
+
+

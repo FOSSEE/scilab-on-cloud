@@ -1,58 +1,54 @@
 
 var Dajaxice = {
 
-    
-    
-
-    
-
-    
     website: {
-    
-    node: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.node', 'POST', callback_function, argv, custom_settings);
-    },
+        
+        node: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.node', 'POST', callback_function, argv, custom_settings);
+        },
 
-    execute: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.execute', 'POST', callback_function, argv, custom_settings);
-    },
+        execute: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.execute', 'POST', callback_function, argv, custom_settings);
+        },
 
-    code: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.code', 'POST', callback_function, argv, custom_settings);
-    },
+        code: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.code', 'POST', callback_function, argv, custom_settings);
+        },
 
-    chapters: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.chapters', 'POST', callback_function, argv, custom_settings);
-    },
+        chapters: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.chapters', 'POST', callback_function, argv, custom_settings);
+        },
 
-    bug_form: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.bug_form', 'POST', callback_function, argv, custom_settings);
-    },
+        bug_form: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.bug_form', 'POST', callback_function, argv, custom_settings);
+        },
 
-    books: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.books', 'POST', callback_function, argv, custom_settings);
-    },
+        books: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.books', 'POST', callback_function, argv, custom_settings);
+        },
 
-    bug_form_submit: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.bug_form_submit', 'POST', callback_function, argv, custom_settings);
-    },
+        bug_form_submit: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.bug_form_submit', 'POST', callback_function, argv, custom_settings);
+        },
 
-    contributor: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.contributor', 'POST', callback_function, argv, custom_settings);
-    },
+        contributor: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.contributor', 'POST', callback_function, argv, custom_settings);
+        },
 
-    examples: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.examples', 'POST', callback_function, argv, custom_settings);
-    },
+        examples: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.examples', 'POST', callback_function, argv, custom_settings);
+        },
 
-    // new
-    revisions: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.revisions', 'POST', callback_function, argv, custom_settings);
-    }
-    
-}
-    
-,
+        // new
+        revisions: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.revisions', 'POST', callback_function, argv, custom_settings);
+        },
+        
+        // submit revision
+        submit_revision: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.submit_revision', 'POST', callback_function, argv, custom_settings);
+        },
+    },
     
 
     get_cookie: function(name)

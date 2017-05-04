@@ -114,6 +114,11 @@ body, html {
     left: 15px;
     bottom: -15px;
 }
+#submit-revision {
+    position: absolute;
+    left: 100px;
+    bottom: -15px;
+}
 #bug {
     position: absolute;
     right: 15px;
@@ -135,7 +140,7 @@ body, html {
 }
 #plotbox-wrapper,
 #databox-wrapper,
-#bug-form-wrapper {
+#bug-form-wrapper, #submit-revision-wrapper {
     padding: 35px;
     background: #ffffff;
     -webkit-box-shadow: 0 0 10px #ffffff;
