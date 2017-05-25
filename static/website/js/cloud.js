@@ -28,6 +28,9 @@ $(document).ready(function() {
 
     var initial_code = '';
 
+    // hide revision submit button initially
+    $("#submit-revision").hide()
+
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
     $toggle_code = $("#toggle-code");
@@ -75,6 +78,10 @@ $(document).ready(function() {
         $("#examples-wrapper").html("");
         $("#revisions-wrapper").html("");
         $("#contributor").hide();
+
+        // hide revision submit button if one selects different category
+        $("#submit-revision").hide()
+
         ajax_loader(this);
         Dajaxice.website.books(function(data) {
             Dajax.process(data);
@@ -88,6 +95,10 @@ $(document).ready(function() {
         $("#revisions-wrapper").html("");
         $("#contributor").show();
         $("#download-book").show();
+
+        // hide revision submit button if one selects different book
+        $("#submit-revision").hide()
+
         ajax_loader(this);
         Dajaxice.website.chapters(function(data) { 
             Dajax.process(data);
@@ -99,6 +110,10 @@ $(document).ready(function() {
         $("#examples-wrapper").html("");
         $("#revisions-wrapper").html("");
         $("#download-chapter").show();
+
+        // hide revision submit button if one selects different chapter
+        $("#submit-revision").hide()
+
         ajax_loader(this);
         Dajaxice.website.examples(function(data) { 
             Dajax.process(data);
@@ -109,6 +124,10 @@ $(document).ready(function() {
     $(document).on("change", "#examples", function() {
         $("#revisions-wrapper").html("");
         $("#download-example").show();
+
+        // hide revision submit button if one selects different example
+        $("#submit-revision").hide()
+
         ajax_loader(this);
         Dajaxice.website.revisions(function(data) { 
             Dajax.process(data);
@@ -122,6 +141,10 @@ $(document).ready(function() {
             editor.setValue(data.code);
             initial_code = editor.getValue()
             ajax_loader("clear");
+
+            // show revision submit button when a revision is loaded
+            $("#submit-revision").show()
+
         }, {revision_id: $(this).val()});
     });
 
