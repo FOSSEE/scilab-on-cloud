@@ -38,4 +38,4 @@ class BugForm(forms.Form):
 
 
 class RevisionForm(forms.Form):
-    commit_message = forms.CharField(widget=forms.Textarea)
+    commit_message = forms.CharField(widget=forms.Textarea, required=True, min_length=10)

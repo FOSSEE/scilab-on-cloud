@@ -178,6 +178,7 @@ def bug_form_submit(request, form):
             dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()
 
+
 # submit revision
 @dajaxice_register
 def revision_form(request):
@@ -189,8 +190,35 @@ def revision_form(request):
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
 
+from difflib import context_diff, unified_diff
+import sys
 
+@dajaxice_register
+def revision_form_submit(request, form, code, initial_code):
+    dajax = Dajax()
+    form = RevisionForm(deserialize_form(form))
 
+    dajax.remove_css_class('#revision-form textarea', 'error')
+    dajax.remove('.error-message')
+
+    if code == initial_code:
+        dajax.assign('#non-field-errors', 'innerHTML', 'You have not made any changes to the code !')
+    else:
+        if form.is_valid():
+            dajax.alert('submitted successfully !')
+            dajax.script('$("#submit-revision-wrapper").trigger("close")')
+        else:
+            for error in form.errors:
+                dajax.add_css_class('#id_{0}'.format(error), 'error')
+            for field in form:
+                for error in field.errors:
+                    message = '<div class="error-message">* {0}</div>'.format(error)
+                    dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message) 
+            # non field errors
+            if form.non_field_errors():
+                message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
+                dajax.append('#non-field-errors', 'innerHTML', message)
+    return dajax.json()
 
 
 

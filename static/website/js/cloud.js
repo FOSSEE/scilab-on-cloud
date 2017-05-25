@@ -26,6 +26,8 @@ $(document).ready(function() {
          }
     });
 
+    var initial_code = '';
+
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
     $toggle_code = $("#toggle-code");
@@ -118,6 +120,7 @@ $(document).ready(function() {
         ajax_loader(this);
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
+            initial_code = editor.getValue()
             ajax_loader("clear");
         }, {revision_id: $(this).val()});
     });
@@ -218,5 +221,29 @@ $(document).ready(function() {
         });
         e.preventDefault();
     });
-    
+
+    // onclick callback for revision-submit button click
+    $(document).on("click", "#revision-form-submit", function(e) {
+        ajax_loader(this);
+        Dajaxice.website.revision_form_submit(
+                Dajax.process, {
+                    form: $('#revision-form').serialize(true),
+                    code: editor.getValue(),
+                    initial_code: initial_code,
+                }
+            );
+        e.preventDefault();
+    });
 });
+
+
+
+
+
+
+
+
+
+
+
+

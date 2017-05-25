@@ -48,6 +48,11 @@ var Dajaxice = {
         revision_form: function(callback_function, argv, custom_settings){
             return Dajaxice.call('website.revision_form', 'POST', callback_function, argv, custom_settings);
         },
+
+        // revision form submit button (inside revision form)
+        revision_form_submit: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.revision_form_submit', 'POST', callback_function, argv, custom_settings);
+        },
     },
     
 
