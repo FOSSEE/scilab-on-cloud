@@ -84,7 +84,11 @@
 
                     
                     <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
-                    <a id="submit-revision" class="button">Submit a revision</a>
+
+                    <!-- show submit revision only if user is logged in -->
+                    {% if user and not user.is_anonymous %}
+                        <a id="submit-revision" class="button">Submit a revision</a>
+                    {% endif %}
 
                     <div id="output">
                         <label>

@@ -212,10 +212,11 @@ $(document).ready(function() {
 
     // submit revision handling
     $(document).on("click", "#submit-revision", function(e) {
-        Dajaxice.website.submit_revision(function(data) {
+        Dajaxice.website.revision_form(function(data) {
             Dajax.process(data);
             $("#submit-revision-wrapper").lightbox_me({centered: false});
         });
         e.preventDefault();
     });
+    
 });

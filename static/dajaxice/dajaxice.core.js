@@ -44,9 +44,9 @@ var Dajaxice = {
             return Dajaxice.call('website.revisions', 'POST', callback_function, argv, custom_settings);
         },
         
-        // submit revision
-        submit_revision: function(callback_function, argv, custom_settings){
-            return Dajaxice.call('website.submit_revision', 'POST', callback_function, argv, custom_settings);
+        // revision form (for commit message)
+        revision_form: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.revision_form', 'POST', callback_function, argv, custom_settings);
         },
     },
     

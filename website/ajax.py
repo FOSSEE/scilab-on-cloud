@@ -15,7 +15,7 @@ from website.models import TextbookCompanionPreference,\
     TextbookCompanionProposal, TextbookCompanionChapter,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
-from website.forms import BugForm
+from website.forms import BugForm, RevisionForm
 from soc.config import UPLOADS_PATH
 from soc.config import GITHUB_ACCESS_TOKEN
 
@@ -180,9 +180,11 @@ def bug_form_submit(request, form):
 
 # submit revision
 @dajaxice_register
-def submit_revision(request):
+def revision_form(request):
     dajax = Dajax()
-    context = {}
+    form = RevisionForm()
+    context = {'form': form}
+    context.update(csrf(request))
     data = render_to_string('website/templates/submit-revision.html', context)
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()

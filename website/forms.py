@@ -35,3 +35,7 @@ class BugForm(forms.Form):
                 Please select book, chapter and example.
                 Or select the *Any other/General* issue type.
             """)
+
+
+class RevisionForm(forms.Form):
+    commit_message = forms.CharField(widget=forms.Textarea)
