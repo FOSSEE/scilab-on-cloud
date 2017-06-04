@@ -136,6 +136,7 @@ $(document).ready(function() {
     });
 
     $(document).on("change", "#revisions", function() {
+        
         ajax_loader(this);
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
@@ -196,6 +197,7 @@ $(document).ready(function() {
         if(key == "clear") {
             $(".ajax-loader").remove();
         } else {
+            $(".ajax-loader").remove();
             $(key).after("<span class='ajax-loader'></span>");
         }
     }

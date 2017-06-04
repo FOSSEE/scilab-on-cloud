@@ -17,23 +17,27 @@ from website.models import TextbookCompanionPreference,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
 from website.forms import BugForm, RevisionForm
 from soc.config import UPLOADS_PATH
-from soc.config import GITHUB_ACCESS_TOKEN
 
 from github import Github
 import base64
 
+from utils import g, user, repo
+import utils
 
-g = Github(GITHUB_ACCESS_TOKEN)
-# FOSSEE = g.get_organization('FOSSEE') 
-# repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
 
-user = g.get_user('vinayakvivek')
-repo = user.get_repo('Scilab-TBC-Uploads')
+# g = Github(GITHUB_ACCESS_TOKEN_2)
+# # FOSSEE = g.get_organization('FOSSEE') 
+# # repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
+
+# user = g.get_user('appucrossroads')
+# repo = user.get_repo('Scilab-TBC-Uploads')
+
 
 @dajaxice_register
 def books(request, category_id):
     dajax = Dajax()
     context = {}
+
     if category_id:
         ids = TextbookCompanionProposal.objects.using('scilab')\
             .filter(proposal_status=3).values('id')
@@ -45,6 +49,8 @@ def books(request, category_id):
         context = {
             'books': books
         }
+
+    # print()
 
     # request.session['repo'] = repo
 
@@ -98,6 +104,13 @@ def revisions(request, example_id):
         print(commit.sha)
         context['revisions'].append({'id': commit.sha})
 
+    # TODO: show latest revision on selecting the example
+    # file_path = request.session['filepath']
+    # file = repo.get_file_contents(path=file_path, ref=context['revisions'][0]['id'])
+    # code = base64.b64decode(file.content)
+
+    context['code'] = code
+
     revisions = render_to_string('website/templates/ajax-revisions.html', context)
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
@@ -107,6 +120,7 @@ def revisions(request, example_id):
 def code(request, revision_id):
     file_path = request.session['filepath']
     file = repo.get_file_contents(path=file_path, ref=revision_id)
+    request.session['sha'] = file.sha
     code = base64.b64decode(file.content)
     return simplejson.dumps({'code': code})
 
@@ -190,8 +204,6 @@ def revision_form(request):
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
 
-from difflib import context_diff, unified_diff
-import sys
 
 @dajaxice_register
 def revision_form_submit(request, form, code, initial_code):
@@ -202,11 +214,22 @@ def revision_form_submit(request, form, code, initial_code):
     dajax.remove('.error-message')
 
     if code == initial_code:
+        # if the user has not made any changes
         dajax.assign('#non-field-errors', 'innerHTML', 'You have not made any changes to the code !')
     else:
         if form.is_valid():
-            dajax.alert('submitted successfully !')
+            # everything fine
+            dajax.alert('submitted successfully! \nYour changes will be visible after review.')
             dajax.script('$("#submit-revision-wrapper").trigger("close")')
+
+            # push changes to temp repo
+            utils.update_file(
+                request.session['filepath'],
+                form.cleaned_data['commit_message'],
+                base64.b64encode(code), 
+                request.session['sha'],
+                [request.user.username, request.user.email]
+                )
         else:
             for error in form.errors:
                 dajax.add_css_class('#id_{0}'.format(error), 'error')
