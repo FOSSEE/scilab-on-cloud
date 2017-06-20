@@ -191,7 +191,7 @@ def revision_form(request):
     return dajax.json()
 
 @dajaxice_register
-def revision_form_submit(request, form, code, initial_code):
+def revision_form_submit(request, form, code):
     dajax = Dajax()
     form = RevisionForm(deserialize_form(form))
 

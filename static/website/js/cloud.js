@@ -261,7 +261,6 @@ $(document).ready(function() {
             Dajax.process, {
                 form: $('#revision-form').serialize(true),
                 code: editor.getValue(),
-                initial_code: initial_code,
             }
         );
         e.preventDefault();
