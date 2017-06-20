@@ -140,7 +140,9 @@ body, html {
 }
 #plotbox-wrapper,
 #databox-wrapper,
-#bug-form-wrapper, #submit-revision-wrapper {
+#bug-form-wrapper, 
+#submit-revision-wrapper,
+#submit-revision-error-wrapper {
     padding: 35px;
     background: #ffffff;
     -webkit-box-shadow: 0 0 10px #ffffff;

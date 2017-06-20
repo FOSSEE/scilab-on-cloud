@@ -240,10 +240,17 @@ $(document).ready(function() {
 
     // submit revision handling
     $(document).on("click", "#submit-revision", function(e) {
-        Dajaxice.website.revision_form(function(data) {
-            Dajax.process(data);
-            $("#submit-revision-wrapper").lightbox_me({centered: false});
-        });
+        if (editor.getValue() == initial_code) {
+            Dajaxice.website.revision_error(function(data) {
+                Dajax.process(data);
+                $("#submit-revision-error-wrapper").lightbox_me({centered: false});
+            });
+        } else {
+            Dajaxice.website.revision_form(function(data) {
+                Dajax.process(data);
+                $("#submit-revision-wrapper").lightbox_me({centered: false});
+            });
+        }
         e.preventDefault();
     });
 
@@ -251,12 +258,12 @@ $(document).ready(function() {
     $(document).on("click", "#revision-form-submit", function(e) {
         ajax_loader(this);
         Dajaxice.website.revision_form_submit(
-                Dajax.process, {
-                    form: $('#revision-form').serialize(true),
-                    code: editor.getValue(),
-                    initial_code: initial_code,
-                }
-            );
+            Dajax.process, {
+                form: $('#revision-form').serialize(true),
+                code: editor.getValue(),
+                initial_code: initial_code,
+            }
+        );
         e.preventDefault();
     });
 });

@@ -15,7 +15,8 @@ from website.models import TextbookCompanionPreference,\
     TextbookCompanionProposal, TextbookCompanionChapter,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
-from website.forms import BugForm, RevisionForm
+
+from website.forms import BugForm, RevisionForm, RevisionErrorForm
 from soc.config import UPLOADS_PATH
 
 from github import Github
@@ -23,14 +24,6 @@ import base64
 
 from utils import g, user, repo
 import utils
-
-
-# g = Github(GITHUB_ACCESS_TOKEN_2)
-# # FOSSEE = g.get_organization('FOSSEE') 
-# # repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
-
-# user = g.get_user('appucrossroads')
-# repo = user.get_repo('Scilab-TBC-Uploads')
 
 
 @dajaxice_register
@@ -49,10 +42,6 @@ def books(request, category_id):
         context = {
             'books': books
         }
-
-    # print()
-
-    # request.session['repo'] = repo
 
     books = render_to_string('website/templates/ajax-books.html', context)
     dajax.assign('#books-wrapper', 'innerHTML', books)
@@ -115,7 +104,6 @@ def revisions(request, example_id):
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
 
-
 @dajaxice_register
 def code(request, revision_id):
     file_path = request.session['filepath']
@@ -123,7 +111,6 @@ def code(request, revision_id):
     request.session['sha'] = file.sha
     code = base64.b64decode(file.content)
     return simplejson.dumps({'code': code})
-
 
 @dajaxice_register
 def execute(request, token, code, book_id, chapter_id, example_id):
@@ -192,7 +179,6 @@ def bug_form_submit(request, form):
             dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()
 
-
 # submit revision
 @dajaxice_register
 def revision_form(request):
@@ -204,7 +190,6 @@ def revision_form(request):
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
 
-
 @dajaxice_register
 def revision_form_submit(request, form, code, initial_code):
     dajax = Dajax()
@@ -213,36 +198,41 @@ def revision_form_submit(request, form, code, initial_code):
     dajax.remove_css_class('#revision-form textarea', 'error')
     dajax.remove('.error-message')
 
-    if code == initial_code:
-        # if the user has not made any changes
-        dajax.assign('#non-field-errors', 'innerHTML', 'You have not made any changes to the code !')
-    else:
-        if form.is_valid():
-            # everything fine
+    if form.is_valid():
+
+        # push changes to temp repo
+        # update_file returns True if the push is success.
+        file_update = utils.update_file(
+            request.session['filepath'],
+            form.cleaned_data['commit_message'],
+            base64.b64encode(code), 
+            request.session['sha'],
+            [request.user.username, request.user.email]
+            )
+
+        if file_update:
+            # everything is fine
             dajax.alert('submitted successfully! \nYour changes will be visible after review.')
             dajax.script('$("#submit-revision-wrapper").trigger("close")')
+    else:
+        for error in form.errors:
+            dajax.add_css_class('#id_{0}'.format(error), 'error')
+        for field in form:
+            for error in field.errors:
+                message = '<div class="error-message">* {0}</div>'.format(error)
+                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message) 
+        # non field errors
+        if form.non_field_errors():
+            message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
+            dajax.append('#non-field-errors', 'innerHTML', message)
 
-            # push changes to temp repo
-            utils.update_file(
-                request.session['filepath'],
-                form.cleaned_data['commit_message'],
-                base64.b64encode(code), 
-                request.session['sha'],
-                [request.user.username, request.user.email]
-                )
-        else:
-            for error in form.errors:
-                dajax.add_css_class('#id_{0}'.format(error), 'error')
-            for field in form:
-                for error in field.errors:
-                    message = '<div class="error-message">* {0}</div>'.format(error)
-                    dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message) 
-            # non field errors
-            if form.non_field_errors():
-                message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
-                dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()
 
-
+@dajaxice_register
+def revision_error(request):
+    dajax = Dajax()
+    data = render_to_string('website/templates/submit-revision-error.html', {})
+    dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
+    return dajax.json()    
 
 

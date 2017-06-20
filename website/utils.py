@@ -39,5 +39,4 @@ def update_file(file_path,
 		"sha": sha,
 	}
 	r = requests.put(url, headers=headers, data=json.dumps(data))
-	print(r.content)
 	return r.status_code == requests.codes.ok
