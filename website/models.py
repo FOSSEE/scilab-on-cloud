@@ -22,6 +22,7 @@ class TextbookCompanionPreference(models.Model):
     class Meta:
         db_table = 'textbook_companion_preference'
 
+
 class TextbookCompanionProposal(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     uid = models.IntegerField()
@@ -46,6 +47,7 @@ class TextbookCompanionProposal(models.Model):
     class Meta:
         db_table = 'textbook_companion_proposal'
 
+
 class TextbookCompanionChapter(models.Model):
     id = models.IntegerField(primary_key=True)
     preference_id = models.IntegerField()
@@ -54,6 +56,7 @@ class TextbookCompanionChapter(models.Model):
     cloud_chapter_err_status = models.CharField(max_length=255L)
     class Meta:
         db_table = 'textbook_companion_chapter'
+
 
 class TextbookCompanionExample(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -68,6 +71,7 @@ class TextbookCompanionExample(models.Model):
     class Meta:
         db_table = 'textbook_companion_example'
 
+
 class TextbookCompanionExampleFiles(models.Model):
     id = models.IntegerField(primary_key=True)
     example_id = models.IntegerField()
@@ -81,6 +85,7 @@ class TextbookCompanionExampleFiles(models.Model):
     class Meta:
         db_table = 'textbook_companion_example_files'
 
+
 class TextbookCompanionExampleDependency(models.Model):
     id = models.IntegerField(primary_key=True)
     example_id = models.IntegerField()
@@ -89,6 +94,7 @@ class TextbookCompanionExampleDependency(models.Model):
     timestamp = models.IntegerField()
     class Meta:
         db_table = 'textbook_companion_example_dependency'
+
 
 class TextbookCompanionDependencyFiles(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -102,3 +108,13 @@ class TextbookCompanionDependencyFiles(models.Model):
     timestamp = models.IntegerField()
     class Meta:
         db_table = 'textbook_companion_dependency_files'
+
+
+class TextbookCompanionRevision(models.Model):
+    id = models.IntegerField(primary_key=True)
+    example_id = models.IntegerField()
+    filepath = models.CharField(max_length=500L)
+    filesha = models.CharField(max_length=100L)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        db_table = 'textbook_companion_revision'

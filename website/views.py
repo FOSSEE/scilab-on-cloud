@@ -9,15 +9,15 @@ def index(request):
     user = request.user
 
     if not user.is_anonymous():
-	    social = user.social_auth.get(provider='google-oauth2')
-	    url = 'https://www.googleapis.com/plus/v1/people/me'
-	    params = {'access_token' : social.extra_data['access_token']}
-	    # r = requests.get(url, params=params)
-	    # print(r.content)
+        social = user.social_auth.get(provider='google-oauth2')
+        url = 'https://www.googleapis.com/plus/v1/people/me'
+        params = {'access_token' : social.extra_data['access_token']}
+        # r = requests.get(url, params=params)
+        # print(r.content)
 
-	    context = {
-	    	'user' : user
-	    }
+        context = {
+        	'user' : user
+        }
 
     return render(request, 'website/templates/index.html', context)
 

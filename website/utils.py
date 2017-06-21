@@ -4,9 +4,9 @@ import requests
 from urlparse import urljoin
 import json
 
-from soc.config import GITHUB_ACCESS_TOKEN_2
+from soc.config import GITHUB_ACCESS_TOKEN
 
-g = Github(GITHUB_ACCESS_TOKEN_2)
+g = Github(GITHUB_ACCESS_TOKEN)
 # FOSSEE = g.get_organization('FOSSEE') 
 # repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
 
@@ -16,7 +16,7 @@ repo = user.get_repo('Scilab-TBC-Uploads')
 # username = user.login
 # repo_name = repo.name
 headers = {
-    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN_2,
+    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN,
     'Content-Type': 'application/json'}
 
 base_url = 'https://api.github.com/repos/'

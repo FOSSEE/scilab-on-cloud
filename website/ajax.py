@@ -12,7 +12,7 @@ from django.db.models import Q
 
 from website.helpers import scilab_run
 from website.models import TextbookCompanionPreference,\
-    TextbookCompanionProposal, TextbookCompanionChapter,\
+    TextbookCompanionProposal, TextbookCompanionChapter, TextbookCompanionRevision,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
 
@@ -212,6 +212,9 @@ def revision_form_submit(request, form, code):
 
         if file_update:
             # everything is fine
+
+            rev = TextbookCompanionRevision()
+
             dajax.alert('submitted successfully! \nYour changes will be visible after review.')
             dajax.script('$("#submit-revision-wrapper").trigger("close")')
     else:

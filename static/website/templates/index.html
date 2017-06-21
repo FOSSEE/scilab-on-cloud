@@ -21,12 +21,19 @@
                     </span>
                     <div id="navlinks">
                         <ul>
-                            <li><a class="node" data-key="about" href="#">About</a></li>
-                            <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                            <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
                             {% if user and not user.is_anonymous %}
+                                {% if not user.is_staff %}
+                                    <li><a class="node" data-key="about" href="#">About</a></li>
+                                    <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
+                                    <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
+                                {% else %}
+                                    <li><a data-key="review-interface" href="/review">Review Interface</a></li>
+                                {% endif %}
                                 <li><a data-key="logout" href="/logout">Log out</a></li>
                             {% else %}
+                                <li><a class="node" data-key="about" href="#">About</a></li>
+                                <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
+                                <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
                                 <li><a class="node" data-key="login" href="#">Log In</a></li>
                             {% endif %}
                             <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
