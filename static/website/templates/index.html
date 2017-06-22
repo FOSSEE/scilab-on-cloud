@@ -1,16 +1,7 @@
 {% load static %}
 {% load dajaxice_templatetags %}
 <html>
-    <head>
-        <title>Scilab on Cloud</title>
-        <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
-        <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
-        <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}"/>
-        {% dajaxice_js_import %}
-    </head>
+    {% include 'website/templates/head.html' %}
     <body>
         <div id="header-wrapper">
             <div id="header-inner">
@@ -143,14 +134,7 @@
     <div id="submit-revision-error-wrapper">
     </div>
 
-    <script src="{% static 'website/js/jquery-1.10.2.min.js' %}"></script>
-    <script src="{% static '/static/dajax/jquery.dajax.core.js' %}"></script>
-    <script src="{% static 'website/js/codemirror.js'%}"></script>
-    <script src="{% static 'website/js/javascript.js'%}"></script>
-    <script src="{% static 'website/js/fullscreen.js'%}"></script>
-    <script src="{% static 'website/js/placeholder.js'%}"></script>
-    <script src="{% static 'website/js/lightbox_me.js'%}"></script>
-    <script src="{% static 'website/js/cloud.js'%}"></script>
+    {% include 'website/templates/footer.html' %}
     {% csrf_token %}
     </body>
 </html>

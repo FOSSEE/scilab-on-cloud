@@ -22,7 +22,12 @@ def index(request):
     return render(request, 'website/templates/index.html', context)
 
 def login(request):
-	print('hi')
 	context = {}
 	return render(request, 'website/templates/login.html', context)
 
+@login_required
+def review(request):
+    context = {
+        'user': request.user
+    }
+    return render(request, 'website/templates/review-interface.html', context)
