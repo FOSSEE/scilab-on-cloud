@@ -70,6 +70,7 @@ def examples(request, chapter_id):
         examples = TextbookCompanionExample.objects.using('scilab')\
             .filter(chapter_id=chapter_id).order_by('number')
         
+        request.session['chapter_id'] = chapter_id
         context = {
             'examples': examples
         }
@@ -85,12 +86,13 @@ def revisions(request, example_id):
     example = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
 
+    request.session['example_id'] = example_id
+
     revisions = repo.get_commits(path=example.filepath)
     request.session['filepath'] = example.filepath
 
     context = {'revisions': []}
     for commit in revisions:
-        print(commit.sha)
         context['revisions'].append({'id': commit.sha})
 
     # TODO: show latest revision on selecting the example
@@ -108,7 +110,7 @@ def revisions(request, example_id):
 def code(request, revision_id):
     file_path = request.session['filepath']
     file = repo.get_file_contents(path=file_path, ref=revision_id)
-    request.session['sha'] = file.sha
+    request.session['filesha'] = file.sha
     code = base64.b64decode(file.content)
     return simplejson.dumps({'code': code})
 
@@ -213,7 +215,13 @@ def revision_form_submit(request, form, code):
         if file_update:
             # everything is fine
 
-            rev = TextbookCompanionRevision()
+            # save the revision info in database
+            rev = TextbookCompanionRevision(
+                    example_id=request.session['example_id'],
+                    filepath=request.session['filepath'],
+                    filesha=request.session['filesha'],
+                )
+            rev.save()
 
             dajax.alert('submitted successfully! \nYour changes will be visible after review.')
             dajax.script('$("#submit-revision-wrapper").trigger("close")')
