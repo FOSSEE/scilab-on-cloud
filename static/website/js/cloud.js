@@ -146,7 +146,7 @@ $(document).ready(function() {
             // show revision submit button when a revision is loaded
             $("#submit-revision").show()
 
-        }, {revision_id: $(this).val()});
+        }, {commit_sha: $(this).val()});
     });
 
     /* Execute the code */

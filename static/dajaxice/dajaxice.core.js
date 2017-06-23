@@ -58,8 +58,12 @@ var Dajaxice = {
         revision_form_submit: function(callback_function, argv, custom_settings){
             return Dajaxice.call('website.revision_form_submit', 'POST', callback_function, argv, custom_settings);
         },
+
+        // new
+        revision_check: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.revision_check', 'POST', callback_function, argv, custom_settings);
+        },
     },
-    
 
     get_cookie: function(name)
     {

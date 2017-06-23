@@ -19,10 +19,7 @@ from website.models import TextbookCompanionPreference,\
 from website.forms import BugForm, RevisionForm, RevisionErrorForm
 from soc.config import UPLOADS_PATH
 
-from github import Github
 import base64
-
-from utils import g, user, repo
 import utils
 
 
@@ -88,7 +85,7 @@ def revisions(request, example_id):
 
     request.session['example_id'] = example_id
 
-    revisions = repo.get_commits(path=example.filepath)
+    revisions = utils.get_commits(file_path=example.filepath)
     request.session['filepath'] = example.filepath
 
     context = {'revisions': []}
@@ -107,9 +104,10 @@ def revisions(request, example_id):
     return dajax.json()
 
 @dajaxice_register
-def code(request, revision_id):
+def code(request, commit_sha):
     file_path = request.session['filepath']
-    file = repo.get_file_contents(path=file_path, ref=revision_id)
+    request.session['commitsha'] = commit_sha
+    file = utils.get_file_contents(file_path, commit_sha)
     request.session['filesha'] = file.sha
     code = base64.b64decode(file.content)
     return simplejson.dumps({'code': code})
@@ -208,7 +206,7 @@ def revision_form_submit(request, form, code):
             request.session['filepath'],
             form.cleaned_data['commit_message'],
             base64.b64encode(code), 
-            request.session['sha'],
+            request.session['filesha'],
             [request.user.username, request.user.email]
             )
 
@@ -219,7 +217,7 @@ def revision_form_submit(request, form, code):
             rev = TextbookCompanionRevision(
                     example_id=request.session['example_id'],
                     filepath=request.session['filepath'],
-                    filesha=request.session['filesha'],
+                    commitsha=request.session['commitsha'],
                 )
             rev.save()
 
@@ -245,5 +243,21 @@ def revision_error(request):
     data = render_to_string('website/templates/submit-revision-error.html', {})
     dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
     return dajax.json()    
+
+@dajaxice_register
+def revision_check(request, revision_id):
+    revision = TextbookCompanionRevision.objects.get(id=revision_id)
+    code = utils.get_file(revision.filepath, revision.commitsha)
+    data = {
+        'code': code,    
+    }
+    return simplejson.dumps(data)
+
+
+
+
+
+
+
 
 

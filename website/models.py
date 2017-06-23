@@ -113,7 +113,7 @@ class TextbookCompanionDependencyFiles(models.Model):
 class TextbookCompanionRevision(models.Model):
     example_id = models.IntegerField()
     filepath = models.CharField(max_length=500L)
-    filesha = models.CharField(max_length=100L) # sha checksum of file in github
+    commitsha = models.CharField(max_length=100L) # sha checksum of commit in github
     timestamp = models.DateTimeField(auto_now_add=True)
     push_status = models.BooleanField(default=0)
     class Meta:

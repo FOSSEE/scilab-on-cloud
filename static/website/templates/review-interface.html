@@ -13,19 +13,10 @@
                     <div id="navlinks">
                         <ul>
                             {% if user and not user.is_anonymous %}
-                                {% if not user.is_staff %}
-                                    <li><a class="node" data-key="about" href="#">About</a></li>
-                                    <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                                    <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                                {% else %}
-                                    <li><a data-key="review-interface" href="/review">Review Interface</a></li>
+                                {% if user.is_staff %}
+                                    <li><a data-key="index" href="/">Go Back</a></li>
+                                    <li><a data-key="logout" href="/logout">Log out</a></li>
                                 {% endif %}
-                                <li><a data-key="logout" href="/logout">Log out</a></li>
-                            {% else %}
-                                <li><a class="node" data-key="about" href="#">About</a></li>
-                                <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                                <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                                <li><a class="node" data-key="login" href="#">Log In</a></li>
                             {% endif %}
                             <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
                         </ul>
@@ -35,8 +26,70 @@
             </div> <!-- /#header-inner -->
         </div> <!-- /#header-wrapper -->
 
+    <div id="content-wrapper">
+        <div id="review-revisions-wrapper">
+            {% if revisions %}
+                <label>Revision: </label>
+                <select id="review-revisions">
+                    <option value="">Select a revision</option>
+                {% for revision in revisions %}
+                    <option value="{{ revision.id }}">{{ revision.filepath }} - {{ revision.filesha }} - {{ revision.timestamp }}</option>
+                {% endfor %}
+                </select>
+            {% endif %}
+        </div>
+        <div id="content">
+            <div id="input">
+                <label>
+                    Scilab Code 
+                    <span id="controls">
+                        <a href="#" id="toggle-code">
+                            <img src="{% static 'website/images/icon-toggle.png'%}">
+                        </a>
+                        <a href="#" id="fullscreen-code">
+                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                        </a>
+                    </span> <!-- /#controls -->
+                </label>
+                <form>
+                    <textarea id="review-code" readonly></textarea>
+                </form>
+            </div><!-- /#input -->
+
+            
+            <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
+            <a id="submit-revision" class="button">push revision</a>
+
+            <div id="output">
+                <label>
+                    Result
+                    <span id="controls">
+                        <a href="#" id="toggle-result">
+                            <img src="{% static 'website/images/icon-toggle.png'%}">
+                        </a>
+                        <a href="#" id="fullscreen-result">
+                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                        </a>
+                    </span> <!-- /#controls -->
+                </label>
+                <textarea id="result"></textarea>
+            </div> <!-- /#output -->
+
+            <div id="credits">
+                <small>
+                    Disclaimer: Scilab is a trademark of Inria 
+                    (registered at the INPI for France and the rest of the World) 
+                    and Scilab Enterprises is granted exclusive rights for 
+                    Scilab Trademark.
+                </small>
+                Copyright IIT Bombay
+            </div> <!-- /#credits -->
+        </div> <!-- /#content -->
+    </div>
 
     {% include 'website/templates/footer.html' %}
+    <script src="{% static 'website/js/review.js'%}"></script>
+
     {% csrf_token %}
     </body>
 </html>

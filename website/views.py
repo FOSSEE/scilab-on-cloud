@@ -1,7 +1,11 @@
 from django.shortcuts import render 
 from django.core.context_processors import csrf
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+from website.models import TextbookCompanionPreference, \
+    TextbookCompanionProposal, TextbookCompanionChapter, TextbookCompanionRevision
+
 import requests
 
 def index(request):
@@ -25,9 +29,13 @@ def login(request):
 	context = {}
 	return render(request, 'website/templates/login.html', context)
 
-@login_required
+@user_passes_test(lambda u: u.is_staff)
 def review(request):
+    revisions = TextbookCompanionRevision.objects \
+        .filter(push_status=0)\
+        .order_by('timestamp')
     context = {
-        'user': request.user
+        'user': request.user,
+        'revisions': revisions,
     }
     return render(request, 'website/templates/review-interface.html', context)
