@@ -78,12 +78,25 @@ $(document).ready(function() {
 	
     //  -----------------------------------------------------
 
+    // callback when revision selection changes
 	$(document).on("change", "#review-revisions", function() {
 		ajax_loader(this);
-		Dajaxice.website.revision_check(function(data) {
+		Dajaxice.website.review_revision(function(data) {
             reviewEditor.setValue(data.code)
             ajax_loader("clear");
         }, {revision_id: $(this).val()});
 	});
 
+    // callback on pressing push button
+    $(document).on("click", "#push", function() {
+        ajax_loader(this)
+        Dajaxice.website.push_revision(function(data) {
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, 
+        {
+            code: reviewEditor.getValue(),
+        }
+        );
+    });
 });

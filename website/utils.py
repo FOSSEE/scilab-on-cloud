@@ -4,7 +4,7 @@ import requests
 from urlparse import urljoin
 import json
 
-from soc.config import GITHUB_ACCESS_TOKEN
+from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT
 
 g = Github(GITHUB_ACCESS_TOKEN)
 # FOSSEE = g.get_organization('FOSSEE') 
@@ -15,11 +15,7 @@ repo = user.get_repo('Scilab-TBC-Uploads')
 
 # username = user.login
 # repo_name = repo.name
-headers = {
-    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN,
-    'Content-Type': 'application/json'}
 
-base_url = 'https://api.github.com/repos/'
 
 
 def get_commits(file_path):
@@ -30,6 +26,12 @@ def get_file_contents(file_path, revision_id):
 	return repo.get_file_contents(path=file_path, ref=revision_id)
 
 def get_file(file_path, ref):
+	headers = {
+	    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN,
+	    'Content-Type': 'application/json'}
+
+	base_url = 'https://api.github.com/repos/'
+
 	url = urljoin(base_url, 'appucrossroads/Scilab-TBC-Uploads/contents/' + file_path)
 	data = {
 		"ref": ref,
@@ -48,7 +50,13 @@ def update_file(file_path,
 				sha, # sha checksum of file blob to be updated
 				committer, # [name, emails]
 				branch='master'):
+	headers = {
+	    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN,
+	    'Content-Type': 'application/json'}
+
+	base_url = 'https://api.github.com/repos/'
 	url =  urljoin(base_url, 'appucrossroads/Scilab-TBC-Uploads/contents/' + file_path)
+	
 	data = {
 		"message" : commit_message,
 		"committer": {
@@ -60,3 +68,47 @@ def update_file(file_path,
 	}
 	r = requests.put(url, headers=headers, data=json.dumps(data))
 	return r.status_code == requests.codes.ok
+
+def push_to_main_repo(
+	file_path,
+	commit_message,
+	content,
+	committer,
+	branch='master',
+	):
+	headers = {
+	    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN_SOCBOT,
+	    'Content-Type': 'application/json'}
+
+	base_url = 'https://api.github.com/repos/'
+	url =  urljoin(base_url, 'socbot/Scilab-TBC-Uploads/contents/' + file_path)
+
+	file_r = requests.get(url, headers=headers)
+	if file_r.status_code == requests.codes.ok:
+		file_sha = json.loads(file_r.content)['sha']
+		data = {
+			"message" : commit_message,
+			"committer": {
+			    "name": committer[0],
+			    "email": committer[1]
+			},
+			"content": content,
+			"sha": file_sha,
+		}
+		r = requests.put(url, headers=headers, data=json.dumps(data))
+		return r.status_code == requests.codes.ok
+	else:
+		return None	
+
+
+
+
+
+
+
+
+
+
+
+
+

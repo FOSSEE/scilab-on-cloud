@@ -114,6 +114,9 @@ class TextbookCompanionRevision(models.Model):
     example_id = models.IntegerField()
     filepath = models.CharField(max_length=500L)
     commitsha = models.CharField(max_length=100L) # sha checksum of commit in github
+    committer_name = models.CharField(max_length=100L)
+    committer_email = models.EmailField()
+    commit_message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     push_status = models.BooleanField(default=0)
     class Meta:

@@ -114,9 +114,14 @@ body, html {
     left: 15px;
     bottom: -15px;
 }
-#submit-revision {
+#submit-revision, #push {
     position: absolute;
-    left: 100px;
+    left: 95px;
+    bottom: -15px;
+}
+#remove {
+    position: absolute;
+    left: 200px;
     bottom: -15px;
 }
 #bug {

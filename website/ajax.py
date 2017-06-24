@@ -200,14 +200,17 @@ def revision_form_submit(request, form, code):
 
     if form.is_valid():
 
+        commit_message = form.cleaned_data['commit_message']
+        username, email = request.user.username, request.user.email
+
         # push changes to temp repo
         # update_file returns True if the push is success.
         file_update = utils.update_file(
             request.session['filepath'],
-            form.cleaned_data['commit_message'],
+            commit_message,
             base64.b64encode(code), 
             request.session['filesha'],
-            [request.user.username, request.user.email]
+            [username, email],
             )
 
         if file_update:
@@ -218,6 +221,9 @@ def revision_form_submit(request, form, code):
                     example_id=request.session['example_id'],
                     filepath=request.session['filepath'],
                     commitsha=request.session['commitsha'],
+                    commit_message=commit_message,
+                    committer_name=username,
+                    committer_email=email,
                 )
             rev.save()
 
@@ -245,15 +251,36 @@ def revision_error(request):
     return dajax.json()    
 
 @dajaxice_register
-def revision_check(request, revision_id):
+def review_revision(request, revision_id):
     revision = TextbookCompanionRevision.objects.get(id=revision_id)
     code = utils.get_file(revision.filepath, revision.commitsha)
+    request.session['revision'] = revision
     data = {
         'code': code,    
     }
     return simplejson.dumps(data)
 
+@dajaxice_register
+def push_revision(request, code):
+    """
+    code: from code editor on review interface
+    """
+    dajax = Dajax()
+    revision = request.session['revision']
 
+    print('pushing to repo')
+    utils.push_to_main_repo(
+        revision.filepath, 
+        revision.commit_message, 
+        base64.b64encode(code),
+        [revision.committer_name, revision.committer_email], 
+        branch='master')
+
+    print('update push_status')
+    revision.push_status = True
+    revision.save()
+
+    return dajax.json()    
 
 
 
