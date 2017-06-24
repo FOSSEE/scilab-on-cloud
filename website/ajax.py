@@ -107,9 +107,9 @@ def revisions(request, example_id):
 def code(request, commit_sha):
     file_path = request.session['filepath']
     request.session['commitsha'] = commit_sha
-    file = utils.get_file_contents(file_path, commit_sha)
-    request.session['filesha'] = file.sha
-    code = base64.b64decode(file.content)
+    file = utils.get_file(file_path, commit_sha, main_repo=True)
+    request.session['filesha'] = file['sha']
+    code = base64.b64decode(file['content'])
     return simplejson.dumps({'code': code})
 
 @dajaxice_register
@@ -208,8 +208,7 @@ def revision_form_submit(request, form, code):
         file_update = utils.update_file(
             request.session['filepath'],
             commit_message,
-            base64.b64encode(code), 
-            request.session['filesha'],
+            base64.b64encode(code),
             [username, email],
             )
 
@@ -253,10 +252,12 @@ def revision_error(request):
 @dajaxice_register
 def review_revision(request, revision_id):
     revision = TextbookCompanionRevision.objects.get(id=revision_id)
-    code = utils.get_file(revision.filepath, revision.commitsha)
+    print(revision.commitsha)
+    file = utils.get_file(revision.filepath, revision.commitsha, main_repo=False)
+    code = base64.b64decode(file['content'])
     request.session['revision'] = revision
     data = {
-        'code': code,    
+        'code': code,
     }
     return simplejson.dumps(data)
 
@@ -269,12 +270,13 @@ def push_revision(request, code):
     revision = request.session['revision']
 
     print('pushing to repo')
-    utils.push_to_main_repo(
+    utils.update_file(
         revision.filepath, 
         revision.commit_message, 
         base64.b64encode(code),
         [revision.committer_name, revision.committer_email], 
-        branch='master')
+        branch='master',
+        main_repo=True)
 
     print('update push_status')
     revision.push_status = True

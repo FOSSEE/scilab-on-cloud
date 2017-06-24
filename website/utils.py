@@ -6,82 +6,63 @@ import json
 
 from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT
 
-g = Github(GITHUB_ACCESS_TOKEN)
+g = Github(GITHUB_ACCESS_TOKEN_SOCBOT)
 # FOSSEE = g.get_organization('FOSSEE') 
 # repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
 
-user = g.get_user('appucrossroads')
+user = g.get_user('socbot')
 repo = user.get_repo('Scilab-TBC-Uploads')
 
-# username = user.login
-# repo_name = repo.name
+TEMP_USER = 'appucrossroads'
+MAIN_USER = 'socbot'
 
 
-
-def get_commits(file_path):
+def get_commits(file_path, main_repo=True):
 	return repo.get_commits(path=file_path)
 
 
 def get_file_contents(file_path, revision_id):
 	return repo.get_file_contents(path=file_path, ref=revision_id)
 
-def get_file(file_path, ref):
-	headers = {
-	    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN,
-	    'Content-Type': 'application/json'}
+
+def get_file(file_path, ref='master', main_repo=False):
 
 	base_url = 'https://api.github.com/repos/'
+	access_token = GITHUB_ACCESS_TOKEN_SOCBOT if main_repo else GITHUB_ACCESS_TOKEN
+	owner = MAIN_USER if main_repo else TEMP_USER
 
-	url = urljoin(base_url, 'appucrossroads/Scilab-TBC-Uploads/contents/' + file_path)
+	headers = {
+	    'Authorization': 'token %s' % access_token,
+	    'Content-Type': 'application/json'}
+
+	url =  urljoin(base_url, owner + '/Scilab-TBC-Uploads/contents/' + file_path)
+
 	data = {
 		"ref": ref,
 	}
 	r = requests.get(url, headers=headers, data=json.dumps(data))
 	if r.status_code == requests.codes.ok:
-		ret_content = json.loads(r.content)
-		return base64.b64decode(ret_content['content'])
+		return json.loads(r.content)
 	else:
-		return 'NIL'
+		return None
 
 
 def update_file(file_path,
 				commit_message,
 				content, # base64 encoded
-				sha, # sha checksum of file blob to be updated
 				committer, # [name, emails]
-				branch='master'):
-	headers = {
-	    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN,
-	    'Content-Type': 'application/json'}
-
-	base_url = 'https://api.github.com/repos/'
-	url =  urljoin(base_url, 'appucrossroads/Scilab-TBC-Uploads/contents/' + file_path)
+				branch='master',
+				main_repo=False):
 	
-	data = {
-		"message" : commit_message,
-		"committer": {
-		    "name": committer[0],
-		    "email": committer[1]
-		},
-		"content": content,
-		"sha": sha,
-	}
-	r = requests.put(url, headers=headers, data=json.dumps(data))
-	return r.status_code == requests.codes.ok
+	base_url = 'https://api.github.com/repos/'
+	access_token = GITHUB_ACCESS_TOKEN_SOCBOT if main_repo else GITHUB_ACCESS_TOKEN
+	owner = MAIN_USER if main_repo else TEMP_USER
 
-def push_to_main_repo(
-	file_path,
-	commit_message,
-	content,
-	committer,
-	branch='master',
-	):
 	headers = {
-	    'Authorization': 'token %s' % GITHUB_ACCESS_TOKEN_SOCBOT,
+	    'Authorization': 'token %s' % access_token,
 	    'Content-Type': 'application/json'}
 
-	base_url = 'https://api.github.com/repos/'
-	url =  urljoin(base_url, 'socbot/Scilab-TBC-Uploads/contents/' + file_path)
+	url =  urljoin(base_url, owner + '/Scilab-TBC-Uploads/contents/' + file_path)
 
 	file_r = requests.get(url, headers=headers)
 	if file_r.status_code == requests.codes.ok:
@@ -98,8 +79,7 @@ def push_to_main_repo(
 		r = requests.put(url, headers=headers, data=json.dumps(data))
 		return r.status_code == requests.codes.ok
 	else:
-		return None	
-
+		return False
 
 
 
