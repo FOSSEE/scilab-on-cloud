@@ -26,66 +26,69 @@
             </div> <!-- /#header-inner -->
         </div> <!-- /#header-wrapper -->
 
-    <div id="content-wrapper">
-        <div id="review-revisions-wrapper">
-            {% if revisions %}
-                <label>Revision: </label>
-                <select id="review-revisions">
-                    <option value="">Select a revision</option>
-                {% for revision in revisions %}
-                    <option value="{{ revision.id }}">{{ revision.filepath }} - {{ revision.filesha }} - {{ revision.timestamp }}</option>
-                {% endfor %}
-                </select>
-            {% endif %}
-        </div>
-        <div id="content">
-            <div id="input">
-                <label>
-                    Scilab Code 
-                    <span id="controls">
-                        <a href="#" id="toggle-code">
-                            <img src="{% static 'website/images/icon-toggle.png'%}">
-                        </a>
-                        <a href="#" id="fullscreen-code">
-                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                        </a>
-                    </span> <!-- /#controls -->
-                </label>
-                <form>
-                    <textarea id="review-code" readonly></textarea>
-                </form>
-            </div><!-- /#input -->
+        <div id="content-wrapper">
+            <div id="content-inner">
+                
+                <div id="review-revisions-wrapper">
+                    {% if revisions %}
+                        <label>Revision: </label>
+                        <select id="review-revisions">
+                            <option value="">Select a revision</option>
+                        {% for revision in revisions %}
+                            <option value="{{ revision.id }}">{{ revision.filepath }} - {{ revision.filesha }} - {{ revision.timestamp }}</option>
+                        {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
 
+                <div id="content">
+                    <div id="input">
+                        <label>
+                            Scilab Code 
+                            <span id="controls">
+                                <a href="#" id="review-toggle-code">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                                <a href="#" id="review-fullscreen-code">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </span> <!-- /#controls -->
+                        </label>
+                        <form>
+                            <textarea id="review-code"></textarea>
+                        </form>
+                    </div><!-- /#input -->
+
+                    
+                    <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
             
-            <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
-            <a id="submit-revision" class="button">push revision</a>
+                    <div id="output">
+                        <label>
+                            Result
+                            <span id="controls">
+                                <a href="#" id="review-toggle-result">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                                <a href="#" id="review-fullscreen-result">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </span> <!-- /#controls -->
+                        </label>
+                        <textarea id="review-result"></textarea>
+                    </div> <!-- /#output -->
 
-            <div id="output">
-                <label>
-                    Result
-                    <span id="controls">
-                        <a href="#" id="toggle-result">
-                            <img src="{% static 'website/images/icon-toggle.png'%}">
-                        </a>
-                        <a href="#" id="fullscreen-result">
-                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                        </a>
-                    </span> <!-- /#controls -->
-                </label>
-                <textarea id="result"></textarea>
-            </div> <!-- /#output -->
-
-            <div id="credits">
-                <small>
-                    Disclaimer: Scilab is a trademark of Inria 
-                    (registered at the INPI for France and the rest of the World) 
-                    and Scilab Enterprises is granted exclusive rights for 
-                    Scilab Trademark.
-                </small>
-                Copyright IIT Bombay
-            </div> <!-- /#credits -->
-        </div> <!-- /#content -->
-    </div>
+                    <div id="credits">
+                        <small>
+                            Disclaimer: Scilab is a trademark of Inria 
+                            (registered at the INPI for France and the rest of the World) 
+                            and Scilab Enterprises is granted exclusive rights for 
+                            Scilab Trademark.
+                        </small>
+                        Copyright IIT Bombay
+                    </div> <!-- /#credits -->
+                </div> <!-- /#content -->
+            </div> <!-- /#content-inner -->
+        </div> <!-- /#content-wrapper -->
 
     {% include 'website/templates/footer.html' %}
     <script src="{% static 'website/js/review.js'%}"></script>

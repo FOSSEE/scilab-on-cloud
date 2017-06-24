@@ -2,7 +2,7 @@ $(document).ready(function() {
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
         lineWrapping: true,
-        theme: "default",
+        theme: "monokai",
         extraKeys: {
            "F11": function(cm) {
             cm.setOption("fullScreen", !cm.getOption("fullScreen"));
@@ -15,7 +15,8 @@ $(document).ready(function() {
 
     var result = CodeMirror.fromTextArea(document.getElementById("result"), {
         lineWrapping: true,
-        theme: "default",
+        theme: "monokai",
+        readOnly: true,
         extraKeys: {
            "F11": function(cm) {
             cm.setOption("fullScreen", !cm.getOption("fullScreen"));
