@@ -83,6 +83,8 @@ $(document).ready(function() {
 		ajax_loader(this);
 		Dajaxice.website.review_revision(function(data) {
             reviewEditor.setValue(data.code)
+            console.log(data)
+
             ajax_loader("clear");
         }, {revision_id: $(this).val()});
 	});

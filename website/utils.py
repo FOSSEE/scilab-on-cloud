@@ -82,7 +82,26 @@ def update_file(file_path,
 		return False
 
 
-
+def get_category(category_id):
+	categories = [
+		'Fluid Mechanics',
+		'Control Theory & Control Systems',
+		'Chemical Engineering',
+		'Thermodynamics',
+		'Mechanical Engineering',
+		'Signal Processing',
+		'Digital Communications',
+		'Electrical Technology',
+		'Mathematics & Pure Science',
+		'Analog Electronics',
+		'Digital Electronics',
+		'Computer Programming',
+		'Others',
+	]
+	if category_id <= len(categories):
+		return categories[category_id - 1]
+	else:
+		return 'Others'
 
 
 

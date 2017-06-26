@@ -31,14 +31,17 @@
                 
                 <div id="review-revisions-wrapper">
                     {% if revisions %}
-                        <label>Revision: </label>
+                        <label>Revisions pending review: </label>
                         <select id="review-revisions">
                             <option value="">Select a revision</option>
                         {% for revision in revisions %}
-                            <option value="{{ revision.id }}">{{ revision.filepath }} - {{ revision.filesha }} - {{ revision.timestamp }}</option>
+                            <option value="{{ revision.id }}">{{ revision.example_file.filepath }} - {{ revision.timestamp }}</option>
                         {% endfor %}
                         </select>
                     {% endif %}
+                </div>
+
+                <div id="test">
                 </div>
 
                 <div id="content">

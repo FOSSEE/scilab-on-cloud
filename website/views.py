@@ -31,9 +31,10 @@ def login(request):
 
 @user_passes_test(lambda u: u.is_staff)
 def review(request):
-    revisions = TextbookCompanionRevision.objects \
+    revisions = TextbookCompanionRevision.objects.using('scilab') \
         .filter(push_status=0)\
         .order_by('timestamp')
+
     context = {
         'user': request.user,
         'revisions': revisions,

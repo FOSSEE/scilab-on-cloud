@@ -22,6 +22,15 @@ from soc.config import UPLOADS_PATH
 import base64
 import utils
 
+from django.utils.encoding import force_text
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers import serialize
+
+class LazyEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, YourCustomType):
+            return force_text(obj)
+        return super(LazyEncoder, self).default(obj)
 
 @dajaxice_register
 def books(request, category_id):
@@ -55,6 +64,7 @@ def chapters(request, book_id):
         context = {
             'chapters': chapters
         }
+
     chapters = render_to_string('website/templates/ajax-chapters.html', context)
     dajax.assign('#chapters-wrapper', 'innerHTML', chapters)
     return dajax.json()
@@ -83,7 +93,7 @@ def revisions(request, example_id):
     example = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
 
-    request.session['example_id'] = example_id
+    request.session['example_file_id'] = example.id
 
     revisions = utils.get_commits(file_path=example.filepath)
     request.session['filepath'] = example.filepath
@@ -106,7 +116,7 @@ def revisions(request, example_id):
 @dajaxice_register
 def code(request, commit_sha):
     file_path = request.session['filepath']
-    request.session['commitsha'] = commit_sha
+    request.session['commit_sha'] = commit_sha
     file = utils.get_file(file_path, commit_sha, main_repo=True)
     request.session['filesha'] = file['sha']
     code = base64.b64decode(file['content'])
@@ -217,14 +227,13 @@ def revision_form_submit(request, form, code):
 
             # save the revision info in database
             rev = TextbookCompanionRevision(
-                    example_id=request.session['example_id'],
-                    filepath=request.session['filepath'],
-                    commitsha=request.session['commitsha'],
+                    example_file_id=request.session['example_file_id'],
+                    commit_sha=request.session['commit_sha'],
                     commit_message=commit_message,
                     committer_name=username,
                     committer_email=email,
                 )
-            rev.save()
+            rev.save(using='scilab')
 
             dajax.alert('submitted successfully! \nYour changes will be visible after review.')
             dajax.script('$("#submit-revision-wrapper").trigger("close")')
@@ -247,17 +256,33 @@ def revision_error(request):
     dajax = Dajax()
     data = render_to_string('website/templates/submit-revision-error.html', {})
     dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
-    return dajax.json()    
+    return dajax.json() 
+
+
+from django.forms.models import model_to_dict
+from time import strftime
 
 @dajaxice_register
 def review_revision(request, revision_id):
-    revision = TextbookCompanionRevision.objects.get(id=revision_id)
-    print(revision.commitsha)
-    file = utils.get_file(revision.filepath, revision.commitsha, main_repo=False)
+    revision = TextbookCompanionRevision.objects.using('scilab').get(id=revision_id)
+    file = utils.get_file(revision.example_file.filepath, revision.commit_sha, main_repo=False)
     code = base64.b64decode(file['content'])
-    request.session['revision'] = revision
+
+    request.session['revision_id'] = revision_id
+
+    example = revision.example_file.example
+    chapter = example.chapter
+    book = chapter.preference 
+    category = utils.get_category(book.category)
+
     data = {
         'code': code,
+        'revision': model_to_dict(revision),
+        'example': model_to_dict(example),
+        'chapter': model_to_dict(chapter),
+        'book': model_to_dict(book),
+        'category': category,
+        'createdAt': str(revision.timestamp),
     }
     return simplejson.dumps(data)
 
@@ -267,11 +292,11 @@ def push_revision(request, code):
     code: from code editor on review interface
     """
     dajax = Dajax()
-    revision = request.session['revision']
+    revision = TextbookCompanionRevision.objects.using('scilab').get(id=request.session['revision_id'])
 
     print('pushing to repo')
     utils.update_file(
-        revision.filepath, 
+        revision.example_file.filepath, 
         revision.commit_message, 
         base64.b64encode(code),
         [revision.committer_name, revision.committer_email], 
@@ -281,6 +306,9 @@ def push_revision(request, code):
     print('update push_status')
     revision.push_status = True
     revision.save()
+
+    dajax.alert('pushed successfully!')
+    dajax.script('location.reload()')
 
     return dajax.json()    
 
