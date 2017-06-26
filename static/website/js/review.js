@@ -84,6 +84,11 @@ $(document).ready(function() {
 		Dajaxice.website.review_revision(function(data) {
             reviewEditor.setValue(data.code)
             console.log(data)
+            $("#category").html(`<span><strong>Category: </strong></span>` + data.category)
+            $("#book").html(`<span><strong>Textbook: </strong></span>` + data.book.book)
+            $("#chapter").html(`<span><strong>Chapter: </strong></span>` + data.chapter.name)
+            $("#example").html(`<span><strong>Example: </strong></span>` + data.example.caption)
+            $("#commit-message").html(`<span><strong>Commit Message: </strong></span>` + data.revision.commit_message)
 
             ajax_loader("clear");
         }, {revision_id: $(this).val()});
@@ -91,10 +96,10 @@ $(document).ready(function() {
 
     // callback on pressing push button
     $(document).on("click", "#push", function() {
-        ajax_loader(this)
+        $(this).html("pushing..")
         Dajaxice.website.push_revision(function(data) {
             Dajax.process(data);
-            ajax_loader("clear");
+            $(this).html('Push revision')
         }, 
         {
             code: reviewEditor.getValue(),
