@@ -258,8 +258,11 @@ $(document).ready(function() {
     // onclick callback for revision-submit button click
     $(document).on("click", "#revision-form-submit", function(e) {
         ajax_loader(this);
-        Dajaxice.website.revision_form_submit(
-            Dajax.process, {
+        Dajaxice.website.revision_form_submit(function(data) {
+                Dajax.process(data);
+                initial_code = editor.getValue()
+            }, 
+            {
                 form: $('#revision-form').serialize(true),
                 code: editor.getValue(),
             }
