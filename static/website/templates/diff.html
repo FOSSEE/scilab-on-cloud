@@ -1,5 +1,5 @@
 <style type="text/css">
-	#diff-div {
+	#diff-area {
 		white-space: pre;
 	}
 
@@ -14,5 +14,19 @@
 	}
 </style>
 
-<div id="diff-div">
+<div>
+	Diff between [1] <strong><span id="diff-first"></span></strong> and 
+	[2] <strong><span id="diff-second"></span></strong>
+</div>
+
+<hr>
+
+<div>
+	[green text] -> exist in [2] but not in [1]<br>
+	[red text] -> exist in [1] but not in [2]
+</div>
+
+<hr>
+
+<div id="diff-area">
 </div>

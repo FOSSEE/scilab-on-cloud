@@ -195,11 +195,16 @@ $(document).ready(function() {
     $(document).on("change", "#revisions-diff", function(e) {
         if ($(this).val()) {
             ajax_loader(this);
+            var revName = $("#revisions-diff").find(":selected").text();
             Dajaxice.website.diff(function(data) {
                 Dajax.process(data.dajax)
                 ajax_loader("clear");
                 $("#diff-wrapper").lightbox_me({centered: false});
-                $("#diff-div").html(diffString(editor.getValue(), data.code2))
+                $("#diff-area").html(diffString(editor.getValue(), data.code2))
+
+                $("#diff-first").html('editor code')
+                console.log(revName)
+                $("#diff-second").html(revName)
             }, {
                 diff_commit_sha: $(this).val(),
                 editor_code: editor.getValue(),
