@@ -23,6 +23,7 @@ from soc.config import UPLOADS_PATH
 
 import base64
 import utils
+import json
 
 
 @dajaxice_register
@@ -91,16 +92,10 @@ def revisions(request, example_id):
     commits = utils.get_commits(file_path=example.filepath)
     request.session['filepath'] = example.filepath
 
-    context = {'revisions': []}
-    for commit in commits:
-        context['revisions'].append({'id': commit['sha']})
-
-    # TODO: show latest revision on selecting the example
-    # file_path = request.session['filepath']
-    # file = repo.get_file_contents(path=file_path, ref=context['revisions'][0]['id'])
-    # code = base64.b64decode(file.content)
-
-    context['code'] = code
+    context = {
+        'revisions': commits,
+        'code': code,
+    }
 
     revisions = render_to_string('website/templates/ajax-revisions.html', context)
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
@@ -109,10 +104,7 @@ def revisions(request, example_id):
 @dajaxice_register
 def code(request, commit_sha):
     file_path = request.session['filepath']
-    # request.session['commit_sha'] = commit_sha
     file = utils.get_file(file_path, commit_sha, main_repo=True)
-    # request.session['filesha'] = file['sha']
-
     code = base64.b64decode(file['content'])
     return simplejson.dumps({'code': code})
 
@@ -217,8 +209,6 @@ def revision_form_submit(request, form, code):
             main_repo=False,
             )
 
-        print(commit_sha)
-
         if commit_sha != None:
             # everything is fine
 
@@ -254,6 +244,27 @@ def revision_error(request):
     data = render_to_string('website/templates/submit-revision-error.html', {})
     dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
     return dajax.json() 
+
+@dajaxice_register
+def diff(request, diff_commit_sha, editor_code):
+    dajax = Dajax()
+    context = {}
+    file_path = request.session['filepath']
+    file = utils.get_file(file_path, diff_commit_sha, main_repo=True)
+    code = base64.b64decode(file['content'])
+    
+    page = render_to_string('website/templates/diff.html', context)
+    dajax.assign('#diff-wrapper', 'innerHTML', page)
+
+    data = {
+        'dajax': json.loads(dajax.json()),
+        'code2': code,
+    }
+
+    return simplejson.dumps(data)
+
+# ------------------------------------------------------------
+# review interface functions
 
 @dajaxice_register
 def review_revision(request, revision_id):

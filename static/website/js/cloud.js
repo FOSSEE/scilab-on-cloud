@@ -22,7 +22,6 @@ function onChangeCategories() {
         ajax_loader("#categories");
         Dajaxice.website.books(function(data) {
             Dajax.process(data);
-            console.log('populating books')
             ajax_loader("clear");
         }, {category_id: $("#categories").val()});
     }
@@ -38,8 +37,6 @@ function onChangeBooks() {
     // hide revision submit button if one selects different book
     $("#submit-revision").hide()
 
-    console.log('selected book')
-
     if ($("#books").val()) {
         ajax_loader("#books");
         Dajaxice.website.chapters(function(data) { 
@@ -49,29 +46,6 @@ function onChangeBooks() {
     }
 }
 
-function initialize() {
-    $("#catergories")
-        .queue(function() {
-            $('#categories option:eq(1)').prop('selected', true)
-            onChangeCategories()
-            $(this).dequeue()
-        })
-        .queue(function() {
-            $('#books option:eq(1)').prop('selected', true)
-            onChangeBooks()
-        })
-
-    // 
-
-    // $('#chapters option:eq(1)').prop('selected', true)
-    // // $('#chapters').trigger("change")
-
-    // $('#examples option:eq(1)').prop('selected', true)
-    // // $('#examples').trigger("change")
-
-    // $('#revisions option:eq(1)').prop('selected', true)
-    // $('#revisions').trigger("change")
-}
 
 $(document).ready(function() {
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -186,13 +160,15 @@ $(document).ready(function() {
                 Dajax.process(data);
                 ajax_loader("clear");
 
-                $('#revisions option:eq(1)').prop('selected', true)
+                $("#revisions-two").hide()
+                $('#revisions option:eq(0)').prop('selected', true)
                 ajax_loader('#revisions');
                 Dajaxice.website.code(function(data) {
                     editor.setValue(data.code);
                     initial_code = editor.getValue()
                     ajax_loader("clear");
                     $("#submit-revision").show()
+                    $("#revisions-two").show()
                 }, {commit_sha: $('#revisions').val()});
 
             }, {example_id: $(this).val()});
@@ -200,6 +176,7 @@ $(document).ready(function() {
     });
 
     $(document).on("change", "#revisions", function() {
+        $("#revisions-two").hide()
         if ($(this).val()) { 
             ajax_loader(this);
             Dajaxice.website.code(function(data) {
@@ -209,8 +186,25 @@ $(document).ready(function() {
 
                 // show revision submit button when a revision is loaded
                 $("#submit-revision").show()
+                $("#revisions-two").show()
 
             }, {commit_sha: $(this).val()});
+        }
+    });
+
+    $(document).on("change", "#revisions-diff", function(e) {
+        if ($(this).val()) {
+            ajax_loader(this);
+            Dajaxice.website.diff(function(data) {
+                Dajax.process(data.dajax)
+                ajax_loader("clear");
+                $("#diff-wrapper").lightbox_me({centered: false});
+                $("#diff-div").html(diffString(editor.getValue(), data.code2))
+            }, {
+                diff_commit_sha: $(this).val(),
+                editor_code: editor.getValue(),
+            });
+            e.preventDefault();
         }
     });
 
