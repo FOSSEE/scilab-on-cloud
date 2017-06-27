@@ -2,6 +2,8 @@ from dajax.core import Dajax
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
 from dajaxice.utils import deserialize_form
+from django.forms.models import model_to_dict
+
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render 
@@ -22,15 +24,6 @@ from soc.config import UPLOADS_PATH
 import base64
 import utils
 
-from django.utils.encoding import force_text
-from django.core.serializers.json import DjangoJSONEncoder
-from django.core.serializers import serialize
-
-class LazyEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, YourCustomType):
-            return force_text(obj)
-        return super(LazyEncoder, self).default(obj)
 
 @dajaxice_register
 def books(request, category_id):
@@ -261,10 +254,6 @@ def revision_error(request):
     data = render_to_string('website/templates/submit-revision-error.html', {})
     dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
     return dajax.json() 
-
-
-from django.forms.models import model_to_dict
-from time import strftime
 
 @dajaxice_register
 def review_revision(request, revision_id):

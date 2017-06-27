@@ -185,6 +185,16 @@ $(document).ready(function() {
             Dajaxice.website.revisions(function(data) { 
                 Dajax.process(data);
                 ajax_loader("clear");
+
+                $('#revisions option:eq(1)').prop('selected', true)
+                ajax_loader('#revisions');
+                Dajaxice.website.code(function(data) {
+                    editor.setValue(data.code);
+                    initial_code = editor.getValue()
+                    ajax_loader("clear");
+                    $("#submit-revision").show()
+                }, {commit_sha: $('#revisions').val()});
+
             }, {example_id: $(this).val()});
         }
     });
