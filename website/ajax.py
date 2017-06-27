@@ -95,12 +95,12 @@ def revisions(request, example_id):
 
     request.session['example_file_id'] = example.id
 
-    revisions = utils.get_commits(file_path=example.filepath)
+    commits = utils.get_commits(file_path=example.filepath)
     request.session['filepath'] = example.filepath
 
     context = {'revisions': []}
-    for commit in revisions:
-        context['revisions'].append({'id': commit.sha})
+    for commit in commits:
+        context['revisions'].append({'id': commit['sha']})
 
     # TODO: show latest revision on selecting the example
     # file_path = request.session['filepath']
@@ -116,9 +116,10 @@ def revisions(request, example_id):
 @dajaxice_register
 def code(request, commit_sha):
     file_path = request.session['filepath']
-    request.session['commit_sha'] = commit_sha
+    # request.session['commit_sha'] = commit_sha
     file = utils.get_file(file_path, commit_sha, main_repo=True)
-    request.session['filesha'] = file['sha']
+    # request.session['filesha'] = file['sha']
+
     code = base64.b64decode(file['content'])
     return simplejson.dumps({'code': code})
 
@@ -215,20 +216,23 @@ def revision_form_submit(request, form, code):
 
         # push changes to temp repo
         # update_file returns True if the push is success.
-        file_update = utils.update_file(
+        commit_sha = utils.update_file(
             request.session['filepath'],
             commit_message,
             base64.b64encode(code),
             [username, email],
+            main_repo=False,
             )
 
-        if file_update:
+        print(commit_sha)
+
+        if commit_sha != None:
             # everything is fine
 
             # save the revision info in database
             rev = TextbookCompanionRevision(
                     example_file_id=request.session['example_file_id'],
-                    commit_sha=request.session['commit_sha'],
+                    commit_sha=commit_sha,
                     commit_message=commit_message,
                     committer_name=username,
                     committer_email=email,

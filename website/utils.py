@@ -16,14 +16,39 @@ repo = user.get_repo('Scilab-TBC-Uploads')
 TEMP_USER = 'appucrossroads'
 MAIN_USER = 'socbot'
 
+print(repo.name)
 
-def get_commits(file_path, main_repo=True):
+
+def pygithub_get_commits(file_path, main_repo=True):
 	return repo.get_commits(path=file_path)
 
-
-def get_file_contents(file_path, revision_id):
+def pygithub_get_file_contents(file_path, revision_id):
 	return repo.get_file_contents(path=file_path, ref=revision_id)
 
+
+def get_commits(file_path, main_repo=True):
+	"""
+	return: list of commits, which affected the files in filepath
+	"""
+	base_url = 'https://api.github.com/repos/'
+	access_token = GITHUB_ACCESS_TOKEN_SOCBOT if main_repo else GITHUB_ACCESS_TOKEN
+	owner = MAIN_USER if main_repo else TEMP_USER
+
+	headers = {
+	    'Authorization': 'token %s' % access_token,
+	    'Content-Type': 'application/json'}
+
+	url =  urljoin(base_url, owner + '/Scilab-TBC-Uploads/commits')
+	
+	params = {
+		'path': file_path,
+	}
+
+	r = requests.get(url, headers=headers, params=params)
+	if r.status_code == requests.codes.ok:
+		return r.json()
+	else:
+		return None
 
 def get_file(file_path, ref='master', main_repo=False):
 
@@ -37,12 +62,13 @@ def get_file(file_path, ref='master', main_repo=False):
 
 	url =  urljoin(base_url, owner + '/Scilab-TBC-Uploads/contents/' + file_path)
 
-	data = {
+	params = {
 		"ref": ref,
 	}
-	r = requests.get(url, headers=headers, data=json.dumps(data))
+
+	r = requests.get(url, headers=headers, params=params)
 	if r.status_code == requests.codes.ok:
-		return json.loads(r.content)
+		return r.json()
 	else:
 		return None
 
@@ -53,6 +79,9 @@ def update_file(file_path,
 				committer, # [name, emails]
 				branch='master',
 				main_repo=False):
+	"""
+	return: commit sha of new commit, after updating the file
+	"""
 	
 	base_url = 'https://api.github.com/repos/'
 	access_token = GITHUB_ACCESS_TOKEN_SOCBOT if main_repo else GITHUB_ACCESS_TOKEN
@@ -77,9 +106,10 @@ def update_file(file_path,
 			"sha": file_sha,
 		}
 		r = requests.put(url, headers=headers, data=json.dumps(data))
-		return r.status_code == requests.codes.ok
-	else:
-		return False
+		if r.status_code == requests.codes.ok:
+			return r.json()['commit']['sha']
+	
+	return None
 
 
 def get_category(category_id):
