@@ -1,3 +1,78 @@
+/* Ajax loader */
+function ajax_loader(key) {
+    if(key == "clear") {
+        $(".ajax-loader").remove();
+    } else {
+        $(".ajax-loader").remove();
+        $(key).after("<span class='ajax-loader'></span>");
+    }
+}
+
+function onChangeCategories() {
+    $("#books-wrapper").html("");
+    $("#chapters-wrapper").html("");
+    $("#examples-wrapper").html("");
+    $("#revisions-wrapper").html("");
+    $("#contributor").hide();
+
+    // hide revision submit button if one selects different category
+    $("#submit-revision").hide()
+
+    if ($("#categories").val()) {
+        ajax_loader("#categories");
+        Dajaxice.website.books(function(data) {
+            Dajax.process(data);
+            console.log('populating books')
+            ajax_loader("clear");
+        }, {category_id: $("#categories").val()});
+    }
+}
+
+function onChangeBooks() {
+    $("#chapters-wrapper").html("");
+    $("#examples-wrapper").html("");
+    $("#revisions-wrapper").html("");
+    $("#contributor").show();
+    $("#download-book").show();
+
+    // hide revision submit button if one selects different book
+    $("#submit-revision").hide()
+
+    console.log('selected book')
+
+    if ($("#books").val()) {
+        ajax_loader("#books");
+        Dajaxice.website.chapters(function(data) { 
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {book_id: $("#books").val()});
+    }
+}
+
+function initialize() {
+    $("#catergories")
+        .queue(function() {
+            $('#categories option:eq(1)').prop('selected', true)
+            onChangeCategories()
+            $(this).dequeue()
+        })
+        .queue(function() {
+            $('#books option:eq(1)').prop('selected', true)
+            onChangeBooks()
+        })
+
+    // 
+
+    // $('#chapters option:eq(1)').prop('selected', true)
+    // // $('#chapters').trigger("change")
+
+    // $('#examples option:eq(1)').prop('selected', true)
+    // // $('#examples').trigger("change")
+
+    // $('#revisions option:eq(1)').prop('selected', true)
+    // $('#revisions').trigger("change")
+}
+
 $(document).ready(function() {
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
@@ -74,37 +149,11 @@ $(document).ready(function() {
      * Write the queries using .on()
     */
     $(document).on("change", "#categories", function() {
-        $("#books-wrapper").html("");
-        $("#chapters-wrapper").html("");
-        $("#examples-wrapper").html("");
-        $("#revisions-wrapper").html("");
-        $("#contributor").hide();
-
-        // hide revision submit button if one selects different category
-        $("#submit-revision").hide()
-
-        ajax_loader(this);
-        Dajaxice.website.books(function(data) {
-            Dajax.process(data);
-            ajax_loader("clear");
-        }, {category_id: $(this).val()});
+        onChangeCategories();
     });
 
     $(document).on("change", "#books", function() {
-        $("#chapters-wrapper").html("");
-        $("#examples-wrapper").html("");
-        $("#revisions-wrapper").html("");
-        $("#contributor").show();
-        $("#download-book").show();
-
-        // hide revision submit button if one selects different book
-        $("#submit-revision").hide()
-
-        ajax_loader(this);
-        Dajaxice.website.chapters(function(data) { 
-            Dajax.process(data);
-            ajax_loader("clear");
-        }, {book_id: $(this).val()});
+        onChangeBooks() 
     });
 
     $(document).on("change", "#chapters", function() {
@@ -115,11 +164,13 @@ $(document).ready(function() {
         // hide revision submit button if one selects different chapter
         $("#submit-revision").hide()
 
-        ajax_loader(this);
-        Dajaxice.website.examples(function(data) { 
-            Dajax.process(data);
-            ajax_loader("clear");
-        }, {chapter_id: $(this).val()});
+        if ($(this).val()) {
+            ajax_loader(this);
+            Dajaxice.website.examples(function(data) { 
+                Dajax.process(data);
+                ajax_loader("clear");
+            }, {chapter_id: $(this).val()});
+        }
     });
 
     $(document).on("change", "#examples", function() {
@@ -129,25 +180,28 @@ $(document).ready(function() {
         // hide revision submit button if one selects different example
         $("#submit-revision").hide()
 
-        ajax_loader(this);
-        Dajaxice.website.revisions(function(data) { 
-            Dajax.process(data);
-            ajax_loader("clear");
-        }, {example_id: $(this).val()});
+        if ($(this).val()) {
+            ajax_loader(this);
+            Dajaxice.website.revisions(function(data) { 
+                Dajax.process(data);
+                ajax_loader("clear");
+            }, {example_id: $(this).val()});
+        }
     });
 
     $(document).on("change", "#revisions", function() {
-        
-        ajax_loader(this);
-        Dajaxice.website.code(function(data) {
-            editor.setValue(data.code);
-            initial_code = editor.getValue()
-            ajax_loader("clear");
+        if ($(this).val()) { 
+            ajax_loader(this);
+            Dajaxice.website.code(function(data) {
+                editor.setValue(data.code);
+                initial_code = editor.getValue()
+                ajax_loader("clear");
 
-            // show revision submit button when a revision is loaded
-            $("#submit-revision").show()
+                // show revision submit button when a revision is loaded
+                $("#submit-revision").show()
 
-        }, {commit_sha: $(this).val()});
+            }, {commit_sha: $(this).val()});
+        }
     });
 
     /* Execute the code */
@@ -192,16 +246,6 @@ $(document).ready(function() {
         window.location = "http://scilab.in/download/example/" + $("#examples").val();
         e.preventDefault();
     });
-
-    /* Ajax loader */
-    function ajax_loader(key) {
-        if(key == "clear") {
-            $(".ajax-loader").remove();
-        } else {
-            $(".ajax-loader").remove();
-            $(key).after("<span class='ajax-loader'></span>");
-        }
-    }
 
     /* Contributor details */
     $(document).on("click", "#contributor", function(e) {
@@ -269,6 +313,8 @@ $(document).ready(function() {
         );
         e.preventDefault();
     });
+
+    // initialize()
 });
 
 

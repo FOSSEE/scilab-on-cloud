@@ -312,6 +312,19 @@ def push_revision(request, code):
 
     return dajax.json()    
 
+@dajaxice_register
+def remove_revision(request):
+    """
+    remove revision from revision database
+    """
+    dajax = Dajax()
+    print(request.session['revision_id'])
+    TextbookCompanionRevision.objects.using('scilab').get(id=request.session['revision_id']).delete()
+
+    dajax.alert('removed successfully!')
+    dajax.script('location.reload()')
+
+    return dajax.json()    
 
 
 

@@ -59,13 +59,19 @@ var Dajaxice = {
             return Dajaxice.call('website.revision_form_submit', 'POST', callback_function, argv, custom_settings);
         },
 
-        // inside review interface
+        
+        // review interface --------------------------------------------
+
         review_revision: function(callback_function, argv, custom_settings){
             return Dajaxice.call('website.review_revision', 'POST', callback_function, argv, custom_settings);
         },
 
         push_revision: function(callback_function, argv, custom_settings){
             return Dajaxice.call('website.push_revision', 'POST', callback_function, argv, custom_settings);
+        },
+
+        remove_revision: function(callback_function, argv, custom_settings){
+            return Dajaxice.call('website.remove_revision', 'POST', callback_function, argv, custom_settings);
         },
     },
 
