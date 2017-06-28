@@ -1,4 +1,4 @@
-from  django import forms
+from django import forms
 from django.core.validators import validate_email
 
 issues = (
@@ -38,8 +38,7 @@ class BugForm(forms.Form):
 
 
 class RevisionForm(forms.Form):
-    commit_message = forms.CharField(widget=forms.Textarea, required=True, min_length=10)
-
-
-class RevisionErrorForm(forms.Form):
-    pass
+    commit_message = forms.CharField(
+        widget=forms.Textarea,
+        required=True,
+        min_length=10)

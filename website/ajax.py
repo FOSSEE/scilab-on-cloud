@@ -5,21 +5,22 @@ from dajaxice.utils import deserialize_form
 from django.forms.models import model_to_dict
 
 
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render 
+# from django.http import HttpResponse, HttpResponseRedirect
+# from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.core.context_processors import csrf
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.db.models import Q
+# from django.views.decorators.csrf import csrf_exempt, csrf_protect
+# from django.db.models import Q
 
 from website.helpers import scilab_run
 from website.models import TextbookCompanionPreference,\
-    TextbookCompanionProposal, TextbookCompanionChapter, TextbookCompanionRevision,\
-    TextbookCompanionExample, TextbookCompanionExampleFiles,\
-    TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
+    TextbookCompanionProposal, TextbookCompanionChapter,\
+    TextbookCompanionRevision, TextbookCompanionExample,\
+    TextbookCompanionExampleFiles, TextbookCompanionExampleDependency,\
+    TextbookCompanionDependencyFiles
 
-from website.forms import BugForm, RevisionForm, RevisionErrorForm
-from soc.config import UPLOADS_PATH
+from website.forms import BugForm, RevisionForm
+# from soc.config import UPLOADS_PATH
 
 import base64
 import utils
@@ -34,11 +35,9 @@ def books(request, category_id):
     if category_id:
         ids = TextbookCompanionProposal.objects.using('scilab')\
             .filter(proposal_status=3).values('id')
-        
         books = TextbookCompanionPreference.objects.using('scilab')\
             .filter(category=category_id).filter(approval_status=1)\
             .filter(proposal_id__in=ids).order_by('book')
-        
         context = {
             'books': books
         }
@@ -46,6 +45,7 @@ def books(request, category_id):
     books = render_to_string('website/templates/ajax-books.html', context)
     dajax.assign('#books-wrapper', 'innerHTML', books)
     return dajax.json()
+
 
 @dajaxice_register
 def chapters(request, book_id):
@@ -58,10 +58,10 @@ def chapters(request, book_id):
         context = {
             'chapters': chapters
         }
-
     chapters = render_to_string('website/templates/ajax-chapters.html', context)
     dajax.assign('#chapters-wrapper', 'innerHTML', chapters)
     return dajax.json()
+
 
 @dajaxice_register
 def examples(request, chapter_id):
@@ -70,7 +70,6 @@ def examples(request, chapter_id):
     if chapter_id:
         examples = TextbookCompanionExample.objects.using('scilab')\
             .filter(chapter_id=chapter_id).order_by('number')
-        
         request.session['chapter_id'] = chapter_id
         context = {
             'examples': examples
@@ -79,6 +78,7 @@ def examples(request, chapter_id):
     examples = render_to_string('website/templates/ajax-examples.html', context)
     dajax.assign('#examples-wrapper', 'innerHTML', examples)
     return dajax.json()
+
 
 @dajaxice_register
 def revisions(request, example_id):
@@ -101,6 +101,7 @@ def revisions(request, example_id):
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
 
+
 @dajaxice_register
 def code(request, commit_sha):
     file_path = request.session['filepath']
@@ -108,12 +109,14 @@ def code(request, commit_sha):
     code = base64.b64decode(file['content'])
     return simplejson.dumps({'code': code})
 
+
 @dajaxice_register
 def execute(request, token, code, book_id, chapter_id, example_id):
     dependency_exists = TextbookCompanionExampleDependency.objects.using('scilab')\
         .filter(example_id=example_id).exists()
     data = scilab_run(code, token, book_id, dependency_exists)
     return simplejson.dumps(data)
+
 
 @dajaxice_register
 def contributor(request, book_id):
@@ -130,12 +133,14 @@ def contributor(request, book_id):
     dajax.assign('#databox', 'innerHTML', contributor)
     return dajax.json()
 
+
 @dajaxice_register
 def node(request, key):
     dajax = Dajax()
     data = render_to_string("website/templates/node-{0}.html".format(key))
     dajax.assign('#databox', 'innerHTML', data)
     return dajax.json()
+
 
 @dajaxice_register
 def bug_form(request):
@@ -147,6 +152,7 @@ def bug_form(request):
     form = render_to_string('website/templates/bug-form.html', context)
     dajax.assign('#bug-form-wrapper', 'innerHTML', form)
     return dajax.json()
+
 
 @dajaxice_register
 def bug_form_submit(request, form):
@@ -175,6 +181,7 @@ def bug_form_submit(request, form):
             dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()
 
+
 # submit revision
 @dajaxice_register
 def revision_form(request):
@@ -185,6 +192,7 @@ def revision_form(request):
     data = render_to_string('website/templates/submit-revision.html', context)
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
+
 
 @dajaxice_register
 def revision_form_submit(request, form, code):
@@ -209,7 +217,7 @@ def revision_form_submit(request, form, code):
             main_repo=False,
             )
 
-        if commit_sha != None:
+        if commit_sha is not None:
             # everything is fine
 
             # save the revision info in database
@@ -238,12 +246,14 @@ def revision_form_submit(request, form, code):
 
     return dajax.json()
 
+
 @dajaxice_register
 def revision_error(request):
     dajax = Dajax()
     data = render_to_string('website/templates/submit-revision-error.html', {})
     dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
-    return dajax.json() 
+    return dajax.json()
+
 
 @dajaxice_register
 def diff(request, diff_commit_sha, editor_code):
@@ -252,7 +262,6 @@ def diff(request, diff_commit_sha, editor_code):
     file_path = request.session['filepath']
     file = utils.get_file(file_path, diff_commit_sha, main_repo=True)
     code = base64.b64decode(file['content'])
-    
     page = render_to_string('website/templates/diff.html', context)
     dajax.assign('#diff-wrapper', 'innerHTML', page)
 
@@ -266,6 +275,7 @@ def diff(request, diff_commit_sha, editor_code):
 # ------------------------------------------------------------
 # review interface functions
 
+
 @dajaxice_register
 def review_revision(request, revision_id):
     revision = TextbookCompanionRevision.objects.using('scilab').get(id=revision_id)
@@ -276,7 +286,7 @@ def review_revision(request, revision_id):
 
     example = revision.example_file.example
     chapter = example.chapter
-    book = chapter.preference 
+    book = chapter.preference
     category = utils.get_category(book.category)
 
     data = {
@@ -290,6 +300,7 @@ def review_revision(request, revision_id):
     }
     return simplejson.dumps(data)
 
+
 @dajaxice_register
 def push_revision(request, code):
     """
@@ -300,10 +311,10 @@ def push_revision(request, code):
 
     print('pushing to repo')
     utils.update_file(
-        revision.example_file.filepath, 
-        revision.commit_message, 
+        revision.example_file.filepath,
+        revision.commit_message,
         base64.b64encode(code),
-        [revision.committer_name, revision.committer_email], 
+        [revision.committer_name, revision.committer_email],
         branch='master',
         main_repo=True)
 
@@ -314,7 +325,8 @@ def push_revision(request, code):
     dajax.alert('pushed successfully!')
     dajax.script('location.reload()')
 
-    return dajax.json()    
+    return dajax.json()
+
 
 @dajaxice_register
 def remove_revision(request):
@@ -328,10 +340,4 @@ def remove_revision(request):
     dajax.alert('removed successfully!')
     dajax.script('location.reload()')
 
-    return dajax.json()    
-
-
-
-
-
-
+    return dajax.json()

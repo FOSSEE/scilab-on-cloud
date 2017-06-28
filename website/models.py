@@ -3,9 +3,11 @@ from django.db import models
 
 """
 Models from Scilab Database created using inspectdb
-Use it with the "scilab" database eg:using("scilab") 
+Use it with the "scilab" database eg:using("scilab")
 These models are used only for django orm reference.
 """
+
+
 class TextbookCompanionProposal(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     uid = models.IntegerField()
@@ -27,6 +29,7 @@ class TextbookCompanionProposal(models.Model):
     scilab_version = models.CharField(max_length=20L)
     operating_system = models.CharField(max_length=20L)
     teacher_email = models.CharField(max_length=20L)
+
     class Meta:
         db_table = 'textbook_companion_proposal'
 
@@ -44,6 +47,7 @@ class TextbookCompanionPreference(models.Model):
     category = models.IntegerField()
     approval_status = models.IntegerField()
     cloud_pref_err_status = models.IntegerField()
+
     class Meta:
         db_table = 'textbook_companion_preference'
 
@@ -54,6 +58,7 @@ class TextbookCompanionChapter(models.Model):
     number = models.IntegerField()
     name = models.CharField(max_length=255L)
     cloud_chapter_err_status = models.CharField(max_length=255L)
+
     class Meta:
         db_table = 'textbook_companion_chapter'
 
@@ -68,8 +73,10 @@ class TextbookCompanionExample(models.Model):
     approval_status = models.IntegerField()
     timestamp = models.IntegerField()
     cloud_err_status = models.IntegerField()
+
     class Meta:
         db_table = 'textbook_companion_example'
+
 
 class TextbookCompanionExampleFiles(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -81,17 +88,20 @@ class TextbookCompanionExampleFiles(models.Model):
     filetype = models.CharField(max_length=1L)
     caption = models.CharField(max_length=100L)
     timestamp = models.IntegerField()
+
     class Meta:
         db_table = 'textbook_companion_example_files'
 
+
 class TextbookCompanionRevision(models.Model):
     example_file = models.ForeignKey(TextbookCompanionExampleFiles, on_delete=models.CASCADE)
-    commit_sha = models.CharField(max_length=100L) # sha checksum of commit in github
+    commit_sha = models.CharField(max_length=100L)  # sha checksum of commit in github
     committer_name = models.CharField(max_length=100L)
     committer_email = models.EmailField()
     commit_message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     push_status = models.BooleanField(default=0)
+
     class Meta:
         db_table = 'textbook_companion_revision'
 
@@ -102,6 +112,7 @@ class TextbookCompanionExampleDependency(models.Model):
     dependency_id = models.IntegerField()
     approval_status = models.IntegerField()
     timestamp = models.IntegerField()
+
     class Meta:
         db_table = 'textbook_companion_example_dependency'
 
@@ -116,5 +127,6 @@ class TextbookCompanionDependencyFiles(models.Model):
     caption = models.CharField(max_length=100L)
     description = models.TextField()
     timestamp = models.IntegerField()
+
     class Meta:
         db_table = 'textbook_companion_dependency_files'
