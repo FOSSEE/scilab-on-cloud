@@ -178,7 +178,6 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-    
     /* Bug form handling */
     $(document).on("click", "#bug", function(e) {
         Dajaxice.website.bug_form(function(data){
@@ -189,7 +188,16 @@ $(document).ready(function() {
     });
 
     $(document).on("click", "#bug-form-submit", function(e){
-        Dajaxice.website.bug_form_submit(Dajax.process, {form: $("#bug-form").serialize(true)});
+     ex_id = $("#examples").val();
+     if(!ex_id){
+     ex_id = "NULL";
+     }
+     console.log(ex_id);
+        Dajaxice.website.bug_form_submit(Dajax.process, {
+        form: $("#bug-form").serialize(true),
+        ex_id: ex_id
+        });
+        console.log(ex_id);
         e.preventDefault();
     });
 
