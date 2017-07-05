@@ -1,14 +1,17 @@
 from dajax.core import Dajax
+from soc.config import FROM_EMAIL, TO_EMAIL, CC_EMAIL, BCC_EMAIL
+from django.core.mail import EmailMultiAlternatives
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
 from dajaxice.utils import deserialize_form
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render 
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.db.models import Q
+from django.utils.html import strip_tags
 
 from website.helpers import scilab_run
 from website.models import TextbookCompanionPreference,\
@@ -118,7 +121,7 @@ def bug_form(request):
     return dajax.json()
 
 @dajaxice_register
-def bug_form_submit(request, form):
+def bug_form_submit(request, form, ex_id):
     dajax = Dajax()
     form = BugForm(deserialize_form(form))
     if form.is_valid():
@@ -127,6 +130,46 @@ def bug_form_submit(request, form):
         dajax.remove_css_class('#bug-form textarea', 'error')
         dajax.remove('.error-message')
         dajax.alert('Forms valid')
+        comment = form.cleaned_data['description']
+        error = form.cleaned_data['issue']
+        comment_data = TextbookCompanionPreference.objects.db_manager('scilab')\
+                .raw("""SELECT 1 as id, tcp.book as book, tcp.author as author, tcp.publisher as publisher,
+                tcp.year as year,tcp.category as category, tce.chapter_id, tcc.number AS chapter_no,
+                tcc.name AS chapter_name, tce.number AS example_no, tce.caption AS example_caption
+                FROM textbook_companion_preference tcp
+                LEFT JOIN textbook_companion_chapter tcc ON  tcp.id  = tcc.preference_id
+                LEFT JOIN textbook_companion_example tce ON tce.chapter_id = tcc.id
+                WHERE tce.id = %s""",[ex_id])
+        book_name = comment_data[0].book
+        book_author = comment_data[0].author
+        book_publisher = comment_data[0].publisher
+        chapter_number = comment_data[0].chapter_no
+        chapter_name = comment_data[0].chapter_name
+        example_number = comment_data[0].example_no
+        example_caption = comment_data[0].example_caption
+        context = {
+            'error' : error,
+            'book' : book_name,
+            'author' :  book_author,
+            'publisher' : book_publisher,
+            'chapter_name' : chapter_name,
+            'chapter_no' : chapter_number,
+            'example_id' : ex_id,
+            'example_caption' : example_caption,
+            'example_no' : example_number,
+            'comment' : comment,
+        }
+        subject = "New Cloud Comment"
+        message = render_to_string('website/templates/email.html', context)
+        from_email = FROM_EMAIL
+        to_email = TO_EMAIL
+        cc_email = CC_EMAIL
+        bcc_email = BCC_EMAIL
+
+        msg = EmailMultiAlternatives(subject, message, from_email, [to_email], bcc=[bcc_email], cc=[cc_email])
+        msg.content_subtype = "html"
+        msg.send()
+
     else:
         dajax.remove_css_class('#bug-form input', 'error')
         dajax.remove_css_class('#bug-form select', 'error')
