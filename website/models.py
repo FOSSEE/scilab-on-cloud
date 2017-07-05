@@ -21,6 +21,22 @@ class TextbookCompanionPreference(models.Model):
     class Meta:
         db_table = 'textbook_companion_preference'
 
+class TextbookCompanionCategoryList(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    category_name = models.CharField(max_length=100L)
+    category_id = models.IntegerField()
+    maincategory = models.CharField(max_length=255L)
+    class Meta:
+        db_table = 'list_of_category'
+
+class TextbookCompanionSubCategoryList(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    subcategory_id = models.IntegerField()
+    subcategory = models.CharField(max_length=255L)
+    maincategory_id = models.IntegerField()
+    class Meta:
+        db_table = 'list_of_subcategory'
+
 class TextbookCompanionProposal(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     uid = models.IntegerField()
