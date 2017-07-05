@@ -1,5 +1,6 @@
 from  django import forms
 from django.core.validators import validate_email
+from dajax.core import Dajax
 
 issues = (
     ('', '-- Select Type of issue --'),
@@ -26,12 +27,15 @@ class BugForm(forms.Form):
             raise forms.ValidationError('Email id is required if you want to be notified.')
         elif notify:
             validate_email(email)
+        return email
 
     def clean(self):
+        cleaned_data = super(BugForm, self).clean()
         issue = self.cleaned_data.get('issue', None)
-        example = self.cleaned_data.get('example', None)
-        if (issue and int(issue) != 7) and (not example):
+        #example = self.cleaned_data.get('example', None)
+        if (issue and int(issue) == '' ):
             raise forms.ValidationError("""
                 Please select book, chapter and example.
                 Or select the *Any other/General* issue type.
             """)
+        return cleaned_data
