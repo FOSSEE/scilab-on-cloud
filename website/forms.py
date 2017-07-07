@@ -17,16 +17,13 @@ class BugForm(forms.Form):
     example = forms.CharField(widget=forms.HiddenInput(), required=False)
     issue = forms.CharField(widget=forms.Select(choices=issues))
     description = forms.CharField(widget=forms.Textarea)
-    notify = forms.BooleanField(required=False)
-    email = forms.CharField(required=False)
+    email = forms.CharField(widget=forms.TextInput(),required=True)
+
 
     def clean_email(self):
         email = self.cleaned_data.get('email', None)
-        notify = self.cleaned_data.get('notify', None)
-        if notify and not email:
+        if not email:
             raise forms.ValidationError('Email id is required if you want to be notified.')
-        elif notify:
-            validate_email(email)
         return email
 
     def clean(self):
