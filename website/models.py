@@ -29,6 +29,22 @@ class TextbookCompanionCategoryList(models.Model):
     class Meta:
         db_table = 'list_of_category'
 
+class ScilabCloudComment(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    type = models.IntegerField()
+    comment = models.TextField()
+    email = models.CharField(max_length=100L)
+    category = models.IntegerField()
+    books = models.IntegerField()
+    chapter = models.IntegerField()
+    example = models.IntegerField()
+    reply = models.TextField()
+    reply_status = models.IntegerField(default='0')
+    user = models.CharField(max_length=100L)
+    date = models.DateTimeField(auto_now=True)
+    class Meta:
+        db_table = 'scilab_cloud_comment'
+
 class TextbookCompanionSubCategoryList(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     subcategory_id = models.IntegerField()
