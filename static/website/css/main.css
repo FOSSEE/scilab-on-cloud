@@ -95,6 +95,10 @@ body, html {
     position: absolute;
     right: 0px;
 }
+#review-link {
+    position: absolute;
+    right: 40px;
+}
 #controls a {
     text-decoration: none;
 }

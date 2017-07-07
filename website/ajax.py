@@ -75,11 +75,14 @@ def examples(request, chapter_id):
 def code(request, example_id):
     example = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
+    review = ScilabCloudComment.objects.using('scilab')\
+        .filter(example=example_id).count()
+    review_url = "http://scilab.in/cloud_comments/" + example_id
     example_path = UPLOADS_PATH + '/' + example.filepath
     f = open(example_path)
     code = f.read()
     f.close()
-    return simplejson.dumps({'code': code})
+    return simplejson.dumps({'code': code, 'review': review,'review_url': review_url})
 
 @dajaxice_register
 def execute(request, token, code, book_id, chapter_id, example_id):
@@ -183,10 +186,9 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
         cc_email = CC_EMAIL
         bcc_email = BCC_EMAIL
         #Send Emails to, cc, bcc
-        msg = EmailMultiAlternatives(subject, message, from_email, [to_email], bcc=[bcc_email], cc=[cc_email])
-        msg.content_subtype = "html"
-        msg.send()
-        dajax.alert('Forms valid')
+        #msg = EmailMultiAlternatives(subject, message, from_email, [to_email], bcc=[bcc_email], cc=[cc_email])
+        #msg.content_subtype = "html"
+        #msg.send()
 
     else:
         dajax.remove_css_class('#bug-form input', 'error')

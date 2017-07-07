@@ -106,6 +106,13 @@ $(document).ready(function() {
         $("#download-example").show();
         Dajaxice.website.code(function(data) {
             editor.setValue(data.code);
+            if( data.review != 0){
+                $("#review").show();
+                $("#review").attr("href", data.review_url);
+                $("#review").text(data.review + " " + "Review");
+            }else{
+                $("#review").hide();
+            }
             ajax_loader("clear");
         }, {example_id: $(this).val()});
     });
