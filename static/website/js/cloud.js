@@ -189,19 +189,26 @@ $(document).ready(function() {
 
     $(document).on("click", "#bug-form-submit", function(e){
      ex_id = $("#examples").val();
+     cat_id = $("#categories").val();
+     book_id = $("#books").val();
+     chapter_id = $("#chapters").val();
      if(!ex_id){
      ex_id = "NULL";
      }
      console.log(ex_id);
         Dajaxice.website.bug_form_submit(Dajax.process, {
         form: $("#bug-form").serialize(true),
-        ex_id: ex_id
+        cat_id: cat_id,
+        book_id:book_id,
+        chapter_id: chapter_id,
+        ex_id: ex_id,
         });
         console.log(ex_id);
         e.preventDefault();
     });
 
-    $(document).on("click", "#bug-form #id_notify", function() {
+    /*$(document).on("click", "#bug-form #id_notify", function() {
         $("#id_email_wrapper").toggle(this.checked);
-    });
+    });*/
+    
 });
