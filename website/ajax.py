@@ -12,12 +12,13 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.db.models import Q
 from django.utils.html import strip_tags
+from website.forms import issues
+
+from django.db import connections
 
 from website.helpers import scilab_run
-from website.models import TextbookCompanionPreference,\
-    TextbookCompanionProposal, TextbookCompanionChapter,\
-    TextbookCompanionExample, TextbookCompanionExampleFiles,\
-    TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
+from website.views import catg
+from website.models import *
 from website.forms import BugForm
 from soc.config import UPLOADS_PATH
 
@@ -121,7 +122,7 @@ def bug_form(request):
     return dajax.json()
 
 @dajaxice_register
-def bug_form_submit(request, form, ex_id):
+def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
     dajax = Dajax()
     form = BugForm(deserialize_form(form))
     if form.is_valid():
@@ -129,9 +130,10 @@ def bug_form_submit(request, form, ex_id):
         dajax.remove_css_class('#bug-form select', 'error')
         dajax.remove_css_class('#bug-form textarea', 'error')
         dajax.remove('.error-message')
-        dajax.alert('Forms valid')
         comment = form.cleaned_data['description']
         error = form.cleaned_data['issue']
+        email = form.cleaned_data['email']
+        print(comment)
         comment_data = TextbookCompanionPreference.objects.db_manager('scilab')\
                 .raw("""SELECT 1 as id, tcp.book as book, tcp.author as author, tcp.publisher as publisher,
                 tcp.year as year,tcp.category as category, tce.chapter_id, tcc.number AS chapter_no,
@@ -147,7 +149,13 @@ def bug_form_submit(request, form, ex_id):
         chapter_name = comment_data[0].chapter_name
         example_number = comment_data[0].example_no
         example_caption = comment_data[0].example_caption
+        category = catg(comment_data[0].category)
+        subcategory = 0
+        error_int = int(error)
+        error =  issues[error_int][1]
         context = {
+            'category': category,
+            'subcategory' : subcategory,
             'error' : error,
             'book' : book_name,
             'author' :  book_author,
@@ -159,16 +167,26 @@ def bug_form_submit(request, form, ex_id):
             'example_no' : example_number,
             'comment' : comment,
         }
+        scilab_comment = ScilabCloudComment()
+        scilab_comment.type = error_int
+        scilab_comment.comment = comment
+        scilab_comment.email = email
+        scilab_comment.category = comment_data[0].category
+        scilab_comment.books = book_id
+        scilab_comment.chapter = chapter_id
+        scilab_comment.example = ex_id
+        scilab_comment.save(using='scilab')
         subject = "New Cloud Comment"
         message = render_to_string('website/templates/email.html', context)
         from_email = FROM_EMAIL
         to_email = TO_EMAIL
         cc_email = CC_EMAIL
         bcc_email = BCC_EMAIL
-
+        #Send Emails to, cc, bcc
         msg = EmailMultiAlternatives(subject, message, from_email, [to_email], bcc=[bcc_email], cc=[cc_email])
         msg.content_subtype = "html"
         msg.send()
+        dajax.alert('Forms valid')
 
     else:
         dajax.remove_css_class('#bug-form input', 'error')
