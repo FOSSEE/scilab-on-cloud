@@ -1,7 +1,7 @@
 {% if examples %}
 <label>Example: </label>
 <select id="examples">
-    <option value="">Select Example</option>
+    <option value="0">Select Example</option>
 {% for example in examples %}
     <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
 {% endfor %}

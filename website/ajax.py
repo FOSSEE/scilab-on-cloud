@@ -73,15 +73,21 @@ def examples(request, chapter_id):
 
 @dajaxice_register
 def code(request, example_id):
-    example = TextbookCompanionExampleFiles.objects.using('scilab')\
-        .get(example_id=example_id, filetype='S')
-    review = ScilabCloudComment.objects.using('scilab')\
-        .filter(example=example_id).count()
-    review_url = "http://scilab.in/cloud_comments/" + example_id
-    example_path = UPLOADS_PATH + '/' + example.filepath
-    f = open(example_path)
-    code = f.read()
-    f.close()
+    print example_id
+    if example_id != '0':
+        example = TextbookCompanionExampleFiles.objects.using('scilab')\
+            .get(example_id=example_id, filetype='S')
+        review = ScilabCloudComment.objects.using('scilab')\
+            .filter(example=example_id).count()
+        review_url = "http://scilab.in/cloud_comments/" + example_id
+        example_path = UPLOADS_PATH + '/' + example.filepath
+        f = open(example_path)
+        code = f.read()
+        f.close()
+    else:
+        code = ''
+        review = ''
+        review_url = ''
     return simplejson.dumps({'code': code, 'review': review,'review_url': review_url})
 
 @dajaxice_register
@@ -152,7 +158,8 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
         chapter_name = comment_data[0].chapter_name
         example_number = comment_data[0].example_no
         example_caption = comment_data[0].example_caption
-        category = catg(comment_data[0].category)
+        all_cat = False
+        category = catg(comment_data[0].category, all_cat)
         subcategory = 0
         error_int = int(error)
         error =  issues[error_int][1]
