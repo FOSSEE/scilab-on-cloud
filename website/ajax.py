@@ -17,9 +17,11 @@ from website.forms import issues
 from django.db import connections
 
 from website.helpers import scilab_run
+from website.helpers import scilab_run_user  #modified code
 from website.views import catg
 from website.models import *
 from website.forms import BugForm
+from website.dataentry import entry
 from soc.config import UPLOADS_PATH
 
 @dajaxice_register
@@ -91,11 +93,18 @@ def code(request, example_id):
     return simplejson.dumps({'code': code, 'review': review,'review_url': review_url})
 
 @dajaxice_register
-def execute(request, token, code, book_id, chapter_id, example_id):
+def execute(request, token, code, book_id, chapter_id, example_id, category_id):
     dependency_exists = TextbookCompanionExampleDependency.objects.using('scilab')\
         .filter(example_id=example_id).exists()
-    data = scilab_run(code, token, book_id, dependency_exists)
-    return simplejson.dumps(data)
+    # modified code
+    dependency_exists = entry(code, example_id, dependency_exists)
+
+    if token is 0 or book_id is 0 or example_id is 0 or chapter_id is 0 or category_id is 0:       #modified code
+        data = scilab_run_user(code,token,dependency_exists)
+        return simplejson.dumps(data)
+    else:
+        data = scilab_run(code, token, book_id, dependency_exists)
+        return simplejson.dumps(data)
 
 @dajaxice_register
 def contributor(request, book_id):

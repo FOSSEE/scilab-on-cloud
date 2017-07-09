@@ -200,7 +200,8 @@ $(document).ready(function() {
             code: editor.getValue(),
             book_id: $("#books").val() || 0,
             chapter_id: $("#chapters").val() || 0,
-            example_id: $("#examples").val() || 0
+            example_id: $("#examples").val() || 0,
+            category_id: $("#categories").val() || 0 //modified code
         });
     });
 
