@@ -1,16 +1,16 @@
 import os, re, sys, time, subprocess
-
-from soc.settings import PROJECT_DIR
 from timeout import TimerTask
-from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH , SCILAB_3 ,SCILAB_4, SCILAB_5
-from website.models import TextbookCompanionPreference, TextbookCompanionProposal
- 
+from soc.settings import PROJECT_DIR
+from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
+SCILAB_3 ,SCILAB_4, SCILAB_5
+from website.models import TextbookCompanionPreference,\
+TextbookCompanionProposal
+
+SystemCommands = 'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|\
+                  unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
 def scilab_run(code, token, book_id, dependency_exists): 
     #Check for system commands
-
-    system_commands = re.compile(
-        'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
-    )
+    system_commands = re.compile(SystemCommands)
     if system_commands.search(code):
         return { 
             'output': 'System Commands not allowed',
@@ -19,7 +19,9 @@ def scilab_run(code, token, book_id, dependency_exists):
     #Remove all clear;
     if "clc" in code:
         clrIndex=code.index("clc")
-        if clrIndex==0 or code[clrIndex-1]==" " or code[clrIndex-1]=="\n" or code[clrIndex-1]==";" :
+        clc_con = clrIndex==0 or code[clrIndex-1]==" " or \
+                  code[clrIndex-1]=="\n" or code[clrIndex-1]==";" 
+        if clc_con:
             code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
 
     plot_exists = False
@@ -33,7 +35,8 @@ def scilab_run(code, token, book_id, dependency_exists):
         plot_exists = True
         code = code + '\n'
         current_time = time.time()
-        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'.format(str(current_time))
+        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'\
+                    .format(str(current_time))
         #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
     #Check whether to load scimax / maxima
@@ -61,7 +64,9 @@ def scilab_run(code, token, book_id, dependency_exists):
 
     SCILAB_BIN = BIN+'/'
     pf = TextbookCompanionPreference.objects.using('scilab').get(id=book_id)
-    pr = TextbookCompanionProposal.objects.using('scilab').get(id=pf.proposal_id)
+    pr = TextbookCompanionProposal.objects.using('scilab').get(
+                                                            id=pf.proposal_id
+                                                            )
     version = pr.scilab_version
     if version in ['5.3.3', '5.3.1', '5.3.0', 'scilab 5.3.3', 'Scilab 5.3.1']:
         SCILAB_BIN+=SCILAB_5
@@ -88,11 +93,9 @@ def scilab_run(code, token, book_id, dependency_exists):
     }
     return data
 
-def scilab_run_user(code,token,dependency_exists):            #method for users own code
+def scilab_run_user(code,token,dependency_exists):  #method for users own code
     #Check for system commands
-    system_commands = re.compile(
-        'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
-    )
+    system_commands = re.compile(SystemCommands)
     if system_commands.search(code):
         return {
         'output': 'System Commands not allowed',
@@ -102,7 +105,9 @@ def scilab_run_user(code,token,dependency_exists):            #method for users 
 
     if "clc" in code:
         clrIndex=code.index("clc")
-        if clrIndex==0 or code[clrIndex-1]==" " or code[clrIndex-1]=="\n" or code[clrIndex-1]==";" :
+        clc_con = clrIndex==0 or code[clrIndex-1]==" " or \
+                  code[clrIndex-1]=="\n" or code[clrIndex-1]==";"
+        if clc_con:
             code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
 
     plot_exists = False
@@ -117,7 +122,8 @@ def scilab_run_user(code,token,dependency_exists):            #method for users 
         plot_exists = True
         code = code + '\n'
         current_time = time.time()
-        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'.format(str(current_time))
+        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'\
+                    .format(str(current_time))
         #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
     #Check whether to load scimax / maxima
