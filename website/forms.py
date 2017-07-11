@@ -1,4 +1,4 @@
-from  django import forms
+from django import forms
 from django.core.validators import validate_email
 from dajax.core import Dajax
 
@@ -12,18 +12,16 @@ issues = (
     (7, 'Any other / General'),
 )
 
-
 class BugForm(forms.Form):
     example = forms.CharField(widget=forms.HiddenInput(), required=False)
     issue = forms.CharField(widget=forms.Select(choices=issues))
     description = forms.CharField(widget=forms.Textarea)
     email = forms.CharField(widget=forms.TextInput(),required=True)
 
-
     def clean_email(self):
         email = self.cleaned_data.get('email', None)
         if not email:
-            raise forms.ValidationError('Email id is required if you want to be notified.')
+            raise forms.ValidationError('Email id is required.')
         return email
 
     def clean(self):
