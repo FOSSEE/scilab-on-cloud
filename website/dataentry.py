@@ -28,7 +28,8 @@ def entry(code, example_id, dependency_exists):
             return dependency_exists
 
         data_df = TextbookCompanionDependencyFiles.objects.db_manager('scilab')\
-        .raw("""SELECT id FROM textbook_companion_dependency_files WHERE filename = %s""", [value]) #get the dependency id
+        .raw("""SELECT id FROM textbook_companion_dependency_files
+         WHERE filename = %s""", [value]) #get the dependency id
         data = data_df[0].id  # extract the id
         if data is not None:
             role = int(data_df[0].id)
