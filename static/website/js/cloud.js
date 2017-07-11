@@ -67,6 +67,7 @@ $(document).ready(function() {
      * Selectors function
      * Write the queries using .on()
      */
+    $("#plot_download").hide();
     $(document).on("change", "#categories", function() {
         if ($("#categories").val() == 0) {
             $("#download-book").hide();
@@ -185,15 +186,20 @@ $(document).ready(function() {
             $("#execute-inner").html("Execute");
             result.setValue(data.output);
             if (data.plot_path) {
+                console.log(data.plot_path);
                 $plot = $("<img>");
                 $plot.attr({
                     src: data.plot_path,
-                    width: 400
+                    width: '90%'
                 });
                 $plotbox.html($plot);
                 $plotbox_wrapper.lightbox_me({
                     centered: true
                 });
+                var dt = $("#examples option:selected").text();
+                $("#plot_download").show();
+                $("#plot_download").attr("download", dt+'.png');
+                $("#plot_download").attr("href", data.plot_path);
             }
         }, {
             token: $("[name='csrfmiddlewaretoken']").val(),
