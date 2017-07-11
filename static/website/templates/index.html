@@ -104,8 +104,14 @@
                     <label>
                         Scilab Code
                         <span id="review-link">
-                                <a href="#" id="review" target="_blank" >
+                                {% if review %}
+                                <a href="{{ review_url}}" id="review" target="_blank" >
+                                {{ review }} Review
                                 </a>
+                                {% else %}
+                                 <a href="#" id="review" target="_blank" >
+                                </a>
+                                {% endif %}
                             </span>
                         <span id="controls">
                                 <a href="#" id="toggle-code">
@@ -160,6 +166,7 @@
 
     <div id="plotbox-wrapper">
         <div id="plotbox"></div>
+        <span><a href="#" id="plot_download" download="Plot">Download</a></span>
     </div>
     <!-- /#plotbox-wrapper -->
 
