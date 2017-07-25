@@ -29,6 +29,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     #Finding the plot and appending xs2jpg function
     #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
     p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
+    plot = re.compile(r'xgrid\(.*\)')
 
     plot_path = ''
     if p.search(code):
@@ -48,18 +49,32 @@ def scilab_run(code, token, book_id, dependency_exists):
 
     #traps even syntax errors eg: endfunton
     f = open(file_path, "w")
-    f.write('driver("PNG");\n')
-    f.write('xinit("{0}");\n'.format(plot_path))
-    f.write('mode(2);\n')
+
+    if plot.search(code):
+        current_time = time.time()
+        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'\
+                    .format(str(current_time))
+        #f.write('scf(0),\n')
+        f.write('xs2png(scf(0), "{0}");\n'.format(plot_path))
+        f.write('xsave("{0}")\n'.format(plot_path))
+        f.write(unicode(code))
+    else:
+        current_time = time.time()
+        plot_path = PROJECT_DIR + '/static/tmp/{0}.png'\
+                    .format(str(current_time))
+        f.write('driver("PNG");\n')
+        f.write('xinit("{0}");\n'.format(plot_path))
+        f.write('mode(2);\n')
+        f.write('lines(0);\n')
+        f.write(unicode(code))
+        f.write('\nxend();')
+        f.write('\nquit();')
 
     if dependency_exists:
         f.write(
             'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
         )
-    f.write('lines(0);\n')
-    f.write(unicode(code))
-    f.write('\nxend();')
-    f.write('\nquit();')
+
     f.close()
 
     SCILAB_BIN = BIN+'/'
@@ -81,7 +96,7 @@ def scilab_run(code, token, book_id, dependency_exists):
     #getting stuck in the prompt in case of error
     cmd = 'printf "exec(\'{0}\',2);\nquit();"'.format(file_path)
     cmd += ' | {0} {1}'.format(SCILAB_BIN, SCILAB_FLAGS)
-
+    print cmd
     task = TimerTask(cmd, timeout=15)
     output = task.run().communicate()[0]
     e = task.wait()

@@ -177,16 +177,25 @@ $(document).ready(function() {
         });
     });
 
+    
     /* Execute the code */
     $plotbox_wrapper = $("#plotbox-wrapper");
     $plotbox = $("#plotbox");
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
-        Dajaxice.website.execute(function(data) {
+        var send_data = {
+            token: $("[name='csrfmiddlewaretoken']").val(),
+            code: editor.getValue(),
+            book_id: $("#books").val() || 0,
+            chapter_id: $("#chapters").val() || 0,
+            example_id: $("#examples").val() || 0
+        };   
+        $.post("/execute-code", send_data,
+        function(data){
             $("#execute-inner").html("Execute");
             result.setValue(data.output);
-            if (data.plot_path) {
-                console.log(data.plot_path);
+
+            if(data.plot_path){
                 $plot = $("<img>");
                 $plot.attr({
                     src: data.plot_path,
@@ -201,13 +210,6 @@ $(document).ready(function() {
                 $("#plot_download").attr("download", dt+'.png');
                 $("#plot_download").attr("href", data.plot_path);
             }
-        }, {
-            token: $("[name='csrfmiddlewaretoken']").val(),
-            code: editor.getValue(),
-            book_id: $("#books").val() || 0,
-            chapter_id: $("#chapters").val() || 0,
-            example_id: $("#examples").val() || 0,
-            category_id: $("#categories").val() || 0 //modified code
         });
     });
 

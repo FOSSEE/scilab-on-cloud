@@ -13,10 +13,6 @@ var Dajaxice = {
         return Dajaxice.call('website.node', 'POST', callback_function, argv, custom_settings);
     },
 
-    execute: function(callback_function, argv, custom_settings){
-        return Dajaxice.call('website.execute', 'POST', callback_function, argv, custom_settings);
-    },
-
     code: function(callback_function, argv, custom_settings){
         return Dajaxice.call('website.code', 'POST', callback_function, argv, custom_settings);
     },
