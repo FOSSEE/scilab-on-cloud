@@ -1,7 +1,7 @@
 #Custom Settings
 
 from os.path import *
-from config import *
+from .config import *
 
 PROJECT_DIR = abspath(dirname(__file__) + '/../')
 
@@ -174,3 +174,15 @@ LOGGING = {
         },
     }
 }
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = EMAIL_HOST_SERVER
+
+# Port for sending e-mail.
+EMAIL_PORT = EMAIL_PORT_SERVER
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = EMAIL_HOST_USER_SERVER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD_SERVER
+EMAIL_USE_TLS = EMAIL_USE_TLS_SERVER
