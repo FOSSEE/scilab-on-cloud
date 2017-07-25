@@ -110,15 +110,24 @@ $(document).ready(function() {
         }, {example_id: $(this).val()});
     });
 
+    
     /* Execute the code */
     $plotbox_wrapper  = $("#plotbox-wrapper");
     $plotbox = $("#plotbox");
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
-        Dajaxice.website.execute(function(data) {
+        var send_data = {
+            token: $("[name='csrfmiddlewaretoken']").val(),
+            code: editor.getValue(),
+            book_id: $("#books").val() || 0,
+            chapter_id: $("#chapters").val() || 0,
+            example_id: $("#examples").val() || 0
+        };   
+        $.post("/execute-code", send_data,
+        function(data){
             $("#execute-inner").html("Execute");
             result.setValue(data.output);
-            if(data.plot_path) {
+            if(data.plot_path){
                 $plot = $("<img>");
                 $plot.attr({
                     src: data.plot_path,
@@ -127,12 +136,6 @@ $(document).ready(function() {
                 $plotbox.html($plot);
                 $plotbox_wrapper.lightbox_me({centered: true});
             }
-        }, {
-            token: $("[name='csrfmiddlewaretoken']").val(),
-            code: editor.getValue(),
-            book_id: $("#books").val() || 0,
-            chapter_id: $("#chapters").val() || 0,
-            example_id: $("#examples").val() || 0
         });
     });
 

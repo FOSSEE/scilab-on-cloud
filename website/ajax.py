@@ -10,7 +10,6 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.db.models import Q
 
-from website.helpers import scilab_run
 from website.models import TextbookCompanionPreference,\
     TextbookCompanionProposal, TextbookCompanionChapter,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
