@@ -58,25 +58,25 @@ instance_manager()
 # passes it to the submit method of ThreadPoolExecutor class through its object.
 # yield is used to gather the output asynchronously in the variable data
 class ExecutionHandler(tornado.web.RequestHandler): 
-	@gen.coroutine
-	def post(self):
-		global request_count
-		request_count += 1
+    @gen.coroutine
+    def post(self):
+        global request_count
+        request_count += 1
 
-		token = buffer(self.request.arguments['token'][0])
-		token = str(token)
-		code =  buffer(self.request.arguments['code'][0])
-		code = str(code)
-		book_id = int(self.request.arguments['book_id'][0])
-		chapter_id = int(self.request.arguments['chapter_id'][0])
-		example_id = int(self.request.arguments['example_id'][0])
-		
-		dependency_exists = TextbookCompanionExampleDependency.objects.using('scilab')\
-			.filter(example_id=example_id).exists()
-		data  = yield executor.submit(scilab_executor.execute_code, code, token, 
-			book_id, dependency_exists)
-		self.write(data)
-		request_count -= 1
+        token = buffer(self.request.arguments['token'][0])
+        token = str(token)
+        code =  buffer(self.request.arguments['code'][0])
+        code = str(code)
+        book_id = int(self.request.arguments['book_id'][0])
+        chapter_id = int(self.request.arguments['chapter_id'][0])
+        example_id = int(self.request.arguments['example_id'][0])
+
+        dependency_exists = TextbookCompanionExampleDependency.objects.using('scilab')\
+            .filter(example_id=example_id).exists()
+        data  = yield executor.submit(scilab_executor.execute_code, code, token, 
+            book_id, dependency_exists)
+        self.write(data)
+        request_count -= 1
 
 
 def main():
@@ -92,7 +92,6 @@ def main():
   server = tornado.httpserver.HTTPServer(tornado_app)
   server.listen(options.port)
   tornado.ioloop.IOLoop.instance().start()
-
 
 if __name__ == '__main__':
   main()
