@@ -1,7 +1,7 @@
 #Custom Settings
 
 from os.path import *
-from config import *
+from .config import *
 
 PROJECT_DIR = abspath(dirname(__file__) + '/../')
 
