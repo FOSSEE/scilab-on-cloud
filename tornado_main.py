@@ -15,6 +15,7 @@ from website.models import TextbookCompanionExampleDependency, TextbookCompanion
 
 from concurrent.futures import ThreadPoolExecutor
 from tornado import gen
+from website.dataentry import entry
 from instances import ScilabInstance
 import threading
 
@@ -73,6 +74,9 @@ class ExecutionHandler(tornado.web.RequestHandler):
 
         dependency_exists = TextbookCompanionExampleDependency.objects.using('scilab')\
             .filter(example_id=example_id).exists()
+        print example_id
+        print dependency_exists
+        dependency_exists = entry(code, example_id, dependency_exists, book_id)
         data  = yield executor.submit(scilab_executor.execute_code, code, token, 
             book_id, dependency_exists)
         self.write(data)
