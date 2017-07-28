@@ -1,9 +1,9 @@
-#Custom Settings
+# Custom Settings
 
-from os.path import *
-from config import *
+import os
+from .config import *
 
-PROJECT_DIR = abspath(dirname(__file__) + '/../')
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__) + '/../')
 
 # Django settings for soc project.
 
@@ -94,7 +94,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'dajaxice.finders.DajaxiceFinder',
 )
 
@@ -202,3 +202,15 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_LOGIN_URL = '/login/'
 
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = EMAIL_HOST_SERVER
+
+# Port for sending e-mail.
+EMAIL_PORT = EMAIL_PORT_SERVER
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = EMAIL_HOST_USER_SERVER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD_SERVER
+EMAIL_USE_TLS = EMAIL_USE_TLS_SERVER

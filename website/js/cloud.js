@@ -1,18 +1,8 @@
-/* Ajax loader */
-function ajax_loader(key) {
-    if(key == "clear") {
-        $(".ajax-loader").remove();
-    } else {
-        $(".ajax-loader").remove();
-        $(key).after("<span class='ajax-loader'></span>");
-    }
-}
-
 $(document).ready(function() {
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
         lineWrapping: true,
-        theme: "monokai",
+        theme: "default",
         extraKeys: {
             "F11": function(cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
@@ -25,8 +15,7 @@ $(document).ready(function() {
 
     var result = CodeMirror.fromTextArea(document.getElementById("result"), {
         lineWrapping: true,
-        theme: "monokai",
-        readOnly: true,
+        theme: "default",
         extraKeys: {
             "F11": function(cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
@@ -36,11 +25,6 @@ $(document).ready(function() {
             }
         }
     });
-
-    var initial_code = '';
-
-    // hide revision submit button initially
-    $("#submit-revision").hide()
 
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
@@ -83,7 +67,6 @@ $(document).ready(function() {
      * Selectors function
      * Write the queries using .on()
      */
-    $("#plot_download").hide();
     $(document).on("change", "#categories", function() {
         if ($("#categories").val() == 0) {
             $("#download-book").hide();
@@ -95,25 +78,18 @@ $(document).ready(function() {
         } else {
             $("#books-wrapper").show();
         }
-
         $("#books-wrapper").html("");
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
         $("#contributor").hide();
-        $("#revisions-wrapper").html("");
-
-        // hide revision submit button if one selects different category
-        $("#submit-revision").hide()
-
-        if ($("#categories").val()) {
-            ajax_loader("#categories");
-            Dajaxice.website.books(function(data) {
-                Dajax.process(data);
-                ajax_loader("clear");
-            }, {category_id: $("#categories").val()});
-        }
+        ajax_loader(this);
+        Dajaxice.website.books(function(data) {
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {
+            category_id: $(this).val()
+        });
     });
-
     if ($("#books").val() > 0) {
         $("#contributor").show();
         $("#download-book").show();
@@ -121,15 +97,11 @@ $(document).ready(function() {
         $("#contributor").hide();
         $("#download-book").hide();
     }
-
     $(document).on("change", "#books", function() {
         $("#chapters-wrapper").html("");
         $("#examples-wrapper").html("");
-        $("#revisions-wrapper").html("");
-
         $("#contributor").show();
         $("#download-book").show();
-
         if ($("#books").val() == 0) {
             $("#chapters-wrapper").hide();
             $("#download-book").hide();
@@ -140,33 +112,22 @@ $(document).ready(function() {
         } else {
             $("#chapters-wrapper").show();
         }
-
-        // hide revision submit button if one selects different book
-        $("#submit-revision").hide()
-
-        if ($("#books").val()) {
-            ajax_loader("#books");
-            Dajaxice.website.chapters(function(data) { 
-                Dajax.process(data);
-                ajax_loader("clear");
-            }, {book_id: $("#books").val()});
-        }
+        ajax_loader(this);
+        Dajaxice.website.chapters(function(data) {
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {
+            book_id: $(this).val()
+        });
     });
-
     if ($("#chapters").val() > 0) {
         $("#download-chapter").show();
     } else {
         $("#download-chapter").hide();
     }
-
     $(document).on("change", "#chapters", function() {
         $("#examples-wrapper").html("");
-        $("#revisions-wrapper").html("");
         $("#download-chapter").show();
-
-        // hide revision submit button if one selects different chapter
-        $("#submit-revision").hide()
-
         if ($("#chapters").val() == 0) {
             $("#examples-wrapper").hide();
             $("#download-chapter").hide();
@@ -177,30 +138,21 @@ $(document).ready(function() {
         } else {
             $("#examples-wrapper").show();
         }
-
-        if ($(this).val()) {
-            ajax_loader(this);
-            Dajaxice.website.examples(function(data) { 
-                Dajax.process(data);
-                ajax_loader("clear");
-            }, {chapter_id: $(this).val()});
-        }
+        ajax_loader(this);
+        Dajaxice.website.examples(function(data) {
+            Dajax.process(data);
+            ajax_loader("clear");
+        }, {
+            chapter_id: $(this).val()
+        });
     });
-
     if ($("#examples").val() > 0) {
         $("#download-example").show();
     } else {
         $("#download-example").hide();
     }
-
     $(document).on("change", "#examples", function() {
-
-        $("#revisions-wrapper").html("");
         $("#download-example").show();
-
-        // hide revision submit button if one selects different example
-        $("#submit-revision").hide()
-
         if ($("#examples").val() == 0) {
             $("#download-example").hide();
             editor.setValue("");
@@ -208,80 +160,26 @@ $(document).ready(function() {
             editor.clearHistory();
             $("#review").hide();
         }
-
-        if ($(this).val()) {
-            ajax_loader(this);
-            Dajaxice.website.revisions(function(data) { 
-                Dajax.process(data);
-                ajax_loader("clear");
-
-                $("#revisions-two").hide()
-                $('#revisions option:eq(0)').prop('selected', true)
-                ajax_loader('#revisions');
-                Dajaxice.website.code(function(data) {
-                    editor.setValue(data.code);
-                    initial_code = editor.getValue()
-                    ajax_loader("clear");
-                    $("#submit-revision").show()
-                    $("#revisions-two").show()
-                }, {commit_sha: $('#revisions').val()});
-
-            }, {example_id: $(this).val()});
-        }
-    });
-
-    $(document).on("change", "#revisions", function() {
-        $("#revisions-two").hide()
-        if ($(this).val()) { 
-            ajax_loader(this);
-            Dajaxice.website.code(function(data) {
-                editor.setValue(data.code);
-                initial_code = editor.getValue()
-
-                if (data.review != 0) {
-                    $("#review").show();
-                    $("#review").attr("href", data.review_url);
-                    $("#review").text(data.review + " " + "Review");
-                } else {
-                    $("#review").hide();
-                }
-
-                ajax_loader("clear");
-
-                // show revision submit button when a revision is loaded
-                $("#submit-revision").show()
-                $("#revisions-two").show()
-
-            }, {commit_sha: $(this).val()});
-        }
-    });
-
-    $(document).on("change", "#revisions-diff", function(e) {
-        if ($(this).val()) {
-            ajax_loader(this);
-            var revName = $("#revisions-diff").find(":selected").text();
-            Dajaxice.website.diff(function(data) {
-                Dajax.process(data.dajax)
-                ajax_loader("clear");
-                $("#diff-wrapper").lightbox_me({centered: false});
-                $("#diff-area").html(diffString(editor.getValue(), data.code2))
-
-                $("#diff-first").html('editor code')
-                console.log(revName)
-                $("#diff-second").html(revName)
-            }, {
-                diff_commit_sha: $(this).val(),
-                editor_code: editor.getValue(),
-            });
-            e.preventDefault();
-        }
+        ajax_loader(this);
+        Dajaxice.website.code(function(data) {
+            editor.setValue(data.code);
+            if (data.review != 0) {
+                $("#review").show();
+                $("#review").attr("href", data.review_url);
+                $("#review").text(data.review + " " + "Review");
+            } else {
+                $("#review").hide();
+            }
+            ajax_loader("clear");
+        }, {
+            example_id: $(this).val()
+        });
     });
 
     
     /* Execute the code */
     $plotbox_wrapper = $("#plotbox-wrapper");
     $plotbox = $("#plotbox");
-
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
         var send_data = {
@@ -300,16 +198,12 @@ $(document).ready(function() {
                 $plot = $("<img>");
                 $plot.attr({
                     src: data.plot_path,
-                    width: '90%'
+                    width: 400
                 });
                 $plotbox.html($plot);
                 $plotbox_wrapper.lightbox_me({
                     centered: true
                 });
-                var dt = $("#examples option:selected").text();
-                $("#plot_download").show();
-                $("#plot_download").attr("download", dt+'.png');
-                $("#plot_download").attr("href", data.plot_path);
             }
         });
     });
@@ -330,6 +224,14 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+    /* Ajax loader */
+    function ajax_loader(key) {
+        if (key == "clear") {
+            $(".ajax-loader").remove();
+        } else {
+            $(key).after("<span class='ajax-loader'></span>");
+        }
+    }
 
     /* Contributor details */
     $(document).on("click", "#contributor", function(e) {
@@ -386,51 +288,8 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-    // $(document).on("click", "#bug-form #id_notify", function() {
-    //     $("#id_email_wrapper").toggle(this.checked);
-    // });
-
-    // submit revision handling
-    $(document).on("click", "#submit-revision", function(e) {
-        if (editor.getValue() == initial_code) {
-            Dajaxice.website.revision_error(function(data) {
-                Dajax.process(data);
-                $("#submit-revision-error-wrapper").lightbox_me({centered: false});
-            });
-        } else {
-            Dajaxice.website.revision_form(function(data) {
-                Dajax.process(data);
-                $("#submit-revision-wrapper").lightbox_me({centered: false});
-            });
-        }
-        e.preventDefault();
-    });
-
-    // onclick callback for revision-submit button click
-    $(document).on("click", "#revision-form-submit", function(e) {
-        ajax_loader(this);
-        Dajaxice.website.revision_form_submit(function(data) {
-                Dajax.process(data);
-                initial_code = editor.getValue()
-            }, 
-            {
-                form: $('#revision-form').serialize(true),
-                code: editor.getValue(),
-            }
-        );
-        e.preventDefault();
-    });
+    /*$(document).on("click", "#bug-form #id_notify", function() {
+        $("#id_email_wrapper").toggle(this.checked);
+    });*/
 
 });
-
-
-
-
-
-
-
-
-
-
-
-

@@ -6,7 +6,8 @@ dajaxice_autodiscover()
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     # Examples:
     # url(r'^$', 'soc.views.home', name='home'),
     # url(r'^soc/', include('soc.foo.urls')),
@@ -20,7 +21,7 @@ urlpatterns = patterns('',
 
     # google auth
     url('', include('social.apps.django_app.urls', namespace='social')),
-    
+
     # Dajaxice urls
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )

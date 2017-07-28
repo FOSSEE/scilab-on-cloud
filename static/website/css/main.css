@@ -95,6 +95,10 @@ body, html {
     position: absolute;
     right: 0px;
 }
+#review-link {
+    position: absolute;
+    right: 40px;
+}
 #controls a {
     text-decoration: none;
 }
@@ -201,7 +205,7 @@ table td {
     margin-bottom: 0;
 }
 #bug-form #id_email_wrapper {
-    display: none;
+   /* display: none;*/
 }
 #bug-form #non-field-errors .error-message{
     border: 1px solid tomato;
@@ -216,4 +220,7 @@ table td {
 #revisions-two {
     position: absolute;
     left: 400px;
+
+.req {
+    color: red;
 }
