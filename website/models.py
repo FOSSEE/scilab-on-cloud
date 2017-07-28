@@ -9,11 +9,11 @@ class TextbookCompanionPreference(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     proposal_id = models.IntegerField()
     pref_number = models.IntegerField()
-    book = models.CharField(max_length=100L)
-    author = models.CharField(max_length=100L)
-    isbn = models.CharField(max_length=25L)
-    publisher = models.CharField(max_length=50L)
-    edition = models.CharField(max_length=2L)
+    book = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=25)
+    publisher = models.CharField(max_length=50)
+    edition = models.CharField(max_length=2)
     year = models.IntegerField()
     category = models.IntegerField()
     approval_status = models.IntegerField()
@@ -21,27 +21,59 @@ class TextbookCompanionPreference(models.Model):
     class Meta:
         db_table = 'textbook_companion_preference'
 
+class TextbookCompanionCategoryList(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    category_name = models.CharField(max_length=100)
+    category_id = models.IntegerField()
+    maincategory = models.CharField(max_length=255)
+    class Meta:
+        db_table = 'list_of_category'
+
+class ScilabCloudComment(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    type = models.IntegerField()
+    comment = models.TextField()
+    email = models.CharField(max_length=100)
+    category = models.IntegerField()
+    books = models.IntegerField()
+    chapter = models.IntegerField()
+    example = models.IntegerField()
+    reply = models.TextField()
+    reply_status = models.IntegerField(default='0')
+    user = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now=True)
+    class Meta:
+        db_table = 'scilab_cloud_comment'
+
+class TextbookCompanionSubCategoryList(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    subcategory_id = models.IntegerField()
+    subcategory = models.CharField(max_length=255)
+    maincategory_id = models.IntegerField()
+    class Meta:
+        db_table = 'list_of_subcategory'
+
 class TextbookCompanionProposal(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     uid = models.IntegerField()
     approver_uid = models.IntegerField()
-    full_name = models.CharField(max_length=50L)
-    mobile = models.CharField(max_length=15L)
-    gender = models.CharField(max_length=10L)
-    how_project = models.CharField(max_length=50L)
-    course = models.CharField(max_length=50L)
-    branch = models.CharField(max_length=50L)
-    university = models.CharField(max_length=100L)
-    faculty = models.CharField(max_length=100L)
-    reviewer = models.CharField(max_length=100L)
+    full_name = models.CharField(max_length=50)
+    mobile = models.CharField(max_length=15)
+    gender = models.CharField(max_length=10)
+    how_project = models.CharField(max_length=50)
+    course = models.CharField(max_length=50)
+    branch = models.CharField(max_length=50)
+    university = models.CharField(max_length=100)
+    faculty = models.CharField(max_length=100)
+    reviewer = models.CharField(max_length=100)
     completion_date = models.IntegerField()
     creation_date = models.IntegerField()
     approval_date = models.IntegerField()
     proposal_status = models.IntegerField()
     message = models.TextField()
-    scilab_version = models.CharField(max_length=20L)
-    operating_system = models.CharField(max_length=20L)
-    teacher_email = models.CharField(max_length=20L)
+    scilab_version = models.CharField(max_length=20)
+    operating_system = models.CharField(max_length=20)
+    teacher_email = models.CharField(max_length=20)
     class Meta:
         db_table = 'textbook_companion_proposal'
 
@@ -49,8 +81,8 @@ class TextbookCompanionChapter(models.Model):
     id = models.IntegerField(primary_key=True)
     preference_id = models.IntegerField()
     number = models.IntegerField()
-    name = models.CharField(max_length=255L)
-    cloud_chapter_err_status = models.CharField(max_length=255L)
+    name = models.CharField(max_length=255)
+    cloud_chapter_err_status = models.CharField(max_length=255)
     class Meta:
         db_table = 'textbook_companion_chapter'
 
@@ -58,8 +90,8 @@ class TextbookCompanionExample(models.Model):
     id = models.IntegerField(primary_key=True)
     chapter_id = models.IntegerField()
     approver_uid = models.IntegerField()
-    number = models.CharField(max_length=10L)
-    caption = models.CharField(max_length=255L)
+    number = models.CharField(max_length=10)
+    caption = models.CharField(max_length=255)
     approval_date = models.IntegerField()
     approval_status = models.IntegerField()
     timestamp = models.IntegerField()
@@ -70,12 +102,12 @@ class TextbookCompanionExample(models.Model):
 class TextbookCompanionExampleFiles(models.Model):
     id = models.IntegerField(primary_key=True)
     example_id = models.IntegerField()
-    filename = models.CharField(max_length=255L)
-    filepath = models.CharField(max_length=500L)
-    filemime = models.CharField(max_length=255L)
+    filename = models.CharField(max_length=255)
+    filepath = models.CharField(max_length=500)
+    filemime = models.CharField(max_length=255)
     filesize = models.IntegerField()
-    filetype = models.CharField(max_length=1L)
-    caption = models.CharField(max_length=100L)
+    filetype = models.CharField(max_length=1)
+    caption = models.CharField(max_length=100)
     timestamp = models.IntegerField()
     class Meta:
         db_table = 'textbook_companion_example_files'
@@ -92,11 +124,11 @@ class TextbookCompanionExampleDependency(models.Model):
 class TextbookCompanionDependencyFiles(models.Model):
     id = models.IntegerField(primary_key=True)
     preference_id = models.IntegerField()
-    filename = models.CharField(max_length=255L)
-    filepath = models.CharField(max_length=500L)
-    filemime = models.CharField(max_length=255L)
+    filename = models.CharField(max_length=255)
+    filepath = models.CharField(max_length=500)
+    filemime = models.CharField(max_length=255)
     filesize = models.IntegerField()
-    caption = models.CharField(max_length=100L)
+    caption = models.CharField(max_length=100)
     description = models.TextField()
     timestamp = models.IntegerField()
     class Meta:

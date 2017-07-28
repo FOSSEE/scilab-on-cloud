@@ -7,7 +7,8 @@ import sys
 
 #importing the local variables
 from soc.settings import PROJECT_DIR
-from soc.config import SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH
+from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
+SCILAB_3 ,SCILAB_4, SCILAB_5
 
 ''' An object of class ScilabInstance handles spawning and maintaining of multiple
 scilab instances. 
@@ -37,117 +38,121 @@ After the execution of the code, the Pexpect object containing Scilab instance i
 put back into the instances list. 
 '''
 class ScilabInstance(object):
-	
-	#defining instance variables
-	def __init__(self):
-		self.maxsize = 5
-		self.instances = []
-		self.count = 0
 
-	# spawning an instance
-	def spawn_instance(self):	
-		if (self.count < self.maxsize):
-			new_instance = pexpect.spawn('scilab-adv-cli')
-			self.count += 1
-			try:
-				new_instance.expect('-->', timeout = 30)
-				self.instances.append(new_instance)
-			except:
-				new_instance.close()
-				self.count -= 1
-	
-	# killing some spawned instances
-	def kill_instances(self, count):
-		for i in range(count):
-			instance = self.instances.pop(0)
-			instance.close()
-			self.count -= 1
-	
-	# returns an active_instancescilab instance. This will block till it gets an active_instance.
-	def get_available_instance(self):
-		if not self.instances and self.count < self.maxsize:
-			self.spawn_instance()
-		while not self.instances:
-			pass
-		return self.instances.pop(0)
+    #defining instance variables
+    def __init__(self):
+        self.maxsize = 5
+        self.instances = []
+        self.count = 0
+
+    # spawning an instance
+    def spawn_instance(self):
+            if (self.count < self.maxsize):
+                SCILAB_BIN = BIN+'/'
+                SCILAB_BIN+=SCILAB_5
+                SCILAB_BIN+='/bin/scilab-adv-cli'
+                new_instance = pexpect.spawn(SCILAB_BIN)
+                self.count += 1
+                try:
+                    new_instance.expect('-->', timeout = 30)
+                    self.instances.append(new_instance)
+                except:
+                    new_instance.close()
+                    self.count -= 1
+
+    # killing some spawned instances
+    def kill_instances(self, count):
+        for i in range(count):
+            instance = self.instances.pop(0)
+            instance.close()
+            self.count -= 1
+
+    # returns an active_instancescilab instance. This will block till it gets an active_instance.
+    def get_available_instance(self):
+        if not self.instances and self.count < self.maxsize:
+            self.spawn_instance()
+        while not self.instances:
+            pass
+        return self.instances.pop(0)
 
 
-	def execute_code(self, code, token, book_id, dependency_exists):
-		#Check for system commands
-		system_commands = re.compile(
-			'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
-		)
-		if system_commands.search(code):
-			return { 
-				'output': 'System Commands not allowed',
-			}
+    def execute_code(self, code, token, book_id, dependency_exists):
+        #Check for system commands
+        print "okk"
+        system_commands = re.compile(
+            'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
+        )
+        if system_commands.search(code):
+            return { 
+                'output': 'System Commands not allowed',
+                }
 
-		#Remove all clear;
-		code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
+        #Remove all clear;
+        code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
 
-		plot_exists = False
+        plot_exists = False
 
-		#Finding the plot and appending xs2jpg function
-		#p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
-		p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
+        #Finding the plot and appending xs2jpg function
+        #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
+        p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
 
-		plot_path = ''
-		if p.search(code):
-			plot_exists = True
-			code = code + '\n'
-			current_time = time.time()
-			plot_path = PROJECT_DIR + '/static/tmp/{0}.png'.format(str(current_time))
-			#code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
+        plot_path = ''
+        if p.search(code):
+            plot_exists = True
+            code = code + '\n'
+            current_time = time.time()
+            plot_path = PROJECT_DIR + '/static/tmp/{0}.png'.format(str(current_time))
+            #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
-		#Check whether to load scimax / maxima
-		if 'syms' in code or 'Syms' in code:
-			code = code.replace('syms', 'Syms')
-			code = 'exec(\'{0}\');\nmaxinit\n'.format(SCIMAX_LOADER) + code
+        #Check whether to load scimax / maxima
+        if 'syms' in code or 'Syms' in code:
+            code = code.replace('syms', 'Syms')
+            code = 'exec(\'{0}\');\nmaxinit\n'.format(SCIMAX_LOADER) + code
 
-		file_path = PROJECT_DIR + '/static/tmp/' + token + '.sci'
+        file_path = PROJECT_DIR + '/static/tmp/' + token + '.sci'
 
-		#traps even syntax errors eg: endfunton
-		f = open(file_path, "w")
-		f.write("clear;");
-		f.write('driver("PNG");\n')
-		f.write('xinit("{0}");\n'.format(plot_path))
-		f.write('mode(2);\n')
-		if dependency_exists:
-			f.write(
-				'getd("{0}/{1}/DEPENDENCIES/");'.format(UPLOADS_PATH, book_id)
-			)
-		f.write('lines(0);\n')
-		f.write(code)
-		f.write('\nxend();')
-		f.close()
-		
-		cmd = 'exec("' + file_path + '", 2);'
+        #traps even syntax errors eg: endfunton
+        f = open(file_path, "w")
+        f.write("clear;");
+        f.write('driver("PNG");\n')
+        f.write('xinit("{0}");\n'.format(plot_path))
+        f.write('mode(2);\n')
+        if dependency_exists:
+            f.write(
+            'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
+        )
+        f.write('lines(0);\n')
+        f.write(code)
+        f.write('\nxend();')
+        f.close()
 
-		active_instance= self.get_available_instance()
-		active_instance.sendline(cmd)
+        cmd = 'exec("' + file_path + '", 2);'
 
-		try:
-			active_instance.expect('\[0m ', timeout = 30)
-			active_instance.expect('', timeout = 30)
-			output = self.trim(active_instance.before)
-			self.instances.append(active_instance)
-			
-		except:
-			active_instance.before += "Exception Occured: It seems that you are running \
-											an infinite code"
-			output = self.trim(active_instance.before)
-			active_instance.close()
-			self.count -= 1		
-			if(self.count == 0):
-				self.spawn_instance()												
-		
-		data = {
-			'output': output,
-			'plot_path': plot_path.replace(PROJECT_DIR, '')
-		}
-		return data
+        active_instance= self.get_available_instance()
+        active_instance.sendline(cmd)
 
-	def trim(self, output):
-		output = [line for line in output.split('\n') if line.strip() != '']
-		output = '\n'.join(output)
-		return output
+        try:
+            active_instance.expect('\[0m ', timeout = 30)
+            active_instance.expect('', timeout = 30)
+            output = self.trim(active_instance.before)
+            self.instances.append(active_instance)
+
+        except:
+            active_instance.before += "Exception Occured: It seems that you are running \
+                                        an infinite code"
+            output = self.trim(active_instance.before)
+            active_instance.close()
+            self.count -= 1
+            if(self.count == 0):
+                self.spawn_instance()
+
+        data = {
+            'output': output,
+            'plot_path': plot_path.replace(PROJECT_DIR, '')
+        }
+        return data
+
+    def trim(self, output):
+        output = [line for line in output.split('\n') if line.strip() != '']
+        output = '\n'.join(output)
+        return output
