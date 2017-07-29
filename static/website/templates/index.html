@@ -1,16 +1,6 @@
-{% load static %}
-{% load dajaxice_templatetags %}
+{% load static %} {% load dajaxice_templatetags %}
 <html>
-    <head>
-        <title>Scilab on Cloud</title>
-        <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
-        <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
-        <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}"/>
-        {% dajaxice_js_import %}
-    </head>
+    {% include 'website/templates/head.html' %}
     <body>
         <div id="header-wrapper">
             <div id="header-inner">
@@ -21,9 +11,21 @@
                     </span>
                     <div id="navlinks">
                         <ul>
-                            <li><a class="node" data-key="about" href="#">About</a></li>
-                            <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                            <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
+                            {% if user and not user.is_anonymous %}
+                                {% if not user.is_staff %}
+                                    <li><a class="node" data-key="about" href="#">About</a></li>
+                                    <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
+                                    <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
+                                {% else %}
+                                    <li><a data-key="review-interface" href="/review">Review Interface</a></li>
+                                {% endif %}
+                                <li><a data-key="logout" href="/logout">Log out</a></li>
+                            {% else %}
+                                <li><a class="node" data-key="about" href="#">About</a></li>
+                                <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
+                                <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
+                                <li><a class="node" data-key="login" href="#">Log In</a></li>
+                            {% endif %}
                             <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
                         </ul>
                         <div class="clearfix"></div>
@@ -34,48 +36,105 @@
         <div id="content-wrapper">
             <div id="content-inner">
                 <div id="selectors">
+                    
                     <div id="category-wrapper">
+                        {% if catg %}
                         <label>Category: </label>
                         <select id="categories">
-                            <option value="">Select Category</option>
-                            <option value="10">Analog Electronics</option>
-                            <option value="3">Chemical Engineering</option>
-                            <option value="12">Computer Programming</option>
-                            <option value="2">Control Theory &amp; Control Systems</option>
-                            <option value="7">Digital Communications</option>
-                            <option value="11">Digital Electronics</option>
-                            <option value="8">Electrical Technology</option>
-                            <option value="1">Fluid Mechanics</option>
-                            <option value="9">Mathematics &amp; Pure Science</option>
-                            <option value="5">Mechanical Engineering</option>
-                            <option value="6">Signal Processing</option>
-                            <option value="4">Thermodynamics</option>
-                            <option value="13">Others</option>
+                            <option value="0">Select Category</option>
+                            {% for category in catg %} {% if category_id == category.id %}
+                            <option value="{{ category.id }}" selected>{{ category.category_name }}</option>
+                            {% else %}
+                            <option value="{{ category.id }}">{{ category.category_name }}</option>
+                            {% endif %} {% endfor %}
                         </select>
+                        {% endif %}
                         <a href="#" class="extra-link" id="contributor">+Contributor</a>
                     </div>
-                    <div id="books-wrapper"></div>
-                    <div id="chapters-wrapper"></div>
-                    <div id="examples-wrapper"></div>
+
+                    <div id="books-wrapper">
+                        {% if books %}
+                        <label>Book: </label>
+                        <select id="books">
+                            <option value="">Select Book</option>
+                            {% for book in books %} {% if book_id == book.id %}
+                            <option value="{{ book.id }}" selected>{{ book.book }} (by {{ book.author }})</option>
+                            {% else %}
+                            <option value="{{ book.id }}">{{ book.book }} (by {{ book.author }})</option>
+                            {% endif %} {% endfor %}
+                        </select>
+                        {% endif %}
+                        <a href="#" class="extra-link" id="download-book">Download Book</a>
+                    </div>
+
+                    <div id="chapters-wrapper">
+                        {% if chapters %}
+                        <label>Chapter: </label>
+                        <select id="chapters">
+                            <option value="">Select Chapter</option>
+                            {% for chapter in chapters %} {% if chapter_id == chapter.id %}
+                            <option value="{{ chapter.id }}" selected>{{ chapter.number }} - {{ chapter.name }}</option>
+                            {% else %}
+                            <option value="{{ chapter.id }}">{{ chapter.number }} - {{ chapter.name }}</option>
+                            {% endif %} {% endfor %}
+                        </select>
+                        {% endif %}
+                        <a href="#" class="extra-link" id="download-chapter">Download Chapter</a>
+                    </div>
+
+                    <div id="examples-wrapper">
+                        {% if examples %}
+                        <label>Example: </label>
+                        <select id="examples">
+                            <option value="0">Select Example</option>
+                            <!-- <! modified option value > -->
+
+                            {% for example in examples %} {% if eid == example.id %}
+                            <option value="{{ example.example_id }}" selected>{{ example.number }} - {{ example.caption }}</option>
+                            {% else %}
+                            <option value="{{ example.example_id }}">{{ example.number }} - {{ example.caption }}</option>
+                            {% endif %} {% endfor %}
+                        </select>
+                        {% endif %}
+                        <a href="#" class="extra-link" id="download-example">Download Example</a>
+                    </div>
+
+                    <div id="revisions-wrapper"></div>
                 </div>
-                <div id="content">
-                    <div id="input">
-                        <label>
-                            Scilab Code 
-                            <span id="controls">
-                                <a href="#" id="toggle-code">
-                                    <img src="{% static 'website/images/icon-toggle.png'%}">
-                                </a>
-                                <a href="#" id="fullscreen-code">
-                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                                </a>
-                            </span> <!-- /#controls -->
-                        </label>
-                        <form>
-                            <textarea id="code" placeholder="Write a new code or select existing from above category..."></textarea>
-                        </form>
-                    </div><!-- /#input -->
+
+            <div id="content">
+                <div id="input">
+                    <label>
+                        Scilab Code
+                        <span id="review-link">
+                            {% if review %}
+                                <a href="{{ review_url}}" id="review" target="_blank">{{ review }} Review
+                            </a>
+                            {% else %}
+                                <a href="#" id="review" target="_blank"></a>
+                            {% endif %}
+                        </span>
+                        <span id="controls">
+                            <a href="#" id="toggle-code">
+                                <img src="{% static 'website/images/icon-toggle.png'%}">
+                            </a>
+                            <a href="#" id="fullscreen-code">
+                                <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                            </a>
+                        </span> <!-- /#controls -->
+                    </label>
+                    <form>
+                        <textarea id="code" placeholder="Write a new code or select existing from above category...">{{ code }}</textarea>
+                    </form>
+                </div><!-- /#input -->
+
+                    
                     <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
+
+                    <!-- show submit revision only if user is logged in -->
+                    {% if user and not user.is_anonymous %}
+                        <a id="submit-revision" class="button">Submit a revision</a>
+                    {% endif %}
 
                     <div id="output">
                         <label>
@@ -87,44 +146,56 @@
                                 <a href="#" id="fullscreen-result">
                                     <img src="{% static 'website/images/icon-fullscreen.png'%}">
                                 </a>
-                            </span> <!-- /#controls -->
+                            </span><!-- /#controls -->
                         </label>
                         <textarea id="result"></textarea>
                     </div> <!-- /#output -->
-                    <a id="bug" class="button">Report bug / Give Feedback</a>
+                    
+                <a id="bug" class="button">Report bug / Give Feedback</a>
 
-                    <div id="credits">
-                        <small>
+                <div id="credits">
+                    <small>
                             Disclaimer: Scilab is a trademark of Inria 
                             (registered at the INPI for France and the rest of the World) 
                             and Scilab Enterprises is granted exclusive rights for 
                             Scilab Trademark.
-                        </small>
-                        Copyright IIT Bombay
-                    </div> <!-- /#credits -->
-                </div> <!-- /#content -->
-            </div> <!-- /#content-inner -->
-        </div> <!-- /#content-wrapper -->
+                        </small> Copyright IIT Bombay
+                </div>
+                <!-- /#credits -->
+            </div>
+            <!-- /#content -->
+        </div>
+        <!-- /#content-inner -->
+    </div>
+    <!-- /#content-wrapper -->
 
     <div id="plotbox-wrapper">
         <div id="plotbox"></div>
-    </div> <!-- /#plotbox-wrapper -->
+        <span><a href="#" id="plot_download" download="Plot">Download</a></span>
+    </div>
+    <!-- /#plotbox-wrapper -->
 
     <div id="databox-wrapper">
         <div id="databox"></div>
-    </div> <!-- /#databox-wrapper -->
+    </div>
+    <!-- /#databox-wrapper -->
 
     <div id="bug-form-wrapper">
-    </div> <!-- /#databox-wrapper -->
+    </div>
+    <!-- /#databox-wrapper -->
 
-    <script src="{% static 'website/js/jquery-1.10.2.min.js' %}"></script>
-    <script src="{% static '/static/dajax/jquery.dajax.core.js' %}"></script>
-    <script src="{% static 'website/js/codemirror.js'%}"></script>
-    <script src="{% static 'website/js/javascript.js'%}"></script>
-    <script src="{% static 'website/js/fullscreen.js'%}"></script>
-    <script src="{% static 'website/js/placeholder.js'%}"></script>
-    <script src="{% static 'website/js/lightbox_me.js'%}"></script>
+    <div id="submit-revision-wrapper">
+    </div>
+
+    <div id="submit-revision-error-wrapper">
+    </div>
+
+    <div id="diff-wrapper"></div>
+
+    {% include 'website/templates/footer.html' %}
     <script src="{% static 'website/js/cloud.js'%}"></script>
+    
     {% csrf_token %}
-    </body>
+</body>
+
 </html>

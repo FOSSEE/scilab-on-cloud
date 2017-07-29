@@ -68,7 +68,7 @@ body, html {
 }
 #content {
     position: absolute;
-    top: 200px;
+    top: 250px;
     bottom: 20px;
     width: 100%;
     min-height: 400px;
@@ -95,6 +95,10 @@ body, html {
     position: absolute;
     right: 0px;
 }
+#review-link {
+    position: absolute;
+    right: 40px;
+}
 #controls a {
     text-decoration: none;
 }
@@ -112,6 +116,16 @@ body, html {
 #execute {
     position: absolute;
     left: 15px;
+    bottom: -15px;
+}
+#submit-revision, #push {
+    position: absolute;
+    left: 95px;
+    bottom: -15px;
+}
+#remove {
+    position: absolute;
+    left: 200px;
     bottom: -15px;
 }
 #bug {
@@ -135,7 +149,10 @@ body, html {
 }
 #plotbox-wrapper,
 #databox-wrapper,
-#bug-form-wrapper {
+#bug-form-wrapper, 
+#submit-revision-wrapper,
+#submit-revision-error-wrapper,
+#diff-wrapper {
     padding: 35px;
     background: #ffffff;
     -webkit-box-shadow: 0 0 10px #ffffff;
@@ -188,10 +205,22 @@ table td {
     margin-bottom: 0;
 }
 #bug-form #id_email_wrapper {
-    display: none;
+   /* display: none;*/
 }
 #bug-form #non-field-errors .error-message{
     border: 1px solid tomato;
     width: 80%;
     padding: 5px;
+}
+
+#revisions-one, #revisions-two {
+    float: left;
+}
+
+#revisions-two {
+    position: absolute;
+    left: 400px;
+
+.req {
+    color: red;
 }
