@@ -97,7 +97,7 @@ def execute(request, token, code, book_id, chapter_id, example_id, category_id):
                         .objects.using('scilab').filter(example_id=example_id)\
                         .exists()
     # modified code
-    dependency_exists = entry(code, example_id, dependency_exists)
+    dependency_exists = entry(code, example_id, dependency_exists, book_id)
     condition = token is 0 or book_id is 0 or example_id is 0 or chapter_id\
                  is 0 or category_id is 0
     #modified code
