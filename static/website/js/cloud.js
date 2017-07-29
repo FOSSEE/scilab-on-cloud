@@ -215,12 +215,23 @@ $(document).ready(function() {
                 Dajax.process(data);
                 ajax_loader("clear");
 
+                console.log($('#revisions').val())
+
                 $("#revisions-two").hide()
                 $('#revisions option:eq(0)').prop('selected', true)
                 ajax_loader('#revisions');
                 Dajaxice.website.code(function(data) {
                     editor.setValue(data.code);
                     initial_code = editor.getValue()
+
+                    if (data.review != 0) {
+                        $("#review").show();
+                        $("#review").attr("href", data.review_url);
+                        $("#review").text(data.review + " " + "Review");
+                    } else {
+                        $("#review").hide();
+                    }
+
                     ajax_loader("clear");
                     $("#submit-revision").show()
                     $("#revisions-two").show()
