@@ -88,7 +88,7 @@ class ScilabInstance(object):
                 }
 
         #Remove all clear;
-        code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
+        code = re.sub(r'clear.*all|clear|clc\(\)|clc\\|\bclc\b', '', code)
 
         plot_exists = False
 
