@@ -9,8 +9,6 @@
 *.swo
 *.pyc
 
-config.py
 tmp/
 local.py
-soc/config.py
 soc/local.py

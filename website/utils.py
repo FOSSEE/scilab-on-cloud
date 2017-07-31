@@ -1,29 +1,11 @@
-from github import Github
 import requests
 from urlparse import urljoin
 import json
 
 from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT
 
-g = Github(GITHUB_ACCESS_TOKEN_SOCBOT)
-# FOSSEE = g.get_organization('FOSSEE')
-# repo = FOSSEE.get_repo('Scilab-TBC-Uploads')
-
-user = g.get_user('socbot')
-repo = user.get_repo('Scilab-TBC-Uploads')
-
 TEMP_USER = 'appucrossroads'
 MAIN_USER = 'socbot'
-
-print(repo.name)
-
-
-def pygithub_get_commits(file_path, main_repo=True):
-    return repo.get_commits(path=file_path)
-
-
-def pygithub_get_file_contents(file_path, revision_id):
-    return repo.get_file_contents(path=file_path, ref=revision_id)
 
 
 def get_commits(file_path, main_repo=True):

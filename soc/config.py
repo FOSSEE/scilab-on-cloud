@@ -1,16 +1,16 @@
-DB_NAME_DEFAULT = 'soc'
-DB_USER_DEFAULT = 'root'
-DB_PASS_DEFAULT = 'password'
+DB_NAME_DEFAULT = 'default_db'
+DB_USER_DEFAULT = 'db user'
+DB_PASS_DEFAULT = 'db pass'
 DB_HOST_DEFAULT = ''
 DB_PORT_DEFAULT = ''
 
-DB_NAME_SCILAB = 'scilab-test'
-DB_USER_SCILAB = 'root'
-DB_PASS_SCILAB = 'password'
+DB_NAME_SCILAB = 'external db'
+DB_USER_SCILAB = 'external db user'
+DB_PASS_SCILAB = 'external db pass'
 DB_HOST_SCILAB = ''
 DB_PORT_SCILAB = ''
 
-BIN = 'scilab directory path'
+BIN = '<scilab directory path>'
 # SCILAB_FLAGS = '-noatomsautoload'
 SCILAB_FLAGS = '-noatomsautoload -nogui -nb '
 SCIMAX_LOADER = 'scimax directory path/loader.sce'
@@ -35,4 +35,12 @@ TO_EMAIL = 'to'
 CC_EMAIL = 'cc'
 BCC_EMAIL = 'bcc'
 
-# ADD API KEYS
+# github
+GITHUB_ACCESS_TOKEN = '<token_for_temp_repo>'
+GITHUB_ACCESS_TOKEN_SOCBOT = '<token_for_main_repo>'
+
+# python social auth
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_URL = '/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '<google_oauth2_key>'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '<google_oauth2_secret>'
