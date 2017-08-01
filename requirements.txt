@@ -10,3 +10,8 @@ tornado==4.0.2
 wsgiref==0.1.2
 futures
 pexpect
+requests
+urlparse
+json
+base64
+python-social-auth==0.2.1
