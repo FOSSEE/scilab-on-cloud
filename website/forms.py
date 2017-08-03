@@ -12,6 +12,7 @@ issues = (
     (7, 'Any other / General'),
 )
 
+
 class BugForm(forms.Form):
     example = forms.CharField(widget=forms.HiddenInput(), required=False)
     issue = forms.CharField(widget=forms.Select(choices=issues))
@@ -27,10 +28,17 @@ class BugForm(forms.Form):
     def clean(self):
         cleaned_data = super(BugForm, self).clean()
         issue = self.cleaned_data.get('issue', None)
-        #example = self.cleaned_data.get('example', None)
-        if (issue and int(issue) == '' ):
+        # example = self.cleaned_data.get('example', None)
+        if (issue and int(issue) == ''):
             raise forms.ValidationError("""
                 Please select book, chapter and example.
                 Or select the *Any other/General* issue type.
             """)
         return cleaned_data
+
+
+class RevisionForm(forms.Form):
+    commit_message = forms.CharField(
+        widget=forms.Textarea,
+        required=True,
+        min_length=10)

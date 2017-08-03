@@ -1,0 +1,15 @@
+{% load static %}
+{% load dajaxice_templatetags %}
+
+<head>
+    <title>Scilab on Cloud</title>
+    <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
+    <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/review-interface.css' %}" rel="stylesheet"/>
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}"/>
+    {% dajaxice_js_import %}
+</head>
