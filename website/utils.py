@@ -2,11 +2,8 @@ import requests
 from urlparse import urljoin
 import json
 
-from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT
-
-TEMP_USER = 'appucrossroads'
-MAIN_USER = 'socbot'
-
+from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT,\
+TEMP_USER, MAIN_USER
 
 def get_commits(file_path, main_repo=True):
     """

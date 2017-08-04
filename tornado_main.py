@@ -11,6 +11,7 @@ import tornado.web
 import tornado.wsgi
 import os
 from django.utils import simplejson
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
 from website.models import TextbookCompanionExampleDependency, TextbookCompanionDependencyFiles
 
 from concurrent.futures import ThreadPoolExecutor
@@ -24,7 +25,7 @@ define('port', type=int, default=8080)
 # Custom settings
 from soc.settings import PROJECT_DIR
 from django.core.wsgi import get_wsgi_application
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
+
 
 # request_count keeps track of the number of requests at hand, it is incremented 
 # when post method is invoked and decremented before exiting post method in 
