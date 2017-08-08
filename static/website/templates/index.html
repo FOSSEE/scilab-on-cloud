@@ -20,6 +20,7 @@
                                     <li><a data-key="review-interface" href="/review">Review Interface</a></li>
                                 {% endif %}
                                 <li><a data-key="logout" href="/logout">Log out</a></li>
+                                <li> <a style="color:red">Hello, {{ user.get_full_name }}!</a></li>
                             {% else %}
                                 <li><a class="node" data-key="about" href="#">About</a></li>
                                 <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
