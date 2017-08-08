@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.core.context_processors import csrf
+from django.contrib.auth import logout
 from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
     TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
     TextbookCompanionPreference, TextbookCompanionChapter,\
@@ -117,6 +118,9 @@ def login(request):
     context = {}
     return render(request, 'website/templates/login.html', context)
 
+def logout(request):
+    auth_logout(request)
+    return render_to_response('registration/logged-out.html', {}, RequestContext(request))
 
 @user_passes_test(lambda u: u.is_staff)
 def review(request):
