@@ -113,7 +113,7 @@ class ScilabInstance(object):
 
         #traps even syntax errors eg: endfunton
         f = open(file_path, "w")
-        f.write("clear;");
+        #f.write("clear;");
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
