@@ -86,6 +86,12 @@ class ScilabInstance(object):
             return { 
                 'output': 'System Commands not allowed',
                 }
+        #check for clear
+        clc_exist = re.compile(r'clear.*all|clear|clc\(\)|clc\\|\bclc\b')
+        if clc_exist.search(code):
+            add_clear = True
+        else:
+            add_clear = False
 
         #Remove all clear;
         code = re.sub(r'clear.*all|clear|clc\(\)|clc\\|\bclc\b', '', code)
@@ -113,7 +119,8 @@ class ScilabInstance(object):
 
         #traps even syntax errors eg: endfunton
         f = open(file_path, "w")
-        #f.write("clear;");
+        if add_clear:
+          f.write('clear;\n');
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
