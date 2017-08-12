@@ -291,13 +291,15 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
 @dajaxice_register
 def revision_form(request):
     dajax = Dajax()
-    form = RevisionForm()
-    context = {'form': form}
-    context.update(csrf(request))
-    data = render_to_string('website/templates/submit-revision.html', context)
+    if not request.user.is_anonymous():
+        form = RevisionForm()
+        context = {'form': form}
+        context.update(csrf(request))
+        data = render_to_string('website/templates/submit-revision.html', context)
+    else:
+        data = render_to_string('website/templates/node-login.html', {})
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
-
 
 @dajaxice_register
 def revision_form_submit(request, form, code):
