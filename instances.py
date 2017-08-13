@@ -76,9 +76,11 @@ class ScilabInstance(object):
         return self.instances.pop(0)
 
 
-    def execute_code(self, code, token, book_id, dependency_exists):
+    def execute_code(self, code, token, book_id, dependency_exists, chapter_id, example_id):
+
         #Check for system commands
         print "okk"
+        #print code, token, book_id, dependency_exists
         system_commands = re.compile(
             'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
         )
@@ -124,7 +126,7 @@ class ScilabInstance(object):
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
-        if dependency_exists:
+        if dependency_exists==True and book_id != 0 and chapter_id != 0 and example_id != 0:
             f.write(
             'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
         )

@@ -79,7 +79,7 @@ class ExecutionHandler(tornado.web.RequestHandler):
         print dependency_exists
         dependency_exists = entry(code, example_id, dependency_exists, book_id)
         data  = yield executor.submit(scilab_executor.execute_code, code, token, 
-            book_id, dependency_exists)
+            book_id, dependency_exists, chapter_id, example_id)
         self.write(data)
         request_count -= 1
 
