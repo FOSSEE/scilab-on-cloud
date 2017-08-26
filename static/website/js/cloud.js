@@ -38,7 +38,10 @@ $(document).ready(function() {
     });
 
     var initial_code = '';
-
+    // editor.setValue("");
+    // result.setValue("");
+    // editor.clearHistory();
+    
     // hide revision submit button initially
     // $("#submit-revision").show()
 

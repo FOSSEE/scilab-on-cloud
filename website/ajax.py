@@ -167,7 +167,7 @@ def code(request, commit_sha):
     file_path = request.session['filepath']
     review = ScilabCloudComment.objects.using('scilab')\
         .filter(example=example_id).count()
-    review_url = "http://scilab.in/cloud_comments/" + example_id
+    review_url = "http://scilab.in/cloud_comments/" + str(example_id)
     # example_path = UPLOADS_PATH + '/' + file_path
 
     file = utils.get_file(file_path, commit_sha, main_repo=True)

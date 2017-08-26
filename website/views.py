@@ -98,6 +98,11 @@ def index(request):
             example_id = request.session['example_id']
             context['eid'] = int(example_id)
             context['revisions'] = get_revisions(example_id)
+            review = ScilabCloudComment.objects.using('scilab')\
+                .filter(example=example_id).count()
+            review_url = "http://scilab.in/cloud_comments/" + str(example_id)
+            context['review'] = review
+            context['review_url'] = review_url
 
         if 'commit_sha' in request.session:
             commit_sha = request.session['commit_sha']
@@ -123,38 +128,55 @@ def index(request):
                 categ_all = TextbookCompanionCategoryList.objects\
                     .using('scilab').all().order_by('category_name')
                 examples = TextbookCompanionExample.objects\
-                            .db_manager('scilab').raw(
-                            """SELECT id, id as example_id, caption, number,
-                            chapter_id FROM textbook_companion_example WHERE
-                            cloud_err_status=0 AND chapter_id =
-                            (SELECT chapter_id FROM textbook_companion_example
-                            WHERE id =%s)""", [eid])
+                    .db_manager('scilab').raw("""
+                        SELECT id, id as example_id,
+                            caption, number, chapter_id
+                        FROM textbook_companion_example
+                        WHERE cloud_err_status=0 AND
+                              chapter_id = (SELECT chapter_id
+                                            FROM textbook_companion_example
+                                            WHERE id =%s)""", [eid])
                 chapter_id = examples[0].chapter_id
                 chapters = TextbookCompanionChapter.objects\
-                            .db_manager('scilab').raw("""SELECT id, name,
-                            number, preference_id FROM
-                            textbook_companion_chapter WHERE
-                            cloud_chapter_err_status = 0 AND preference_id = (
-                            SELECT preference_id FROM textbook_companion_chapter
-                            WHERE id = %s) ORDER BY number ASC""", [chapter_id])
+                    .db_manager('scilab').raw("""
+                        SELECT id, name,
+                            number, preference_id
+                        FROM textbook_companion_chapter
+                        WHERE cloud_chapter_err_status = 0 AND
+                              preference_id = (SELECT preference_id
+                                               FROM textbook_companion_chapter
+                                               WHERE id = %s)
+                                               ORDER BY number ASC""", [chapter_id])
                 preference_id = chapters[0].preference_id
 
                 books = TextbookCompanionPreference.objects\
-                         .db_manager('scilab').raw("""SELECT pre.id, pre.book,
-                         author, category FROM textbook_companion_preference pre
-                         WHERE pre.approval_status=1 AND pre.category = (
-                         SELECT category FROM textbook_companion_preference
-                         WHERE id = %s) AND cloud_pref_err_status=0 and
-                         pre.proposal_id IN (SELECT id from
-                         textbook_companion_proposal where proposal_status=3
-                         ) ORDER BY pre.book ASC""", [preference_id])
+                    .db_manager('scilab').raw("""
+                        SELECT pre.id, pre.book,
+                            author, category
+                        FROM textbook_companion_preference pre
+                        WHERE pre.approval_status=1 AND
+                              pre.category = (SELECT category
+                                              FROM textbook_companion_preference
+                                              WHERE id = %s) AND
+                              cloud_pref_err_status=0 AND
+                              pre.proposal_id IN (SELECT id
+                                                  FROM textbook_companion_proposal 
+                                                  WHERE proposal_status=3)
+                        ORDER BY pre.book ASC""", [preference_id])
                 category_id = books[0].category
-                example = TextbookCompanionExampleFiles.objects.using('scilab')\
-                           .get(example_id=eid, filetype='S')
-                example_path = UPLOADS_PATH + '/' + example.filepath
-                f = open(example_path)
-                code = f.read()
-                f.close()
+                example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
+                    .get(example_id=eid, filetype='S')
+
+                request.session['category_id'] = category_id
+                request.session['book_id'] = preference_id
+                request.session['chapter_id'] = chapter_id
+                request.session['example_id'] = eid
+                request.session['example_file_id'] = example_file.id
+                request.session['filepath'] = example_file.filepath
+
+                revisions = get_revisions(eid)
+                code = get_code(example_file.filepath, revisions[0]['sha'])
+                request.session['commit_sha'] = revisions[0]['sha']
 
             except IndexError:
                 return redirect("/")
@@ -168,6 +190,8 @@ def index(request):
                 'chapter_id': chapter_id,
                 'examples': examples,
                 'eid': eid,
+                'revisions': revisions,
+                'commit_sha': revisions[0]['sha'],
                 'code': code,
                 'review': review,
                 'review_url': review_url,
