@@ -336,16 +336,25 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
 
 # submit revision
 @dajaxice_register
-def revision_form(request, code):
+def revision_form(request, code, initial_code):
     dajax = Dajax()
-
     request.session['code'] = code
+
+    if code == initial_code:
+        context = {
+            'error_message': 'You have not made any changes',
+        }
+        data = render_to_string('website/templates/submit-revision-error.html', context)
+        dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
+        return dajax.json()
 
     if not request.user.is_anonymous():
         if 'commit_sha' not in request.session:
-            context = {'error_message': 'Please select a revision'}
+            context = {
+                'error_message': 'Please select a revision',
+            }
             data = render_to_string('website/templates/submit-revision-error.html', context)
-            dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
+            dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
             return dajax.json()
 
         form = RevisionForm()

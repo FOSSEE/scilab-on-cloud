@@ -403,17 +403,18 @@ $(document).ready(function() {
 
     // submit revision handling
     $(document).on("click", "#submit-revision", function(e) {
-        if (editor.getValue() == initial_code) {
-            Dajaxice.website.revision_error(function(data) {
-                Dajax.process(data);
-                $("#submit-revision-error-wrapper").lightbox_me({centered: false});
-            });
-        } else {
+        // if (editor.getValue() == initial_code) {
+        //     Dajaxice.website.revision_error(function(data) {
+        //         Dajax.process(data);
+        //         $("#submit-revision-error-wrapper").lightbox_me({centered: false});
+        //     });
+        // } else {
             Dajaxice.website.revision_form(function(data) {
                 Dajax.process(data);
                 $("#submit-revision-wrapper").lightbox_me({centered: false});
-            },{code: editor.getValue(),});
-        }
+            },{code: editor.getValue(),
+               initial_code: initial_code});
+        // }
         e.preventDefault();
     });
 
