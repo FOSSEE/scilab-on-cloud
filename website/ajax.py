@@ -34,12 +34,29 @@ import utils
 import json
 
 
+def remove_from_session(request, keys):
+    for key in keys:
+        request.session.pop(key, None)
+
+
 @dajaxice_register
 def books(request, category_id):
     dajax = Dajax()
     context = {}
 
     if category_id:
+        # store category_id in cookie/session
+        request.session['category_id'] = category_id
+        remove_from_session(request, [
+            'book_id',
+            'chapter_id',
+            'example_id',
+            'commit_sha',
+            'example_file_id',
+            'filepath',
+            'code',
+        ])
+
         ids = TextbookCompanionProposal.objects.using('scilab')\
             .filter(proposal_status=3).values('id')
         books = TextbookCompanionPreference.objects.using('scilab')\
@@ -60,9 +77,18 @@ def chapters(request, book_id):
     dajax = Dajax()
     context = {}
     if book_id:
-        chapters = TextbookCompanionChapter.objects.using('scilab')\
-                    .filter(preference_id=book_id).order_by('number')
+        request.session['book_id'] = book_id
+        remove_from_session(request, [
+            'chapter_id',
+            'example_id',
+            'commit_sha',
+            'example_file_id',
+            'filepath',
+            'code',
+        ])
 
+        chapters = TextbookCompanionChapter.objects.using('scilab')\
+            .filter(preference_id=book_id).order_by('number')
         context = {
             'chapters': chapters
         }
@@ -76,9 +102,17 @@ def examples(request, chapter_id):
     dajax = Dajax()
     context = {}
     if chapter_id:
+        request.session['chapter_id'] = chapter_id
+        remove_from_session(request, [
+            'example_id',
+            'commit_sha',
+            'example_file_id',
+            'filepath',
+            'code',
+        ])
+
         examples = TextbookCompanionExample.objects.using('scilab')\
             .filter(chapter_id=chapter_id).order_by('number')
-        request.session['chapter_id'] = chapter_id
         context = {
             'examples': examples
         }
@@ -91,15 +125,22 @@ def examples(request, chapter_id):
 @dajaxice_register
 def revisions(request, example_id):
     dajax = Dajax()
-    print('revisions')
+
+    request.session['example_id'] = example_id
+    remove_from_session(request, [
+            'commit_sha',
+            'example_file_id',
+            'filepath',
+            'code',
+        ])
+
     example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
 
     request.session['example_file_id'] = example_file.id
-    request.session['example_id'] = example_id
+    request.session['filepath'] = example_file.filepath
 
     commits = utils.get_commits(file_path=example_file.filepath)
-    request.session['filepath'] = example_file.filepath
 
     context = {
         'revisions': commits,
@@ -113,15 +154,21 @@ def revisions(request, example_id):
 
 @dajaxice_register
 def code(request, commit_sha):
+
+    request.session['commit_sha'] = commit_sha
+    remove_from_session(request, [
+                'code',
+            ])
+
     code = ''
     review = ''
     review_url = ''
     example_id = request.session['example_id']
     file_path = request.session['filepath']
     review = ScilabCloudComment.objects.using('scilab')\
-                .filter(example=example_id).count()
+        .filter(example=example_id).count()
     review_url = "http://scilab.in/cloud_comments/" + example_id
-    example_path = UPLOADS_PATH + '/' + file_path
+    # example_path = UPLOADS_PATH + '/' + file_path
 
     file = utils.get_file(file_path, commit_sha, main_repo=True)
     code = base64.b64decode(file['content'])
@@ -154,9 +201,9 @@ def execute(request, token, code, book_id, chapter_id, example_id, category_id):
 def contributor(request, book_id):
     dajax = Dajax()
     preference = TextbookCompanionPreference.objects.using('scilab')\
-                 .get(id=book_id)
+        .get(id=book_id)
     proposal = TextbookCompanionProposal.objects.using('scilab')\
-                .get(id=preference.proposal_id)
+        .get(id=preference.proposal_id)
     context = {
         "preference": preference,
         "proposal": proposal,
@@ -289,9 +336,18 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
 
 # submit revision
 @dajaxice_register
-def revision_form(request):
+def revision_form(request, code):
     dajax = Dajax()
+
+    request.session['code'] = code
+
     if not request.user.is_anonymous():
+        if 'commit_sha' not in request.session:
+            context = {'error_message': 'Please select a revision'}
+            data = render_to_string('website/templates/submit-revision-error.html', context)
+            dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
+            return dajax.json()
+
         form = RevisionForm()
         context = {'form': form}
         context.update(csrf(request))
@@ -300,6 +356,18 @@ def revision_form(request):
         data = render_to_string('website/templates/node-login.html', {})
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
+
+
+@dajaxice_register
+def revision_error(request):
+    dajax = Dajax()
+    context = {
+        'error_message': 'You have not made any changes',
+    }
+    data = render_to_string('website/templates/submit-revision-error.html', context)
+    dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
+    return dajax.json()
+
 
 @dajaxice_register
 def revision_form_submit(request, form, code):
@@ -351,14 +419,6 @@ def revision_form_submit(request, form, code):
             message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
             dajax.append('#non-field-errors', 'innerHTML', message)
 
-    return dajax.json()
-
-
-@dajaxice_register
-def revision_error(request):
-    dajax = Dajax()
-    data = render_to_string('website/templates/submit-revision-error.html', {})
-    dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
     return dajax.json()
 
 

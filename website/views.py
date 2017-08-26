@@ -9,7 +9,8 @@ from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
     TextbookCompanionRevision, TextbookCompanionExampleDependency,\
     TextbookCompanionDependencyFiles
 from soc.config import UPLOADS_PATH
-
+import utils
+import base64
 
 def catg(cat_id, all_cat):
     if all_cat is False:
@@ -20,6 +21,40 @@ def catg(cat_id, all_cat):
         category = TextbookCompanionCategoryList.objects.using('scilab')\
                     .all().order_by('category_name')
         return category
+
+
+def get_books(category_id):
+    ids = TextbookCompanionProposal.objects.using('scilab')\
+            .filter(proposal_status=3).values('id')
+    books = TextbookCompanionPreference.objects.using('scilab')\
+        .filter(category=category_id).filter(approval_status=1)\
+        .filter(proposal_id__in=ids).order_by('book')
+    return books
+
+
+def get_chapters(book_id):
+    chapters = TextbookCompanionChapter.objects.using('scilab')\
+                    .filter(preference_id=book_id).order_by('number')
+    return chapters
+
+
+def get_examples(chapter_id):
+    examples = TextbookCompanionExample.objects.using('scilab')\
+            .filter(chapter_id=chapter_id).order_by('number')
+    return examples
+
+
+def get_revisions(example_id):
+    example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
+        .get(example_id=example_id, filetype='S')
+    commits = utils.get_commits(file_path=example_file.filepath)
+    return commits
+
+
+def get_code(file_path, commit_sha):
+    file = utils.get_file(file_path, commit_sha, main_repo=True)
+    code = base64.b64decode(file['content'])
+    return code
 
 
 def index(request):
@@ -39,10 +74,40 @@ def index(request):
     #     }
 
     if not request.GET.get('eid'):
-        all_cat = True
-        cat_id = 'NULL'
-        catg_all = catg(cat_id, all_cat)
-        context = {'catg': catg_all}
+        catg_all = catg(None, all_cat=True)
+        context = {
+            'catg': catg_all,
+        }
+
+        if 'category_id' in request.session:
+            category_id = request.session['category_id']
+            context['category_id'] = int(category_id)
+            context['books'] = get_books(category_id)
+
+        if 'book_id' in request.session:
+            book_id = request.session['book_id']
+            context['book_id'] = int(book_id)
+            context['chapters'] = get_chapters(book_id)
+
+        if 'chapter_id' in request.session:
+            chapter_id = request.session['chapter_id']
+            context['chapter_id'] = int(chapter_id)
+            context['examples'] = get_examples(chapter_id)
+
+        if 'example_id' in request.session:
+            example_id = request.session['example_id']
+            context['eid'] = int(example_id)
+            context['revisions'] = get_revisions(example_id)
+
+        if 'commit_sha' in request.session:
+            commit_sha = request.session['commit_sha']
+            context['commit_sha'] = commit_sha
+
+            if 'code' in request.session:
+                context['code'] = request.session['code']
+            elif 'filepath' in request.session:
+                context['code'] = get_code(request.session['filepath'], commit_sha)
+
         return render(request, 'website/templates/index.html', context)
     else:
         try:
@@ -56,7 +121,7 @@ def index(request):
                          .filter(example=eid).count()
                 review_url = "http://scilab.in/cloud_comments/" + str(eid)
                 categ_all = TextbookCompanionCategoryList.objects\
-                            .using('scilab').all().order_by('category_name')
+                    .using('scilab').all().order_by('category_name')
                 examples = TextbookCompanionExample.objects\
                             .db_manager('scilab').raw(
                             """SELECT id, id as example_id, caption, number,
@@ -118,9 +183,11 @@ def login(request):
     context = {}
     return render(request, 'website/templates/login.html', context)
 
-def logout(request):
-    auth_logout(request)
-    return render_to_response('registration/logged-out.html', {}, RequestContext(request))
+# def logout(request):
+#     print('logging out..')
+#     auth_logout(request)
+#     return render_to_response('registration/logged-out.html', {}, RequestContext(request))
+
 
 @user_passes_test(lambda u: u.is_staff)
 def review(request):
