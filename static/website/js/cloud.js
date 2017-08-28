@@ -38,9 +38,12 @@ $(document).ready(function() {
     });
 
     var initial_code = '';
-
+    // editor.setValue("");
+    // result.setValue("");
+    // editor.clearHistory();
+    
     // hide revision submit button initially
-    $("#submit-revision").hide()
+    // $("#submit-revision").show()
 
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
@@ -103,7 +106,7 @@ $(document).ready(function() {
         $("#revisions-wrapper").html("");
 
         // hide revision submit button if one selects different category
-        $("#submit-revision").hide()
+        // $("#submit-revision").hide()
 
         if ($("#categories").val()) {
             ajax_loader("#categories");
@@ -142,7 +145,7 @@ $(document).ready(function() {
         }
 
         // hide revision submit button if one selects different book
-        $("#submit-revision").hide()
+        // $("#submit-revision").hide()
 
         if ($("#books").val()) {
             ajax_loader("#books");
@@ -165,7 +168,7 @@ $(document).ready(function() {
         $("#download-chapter").show();
 
         // hide revision submit button if one selects different chapter
-        $("#submit-revision").hide()
+        // $("#submit-revision").hide()
 
         if ($("#chapters").val() == 0) {
             $("#examples-wrapper").hide();
@@ -199,7 +202,7 @@ $(document).ready(function() {
         $("#download-example").show();
 
         // hide revision submit button if one selects different example
-        $("#submit-revision").hide()
+        // $("#submit-revision").hide()
 
         if ($("#examples").val() == 0) {
             $("#download-example").hide();
@@ -218,7 +221,7 @@ $(document).ready(function() {
                 console.log($('#revisions').val())
 
                 $("#revisions-two").hide()
-                $('#revisions option:eq(0)').prop('selected', true)
+                $('#revisions option:eq(1)').prop('selected', true)
                 ajax_loader('#revisions');
                 Dajaxice.website.code(function(data) {
                     editor.setValue(data.code);
@@ -403,17 +406,18 @@ $(document).ready(function() {
 
     // submit revision handling
     $(document).on("click", "#submit-revision", function(e) {
-        if (editor.getValue() == initial_code) {
-            Dajaxice.website.revision_error(function(data) {
-                Dajax.process(data);
-                $("#submit-revision-error-wrapper").lightbox_me({centered: false});
-            });
-        } else {
+        // if (editor.getValue() == initial_code) {
+        //     Dajaxice.website.revision_error(function(data) {
+        //         Dajax.process(data);
+        //         $("#submit-revision-error-wrapper").lightbox_me({centered: false});
+        //     });
+        // } else {
             Dajaxice.website.revision_form(function(data) {
                 Dajax.process(data);
                 $("#submit-revision-wrapper").lightbox_me({centered: false});
-            });
-        }
+            },{code: editor.getValue(),
+               initial_code: initial_code});
+        // }
         e.preventDefault();
     });
 
