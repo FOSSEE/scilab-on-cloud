@@ -362,7 +362,7 @@ def revision_form(request, code, initial_code):
         context.update(csrf(request))
         data = render_to_string('website/templates/submit-revision.html', context)
     else:
-        data = render_to_string('website/templates/node-login.html', {})
+        data = render_to_string('website/templates/revision-login.html', {})
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
     return dajax.json()
 
