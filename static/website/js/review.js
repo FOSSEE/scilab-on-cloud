@@ -65,6 +65,39 @@ $(document).ready(function() {
         }
         e.preventDefault();
     });
+    $(document).on("click", "#execute-revision", function() {
+        $("#execute-inner").html("Executing...");
+        console.log(reviewEditor.getValue());
+
+        var send_data = {
+            token: $("[name='csrfmiddlewaretoken']").val(),
+            code: reviewEditor.getValue(),
+            book_id: $("#books").val() || 0,
+            chapter_id: $("#chapters").val() || 0,
+            example_id: $("#examples").val() || 0
+        };
+        $.post("/execute-code", send_data,
+        function(data){
+            $("#execute-inner").html("Execute");
+            reviewResult.setValue(data.output);
+
+            if(data.plot_path){
+                $plot = $("<img>");
+                $plot.attr({
+                    src: data.plot_path,
+                    width: '90%'
+                });
+                $plotbox.html($plot);
+                $plotbox_wrapper.lightbox_me({
+                    centered: true
+                });
+                var dt = $("#examples option:selected").text();
+                $("#plot_download").show();
+                $("#plot_download").attr("download", dt+'.png');
+                $("#plot_download").attr("href", data.plot_path);
+            }
+        });
+    });
 
      /* Ajax loader */
     function ajax_loader(key) {

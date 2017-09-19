@@ -327,7 +327,6 @@ $(document).ready(function() {
             }
         });
     });
-
     /* Download book, chapter, example */
     $(document).on("click", "#download-book", function(e) {
         window.location = "http://scilab.in/download/book/" + $("#books").val();

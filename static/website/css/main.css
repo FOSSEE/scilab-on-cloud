@@ -113,7 +113,7 @@ body, html {
     font-size: 100%; 
     font-family: inherit;
 }
-#execute {
+#execute, #execute-revision {
     position: absolute;
     left: 15px;
     bottom: -15px;
