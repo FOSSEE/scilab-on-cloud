@@ -10,7 +10,7 @@ SystemCommands = 'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|\
                   unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
 
 
-def scilab_run(code, token, book_id, dependency_exists): 
+def scilab_run(code, token, book_id, dependency_exists):
     # Check for system commands
     system_commands = re.compile(SystemCommands)
     if system_commands.search(code):
@@ -64,20 +64,11 @@ def scilab_run(code, token, book_id, dependency_exists):
     f.write('\nquit();')
     f.close()
 
-    SCILAB_BIN = BIN+'/'
+    SCILAB_BIN = '/home/vidhan/scilab-5.5.2/bin/scilab-adv-cli'
     pf = TextbookCompanionPreference.objects.using('scilab').get(id=book_id)
     pr = TextbookCompanionProposal.objects.using('scilab').get(
                                                             id=pf.proposal_id
                                                             )
-    version = pr.scilab_version
-    if version in ['5.3.3', '5.3.1', '5.3.0', 'scilab 5.3.3', 'Scilab 5.3.1']:
-        SCILAB_BIN += SCILAB_5
-    elif version in ['Scilab 5.4.1', 'scilab 5.4.0', '5.4.1', '5.4']:
-        SCILAB_BIN += SCILAB_5
-    else:
-        SCILAB_BIN += SCILAB_5
-
-    SCILAB_BIN += '/bin/scilab-adv-cli'
 
     # this makes it possible to execute scilab without the problem of \
     # getting stuck in the prompt in case of error

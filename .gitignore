@@ -4,11 +4,9 @@
 # exclude patterns (uncomment them if you want to use them):
 # *.[oa]
 *~
-*.*~
 *.swp
 *.swo
 *.pyc
-
-tmp/
-local.py
+soc/config.py
 soc/local.py
+tmp/

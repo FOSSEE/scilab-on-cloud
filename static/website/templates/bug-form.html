@@ -3,19 +3,23 @@
     <div id="non-field-errors">
     </div>
     <div id="id_issue_wrapper" class="wrapper">
-        <label>Type of issue <span class="req">*</span>:</label>
+        <label>Type of issue:</label>
         {{ form.issue }}
     </div>
 
     <div id="id_description_wrapper" class="wrapper">
-        <label>Description<span class="req">*</span>:</label>
+        <label>Description:</label>
         {{ form.description }}
+    </div>
+
+    <div id="id_notify_wrapper" class="wrapper">
+        <label>{{ form.notify }} I want to be notified.</label>
     </div>
 
     <div id="id_email_wrapper" class="wrapper">
         <span id="email-wrapper">
             {{ form.email.errors }}
-            <label>Enter Your Email<span class="req">*</span>:</label>
+            <label>Email:</label>
             {{ form.email }}
         </span>
     </div>

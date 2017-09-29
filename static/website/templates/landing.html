@@ -1,0 +1,274 @@
+{% load static %}
+{% load dajaxice_templatetags %}
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Scilab Cloud</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300|Roboto:300,400|Ubuntu:300,400,500" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'website/css/bootstrap-theme.min.css' %}">
+        <link rel="stylesheet" href="{% static 'website/css/onepage-scroll.css' %}">
+        <link rel="stylesheet" href="{% static 'website/css/main.css' %}">
+
+        <script src="{% static 'website/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+    </head>
+    <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand ubuntu" href="#"><span class="nav-brand-big">Scilab</span><span class="nav-brand-small pcolor"> Cloud</span></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <p class="navbar-text navbar-right">
+              <a href="#" onclick='$(".main").moveTo(1);' class="navbar-link">Home</a>
+              <a href="#" onclick='$(".main").moveTo(3);' class="navbar-link">About</a>
+              <a href="#" onclick='$(".main").moveTo(5);' class="navbar-link">Contribute</a>
+              <a href="http://scilab.in/" target="_blank" class="navbar-link pcolor">Scilab</a>
+
+            </p>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+
+
+        <div class="main">
+
+            <section class="intro">
+                <div class="container">
+                    <div class="row text-center">
+                        <img src="{% static 'website/images/mast-img.svg'%}" class="mast-svg zoomed"/>
+                        <div class="promo-text">
+                            An implementation of Scilab on the <span class="petite">GARUDA GRID</span> enabling rapid code execution online
+                            <div class="promo-btns">
+                                <a class="btn btn-blue hide-sm" href="#2" onclick='$(".main").moveDown();'>Learn More</a>
+                                <a class="btn btn-blue" href="{%url 'website:index'%}">Get Started &nbsp; <span class="fa fa-chevron-right"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-bg intro-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-6">
+                            <img src="{% static 'website/images/fossee-logo.png'%}" height="50" />
+                            </div>
+                            <div class="col-xs-6 text-align-right">
+                            <img src="{% static 'website/images/scilab-logo.png'%}" height="50" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="about-1">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-8 about-1-text">
+                            <h1 class="about-heading">Scilab on <span class="dark-text">Cloud</span></h1>
+                            <p>For enhanced performance and safety, FOSSEE team ported <span class="pcolor">Scilab</span> to
+the GARUDA Grid, with the help from the GARUDA Team at CDAC, Bengaluru.</p>
+                            <p>Scilab on Cloud facilitates execution of <span class="pcolor">Scilab Textbook Companion</span> codes online.</p>
+                            <b class="about-sub">Features :</b>
+                            <ul>
+                                <li>The results can be verified with the solved example(s) from the textbook.</li>
+                                <li>Change the values of the variables and in fact, the code itself, and execute it.</li>
+                                <li>In addition to the given examples, one can also copy and paste (or) write a new code
+  in the input box provided on the interface and execute the same.</li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-4 graph-lines">
+                            <img src="{% static 'website/images/graph-lines.svg' %}" />
+                        </div>
+                    </div>
+                    <div class="row text-center how-it-works">
+                        <h1>How it <span class="dark-text">Works</span></h1>
+                        <div class="col-xs-2">
+                            <img src="{% static 'website/images/work-1.svg' %}" class="full-width" /><br><br>
+                            Your Laptop/PC
+                        </div>
+                        <div class="col-xs-3 work-progress">
+                            <div class="progress">
+                                <div class="indeterminate"></div>
+                            </div>
+                            <div class="progress p2">
+                                <div class="indeterminate"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-2">
+                            <img src="{% static 'website/images/work-2.svg' %}" class="full-width" /><br><br>
+                            The Scilab Cloud
+                        </div>
+                        <div class="col-xs-3 work-progress">
+                            <div class="progress">
+                                <div class="indeterminate"></div>
+                            </div>
+                            <div class="progress p2">
+                                <div class="indeterminate"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-2">
+                            <img src="{% static 'website/images/servers.svg' %}" class="full-width" /><br><br>
+                            <span class="petite">Garuda Grid</span>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="about-2 grid-bg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <h2>About <span class="dark-text">Scilab.in</span></h2>
+                            <p>We, the Scilab team at IIT Bombay India, aim to increase the use of Scilab in educational institutions across India. The primary focus of our efforts is to help educational institutions shift from using proprietary packages to using Scilab. </p><p>Scilab is a major component of the FOSSEE (Free and Open source Software for Education) project. </p>
+                        </div>
+                        <div class="col-md-5">
+                            <img class="full-width" src="{% static 'website/images/graph3d.svg' %}" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <img class="full-width" src="{% static 'website/images/servers.svg' %}" />
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            <h2>About <span class="petite black-text">GARUDA GRID</span></h2>
+                            <p>GARUDA (Global Access to Resource Using Distributed Architecture) is India's Grid Computing Initiative connecting 17 cities across the country.
+                            </p><p>
+The 45 participating institutes in this nationwide project include all the IITs and C-DAC centres and other major institutes in India. </p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </section>
+
+            <section class="examples">
+                <div class="container">
+                    <div class="row examples-sec">
+                        <h1>Scilab Cloud in <span class="dark-text">Action</span></h1>
+                        <span class="pcolor examples-sub ubuntu">Examples</span>
+                    </div>
+                    <div class="row examples-wrapper">
+                        <div class="col-md-4 example-text-wrap">
+                            <h4>Example 001</h4>
+                            Engineering Heat Transfer by
+W.S. Janna, Chapter 6, E.g. 6.4.
+
+Scilab can be used to study
+temperature properties of
+freon gas over a tube with
+constant wall temperature<br><br>
+                            <a class="btn btn-blue btn-white btn-small">Open in Scilab Cloud</a>
+                        </div>
+                        <div class="col-md-8 example-img-wrap">
+                            <img class="full-width-always" src="{% static 'website/images/Img1.jpg' %}">
+
+                        </div>
+
+                    </div>
+                    <div class="arrows">
+                            <div class="left-arrow">
+                                <span class="fa fa-chevron-left"></span>
+                            </div>
+                            <div class="right-arrow">
+                                <span class="fa fa-chevron-right"></span>
+                            </div>
+                        </div>
+                </div>
+
+            </section>
+
+
+            <section class="foot">
+                <div class="get-started-foot grid-bg">
+                    <div class="container">
+                        <div class="row get-started-wrap">
+                            <h1>Get <span class="dark-text">Started</span></h1>
+                            <span class="pcolor get-started-sub">Simple, direct access through your web browser</span>
+                            <a class="btn btn-blue btn-get-started" href="{%url 'website:index'%}">Launch Scilab Cloud &nbsp;&nbsp;<span class="fa fa-chevron-right"></span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="container foot-bottom">
+                    <div class="row">
+                        <div class="col-sm-4 text-center foot-img-wrap">
+                            <img src="{% static 'website/images/fossee-logo.png' %}" />
+                        </div>
+                        <div class="col-sm-8">
+                            <h1 class="small">Get <span class="dark-text">Involved</span></h1>
+                            <span class="pcolor foot-bottom-sub">Contribute. Collaborate. Explore.</span><br>
+                            <p>FOSSEE (Free and Open Source Software in Education) project promotes the use of FOSS tools
+to improve the quality of education in our country. We aim to reduce dependency on proprietary
+software in educational institutions.
+                            </p><br><p>
+We encourage the use of FOSS tools through various activities to ensure commercial software
+is replaced by equivalent FOSS tools. We also develop new FOSS tools and upgrade existing tools
+to meet requirements in academia and research. </p><br><br><br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="footer-left col-xs-6">
+                            Disclaimer: Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World)<br>
+and Scilab Enterprises is granted exclusive rights for Scilab Trademark.
+                            </div>
+                            <div class="footer-right col-xs-6">
+                                <div class="one">
+                                <span class="light">Crafted with </span>
+                                <span class="fa fa-heart red"></span>
+                                <span class="light"> in </span>
+                                <span class="bold">Mumbai</span>
+                                </div>
+                                <div class="two" onclick="window.open('http://naveen.io')">
+                                <span class="light">Designed </span>
+                                <span class="light"> by </span>
+                                <span class="bold">NAVEEN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+        </div>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{% static 'website/js/vendor/jquery-1.11.2.min.js' %}"><\/script>')</script>
+
+        <script src="{% static 'website/js/vendor/bootstrap.min.js' %}"></script>
+        <script src="{% static 'website/js/vendor/jquery.onepage-scroll.min.js' %}"></script>
+
+        <script src="{% static 'website/js/main.js' %}"></script>
+    </body>
+</html>
