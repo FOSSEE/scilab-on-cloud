@@ -159,9 +159,6 @@ class ScilabInstance(object):
             'output': output,
             'plot_path': plot_path.replace(PROJECT_DIR, '')
         }
-        print "////////////////////"
-        print data
-        print "////////////////////"
         return data
 
     def trim(self, output):
