@@ -12,6 +12,11 @@ from soc.config import UPLOADS_PATH
 import utils
 import base64
 
+def landing(request):
+    context = {}
+    return render(request, 'website/templates/landing.html', context)
+
+
 def catg(cat_id, all_cat):
     if all_cat is False:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
@@ -59,6 +64,17 @@ def get_code(file_path, commit_sha):
 
 def index(request):
     context = {}
+    categories = TextbookCompanionCategoryList.objects.using('scilab')\
+                .all().order_by('category_name')
+    ids = TextbookCompanionProposal.objects.using('scilab')\
+            .filter(proposal_status=3).values('id')
+    d = {}
+    for category in categories:
+        books_count = TextbookCompanionPreference.objects.using('scilab')\
+        .filter(category=category.id).filter(
+        approval_status=1).filter(proposal_id__in=ids).order_by('book')
+        d[category] = books_count
+    print d
 
     user = request.user
 
@@ -77,6 +93,7 @@ def index(request):
         catg_all = catg(None, all_cat=True)
         context = {
             'catg': catg_all,
+            'd': d,
         }
 
         if 'category_id' in request.session:
@@ -160,7 +177,7 @@ def index(request):
                                               WHERE id = %s) AND
                               cloud_pref_err_status=0 AND
                               pre.proposal_id IN (SELECT id
-                                                  FROM textbook_companion_proposal 
+                                                  FROM textbook_companion_proposal
                                                   WHERE proposal_status=3)
                         ORDER BY pre.book ASC""", [preference_id])
                 category_id = books[0].category
@@ -195,8 +212,11 @@ def index(request):
                 'code': code,
                 'review': review,
                 'review_url': review_url,
+                'd': d,
             }
-
+            print "/////*****"
+            print context
+            print "***/*////"
             if not user.is_anonymous():
                 context['user'] = user
 

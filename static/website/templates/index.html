@@ -1,225 +1,479 @@
-{% load static %} {% load dajaxice_templatetags %}
-<html>
-    {% include 'website/templates/head.html' %}
-    <body>
-        <div id="header-wrapper">
-            <div id="header-inner">
-                <div id="topbar">
-                    <img id="home-logo" src="{% static 'website/images/home-logo.png' %}">
-                    <span id="title">
-                        Scilab on Cloud
-                    </span>
-                    <div id="navlinks">
-                        <ul>
-                            {% if user and not user.is_anonymous %}
-                                {% if not user.is_staff %}
-                                    <li><a class="node" data-key="about" href="#">About</a></li>
-                                    <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                                    <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                                {% else %}
-                                    <li><a data-key="review-interface" href="/review">Review Interface</a></li>
-                                {% endif %}
-                                <li><a data-key="logout" href="/logout">Log out</a></li>
-                                <li> <a style="color:red">Hello, {{ user.get_full_name }}!</a></li>
-                            {% else %}
-                                <li><a class="node" data-key="about" href="#">About</a></li>
-                                <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                                <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                                <li><a class="node" data-key="login" href="#">Log In</a></li>
-                            {% endif %}
-                            <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
-                        </ul>
-                        <div class="clearfix"></div>
-                    </div> <!-- /#navlinks -->
-                </div> <!-- /#topbar -->
-            </div> <!-- /#header-inner -->
-        </div> <!-- /#header-wrapper -->
-        <div id="content-wrapper">
-            <div id="content-inner">
-                <div id="selectors">
-                    
-                    <div id="category-wrapper">
-                        {% if catg %}
-                        <label>Category: </label>
-                        <select id="categories">
-                            <option value="0">Select Category</option>
-                            {% for category in catg %} {% if category_id == category.id %}
-                            <option value="{{ category.id }}" selected>{{ category.category_name }}</option>
-                            {% else %}
-                            <option value="{{ category.id }}">{{ category.category_name }}</option>
-                            {% endif %} {% endfor %}
-                        </select>
-                        {% endif %}
-                        <a href="#" class="extra-link" id="contributor">+Contributor</a>
-                    </div>
+{% load static %}
+{% load dajaxice_templatetags %}
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
 
-                    <div id="books-wrapper">
-                        {% if books %}
-                        <label>Book: </label>
-                        <select id="books">
-                            <option value="">Select Book</option>
-                            {% for book in books %} {% if book_id == book.id %}
-                            <option value="{{ book.id }}" selected>{{ book.book }} (by {{ book.author }})</option>
-                            {% else %}
-                            <option value="{{ book.id }}">{{ book.book }} (by {{ book.author }})</option>
-                            {% endif %} {% endfor %}
-                        </select>
-                        {% endif %}
-                        <a href="#" class="extra-link" id="download-book">Download Book</a>
-                    </div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Scilab Cloud</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-                    <div id="chapters-wrapper">
-                        {% if chapters %}
-                        <label>Chapter: </label>
-                        <select id="chapters">
-                            <option value="">Select Chapter</option>
-                            {% for chapter in chapters %} {% if chapter_id == chapter.id %}
-                            <option value="{{ chapter.id }}" selected>{{ chapter.number }} - {{ chapter.name }}</option>
-                            {% else %}
-                            <option value="{{ chapter.id }}">{{ chapter.number }} - {{ chapter.name }}</option>
-                            {% endif %} {% endfor %}
-                        </select>
-                        {% endif %}
-                        <a href="#" class="extra-link" id="download-chapter">Download Chapter</a>
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}"/>
+
+    {% dajaxice_js_import %}
+    <style>
+        body {
+            padding-top: 50px;
+            padding-bottom: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300|Roboto:300,400|Ubuntu:300,400,500" rel="stylesheet">
+   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap-theme.min.css' %}">
+    <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
+    <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'website/css/component.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'website/css/main.css' %}">
+    <style>
+        html,
+        body,
+        .container,
+        .scroller {
+            height: 100%;
+        }
+
+        .scrollid {
+            height: 75%;
+            overflow-y: scroll;
+        }
+
+        #plotbox-wrapper,
+        #databox-wrapper,
+        #bug-form-wrapper,
+        #submit-revision-wrapper,
+        #submit-revision-error-wrapper,
+        #diff-wrapper {
+          padding: 35px;
+          background: #ffffff;
+          -webkit-box-shadow: 0 0 10px #ffffff;
+             -moz-box-shadow: 0 0 10px #ffffff;
+               -o-box-shadow: 0 0 10px #ffffff;
+                  box-shadow: 0 0 10px #ffffff;
+}
+        .scroller {
+            overflow-y: scroll;
+        }
+
+        .side-about {
+            position: fixed;
+        }
+
+        .scroller,
+        .scroller-inner {
+            position: relative;
+        }
+
+        .container {
+            position: relative;
+            overflow: hidden;
+            background: #34495e;
+        }
+        .noud {
+            text-decoration: none;
+        }
+      .btn-blue {
+            margin: auto;
+            margin-top: 8px;
+      }
+    </style>
+
+</head>
+
+<body class="app-body">
+  <div class="login-button">
+      <a href="#">Login / Register</a>
+  </div>
+
+
+    <div class="container-ml">
+        <!-- Push Wrapper -->
+        <div class="mp-pusher" id="mp-pusher">
+
+            <!-- mp-menu -->
+            <nav id="mp-menu" class="mp-menu">
+                <div class="mp-level">
+                    <img src="{% static 'website/images/scilab-app-logo.svg' %}" class="full-width padding-logo" />
+                    <h2 class="icon icon-world" >Categories</h2>
+                    <ul class="scrollid">
+                      {% for category, books in d.items %}
+                        <li  class="icon icon-arrow-left">
+                            <a id="{{ category.id }}" class="categories" href="#">{{ category.category_name }}</a>
+                            <div id="books-wrapper{{ category.id }}" class="mp-level bookss">
+                              <img src="{% static 'website/images/scilab-app-logo.svg' %}" class="full-width padding-logo" />
+                              <h2 class="icon icon-display">Books</h2>
+                              <ul class="scrollid">
+                              {% for book in books %}
+                              <li class="icon icon-arrow-left">
+                                  <a id="{{ book.id }}" class="mmbooks" href="#">{{ book.book }}<br><span class="petite black-text">{{ book.author }}</span></a>
+                                  <div id="chapters-wrapper{{ book.id }}"  class="mp-level chapterss">
+                                  </div>
+                              </li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </li>
+                     {% endfor %}
+                        <!-- ... -->
+                    </ul>
+                </div>
+            </nav>
+            <!-- /mp-menu -->
+
+            <div class="scroller">
+                <!-- this is for emulating position fixed of the nav -->
+                <div class="scroller-inner">
+                    <a data-rel="mobile-menu" href="#" id="trigger" class="menu-triggerx"><span class="fa fa-bars"></span></a>
+
+                    <div class="container-app-main">
+                        <div id="intro-page">
+                            <div class="intro-abs-wrap">
+                            <div class="logo-app-wrap">
+
+                            </div>
+                            <h2 class="text-center">Choose a book <span class="fa fa-chevron-right pcolor"></span> Choose an example <span class="fa fa-chevron-right pcolor"></span> Execute</h2>
+                            <br><br><br>
+                            <div class="text-center pcolor"><a data-rel="mobile-menu" href="#" id="trigger-alt" class="pcolor link noud" style="display: none">Or, browse by category</a></div>
+                            </div>
+                            <div id="morphsearch" class="morphsearch" style="display: none">
+                <form class="morphsearch-form">
+                    <input class="morphsearch-input" type="search" placeholder="Search Books"/>
+                    <button class="morphsearch-submit" type="submit">Search</button>
+                </form>
+                <div class="morphsearch-content">
+                    <div class="dummy-column">
+                        <h2>Relevant</h2>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Sara Soueidan</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Rachel Smith</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Peter Finlan</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Patrick Cox</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Tim Holman</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Shaun Dona</h3>
+                        </a>
                     </div>
+                    <div class="dummy-column">
+                        <h2>Popular</h2>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Page Preloading Effect</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Arrow Navigation Styles</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Ideas for Subtle Hover Effects</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Halcyon Days Template</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Inspiration for Article Intro Effects</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Draggable Dual-View Slideshow</h3>
+                        </a>
+                    </div>
+                    <div class="dummy-column">
+                        <h2>Recent</h2>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Tooltip Styles Inspiration</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Animated Background Headers</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Off-Canvas Menu Effects</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Tab Styles Inspiration</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Make SVGs Responsive with CSS</h3>
+                        </a>
+                        <a class="dummy-media-object" href="#">
+
+                            <h3>Notification Styles Inspiration</h3>
+                        </a>
+                    </div>
+                </div><!-- /morphsearch-content -->
+                <span class="morphsearch-close"></span>
+            </div><!-- /morphsearch -->
+
+                        </div>
 
                     <div id="examples-wrapper">
-                        {% if examples %}
-                        <label>Example: </label>
-                        <select id="examples">
-                            <option value="0">Select Example</option>
-                            <!-- <! modified option value > -->
-
-                            {% for example in examples %} {% if eid == example.id %}
-                            <option value="{{ example.id }}" selected>{{ example.number }} - {{ example.caption }}</option>
-                            {% else %}
-                            <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
-                            {% endif %} {% endfor %}
-                        </select>
-                        {% endif %}
-                        <a href="#" class="extra-link" id="download-example">Download Example</a>
+                    </div>
                     </div>
 
-                    <div id="revisions-wrapper">
-                        {% if revisions %}
-                            <div id="revisions-one">
-                                <label>Revision: </label>
+                    <div class="code-sectionx">
+                        <div class="code-left code-panes">
+                          <div class="code-header" id="revisions-wrapper">
+                              <div class="expand-btn">
+                                  <span class="fa fa-expand"></span>
+                              </div>
+                              <div class="styled-select slate" id="revisions-one">
                                 <select id="revisions">
-                                    <option value="">Select a revision</option>
-                                    {% for revision in revisions %}
-                                        {% if revision.sha == commit_sha %}
-                                            <option value="{{ revision.sha }}" selected>{{ forloop.counter }} - {{ revision.commit.message }}</option>
-                                        {% else %}
-                                            <option value="{{ revision.sha }}">{{ forloop.counter }} - {{ revision.commit.message }}</option>
-                                        {% endif %}
-                                    {% endfor %}
+                                  <option value="">Select a revision</option>
+                                  <option >Version 1.82alpha</option>
+                                  <option>The second option</option>
+                                  <option>The third option</option>
                                 </select>
-                            </div>
-
-                            <div id="revisions-two">
-                                <label>Diff with: </label>
+                              </div>
+                              vs
+                              <div class="styled-select slate" id="revisions-two">
                                 <select id="revisions-diff">
-                                    <option value="">Select a revision</option>
-                                    {% for revision in revisions %}
-                                        <option value="{{ revision.sha }}">{{ forloop.counter }} - {{ revision.commit.message }}</option>
-                                    {% endfor %}
+                                  <option value="">Compare with</option>
+                                  <option>Version 1.82alpha</option>
+                                  <option>The second option</option>
+                                  <option>The third option</option>
                                 </select>
+                              </div>
+                              <a id="execute" class="btn btn-blue btn-white btn-execute noud">EXECUTE <span class="fa fa-gears"></span></a>
+                          </div>
+                            <form>
+                                <textarea id="code" placeholder="Write a new code or select existing from above panel..."></textarea>
+                            </form>
+                            <div id="hidethis" class="code-footer" style="display: none">
+                                <div class="code-footer-item col-md-6">
+                                    <span class="fa fa-file"></span> &nbsp;random_filename_443.sci
+                                </div>
+                                <div class="code-footer-item col-md-6">
+                                    <span class="fa fa-file"></span> &nbsp;dependancy_v34_test.sci
+                                </div>
+                                <div class="code-footer-item col-md-6">
+                                    <span class="fa fa-file"></span> &nbsp;picture.jpg
+                                </div>
+                                <div class="code-footer-item col-md-6">
+                                    <span class="fa fa-file"></span> &nbsp;random_latin_text.txt
+                                </div>
                             </div>
-                        {% endif %}
+                        </div>
+                        <div class="code-right code-panes">
+                            <div class="code-header">
+                                <div class="expand-btn">
+                                    <span class="fa fa-expand"></span>
+                                </div>
+                                Result
+                                <a class="btn btn-blue btn-white btn-execute exmpid noud download-example" id="0">DOWNLOAD EXAMPLE<span class="fa fa-download"></span></a>
+                                <a id="submit-revision" class="btn btn-blue btn-white btn-execute noud">Submit a Revision <span class="fa fa-gears"></span></a>
+                            </div>
+                            <textarea id="result" placeholder="Result will be shown here..."></textarea>
+                            <div id="handle"></div>
+                            <div class="code-right-footer">
+                                Submit Feedback/Report Bug <span class="fa fa-bug"></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-            <div id="content">
-                <div id="input">
-                    <label>
-                        Scilab Code
-                        <span id="review-link">
-                            {% if review %}
-                                <a href="{{ review_url}}" id="review" target="_blank">{{ review }} Review
-                            </a>
-                            {% else %}
-                                <a href="#" id="review" target="_blank"></a>
-                            {% endif %}
-                        </span>
-                        <span id="controls">
-                            <a href="#" id="toggle-code">
-                                <img src="{% static 'website/images/icon-toggle.png'%}">
-                            </a>
-                            <a href="#" id="fullscreen-code">
-                                <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                            </a>
-                        </span> <!-- /#controls -->
-                    </label>
-                    <form>
-                        <textarea id="code" placeholder="Write a new code or select existing from above category...">{{ code }}</textarea>
-                    </form>
-                </div><!-- /#input -->
 
-                    
-                    <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
 
-                    <a id="submit-revision" class="button">Submit a revision</a>
-
-                    <div id="output">
-                        <label>
-                            Result
-                            <span id="controls">
-                                <a href="#" id="toggle-result">
-                                    <img src="{% static 'website/images/icon-toggle.png'%}">
-                                </a>
-                                <a href="#" id="fullscreen-result">
-                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                                </a>
-                            </span><!-- /#controls -->
-                        </label>
-                        <textarea id="result"></textarea>
-                    </div> <!-- /#output -->
-                    
-                <a id="bug" class="button">Report bug / Give Feedback</a>
-
-                <div id="credits">
-                    <small>
-                            Disclaimer: Scilab is a trademark of Inria 
-                            (registered at the INPI for France and the rest of the World) 
-                            and Scilab Enterprises is granted exclusive rights for 
-                            Scilab Trademark.
-                        </small> Copyright IIT Bombay
-                </div>
-                <!-- /#credits -->
             </div>
-            <!-- /#content -->
+            <!-- /scroller-inner -->
         </div>
-        <!-- /#content-inner -->
-    </div>
-    <!-- /#content-wrapper -->
+        <!-- /scroller -->
 
+    </div>
+    <!-- /pusher -->
+
+    </div>
+    <!-- /container -->
     <div id="plotbox-wrapper">
         <div id="plotbox"></div>
-        <span><a href="#" id="plot_download" download="Plot">Download</a></span>
     </div>
-    <!-- /#plotbox-wrapper -->
-
-    <div id="databox-wrapper">
-        <div id="databox"></div>
-    </div>
-    <!-- /#databox-wrapper -->
 
     <div id="bug-form-wrapper">
     </div>
-    <!-- /#databox-wrapper -->
 
     <div id="submit-revision-wrapper">
     </div>
 
     <div id="submit-revision-error-wrapper">
     </div>
-
     <div id="diff-wrapper"></div>
-
-    {% include 'website/templates/footer.html' %}
+    <!--
+    <script
+			  src="http://code.jquery.com/jquery-3.2.1.slim.min.js"
+			  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+              crossorigin="anonymous"></script>-->
+    <script src="{% static 'website/js/jquery-1.10.2.min.js' %}"></script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+    </script>
+    <script src="{% static 'website/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
+    <script src="{% static 'dajax/jquery.dajax.core.js' %}"></script>
+    <script src="{% static 'website/js/codemirror.js'%}"></script>
+    <script src="{% static 'website/js/javascript.js'%}"></script>
+    <script src="{% static 'website/js/fullscreen.js'%}"></script>
+    <script src="{% static 'website/js/placeholder.js'%}"></script>
+    <script src="{% static 'website/js/lightbox_me.js'%}"></script>
+    <script src="{% static 'website/js/vendor/bootstrap.min.js' %}"></script>
+    <script src="{% static 'website/js/vendor/classie.js' %}"></script>
+    <script src="{% static 'website/js/vendor/mlpushmenu.js' %}"></script>
     <script src="{% static 'website/js/cloud.js'%}"></script>
-    
-    {% csrf_token %}
+    <script src="{% static 'website/js/jsdiff.js'%}"></script>
+    <script>
+    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+
+    $('.expand-btn').on('click', function(){
+        $('.code-panes').toggleClass('fullscreen');
+        $('.code-sectionx').toggleClass('fullscreen-x');
+    //            $('.container-app-main').toggle();
+    });
+    </script>
+    <script>
+
+        var isResizing = false,
+    lastDownX = 0;
+
+$(function () {
+    var container = $('.code-sectionx'),
+        left = $('.code-left'),
+        right = $('.code-right'),
+        handle = $('#handle');
+
+    handle.on('mousedown', function (e) {
+        lastDownX = e.clientX;
+        isResizing=true;
+    });
+
+    $(document).on('mousemove', function (e) {
+        // we don't want to do anything if we aren't resizing.
+        if (!isResizing)
+            return;
+
+        var offsetRight = container.width() - (e.clientX - container.offset().left);
+        if(offsetRight>300 && (e.clientX - container.offset().left)>450){
+            left.css('right', offsetRight);
+            right.css('width', offsetRight);
+        }
+    }).on('mouseup', function (e) {
+        // stop resizing
+        isResizing = false;
+    });
+});
+
+        $('.code-footer-item').on('click', function(){
+            $(this).toggleClass('active');
+            $('.code-footer').toggleClass('item-active');
+            $(this).find('.fa').toggleClass('fa-file');
+            $(this).find('.fa').toggleClass('fa-close');
+        });
+
+
+    </script>
+    <script>
+            (function() {
+                var morphSearch = document.getElementById( 'morphsearch' ),
+                    input = morphSearch.querySelector( 'input.morphsearch-input' ),
+                    ctrlClose = morphSearch.querySelector( 'span.morphsearch-close' ),
+                    isOpen = isAnimating = false,
+                    // show/hide search area
+                    toggleSearch = function(evt) {
+                        // return if open and the input gets focused
+                        if( evt.type.toLowerCase() === 'focus' && isOpen ) return false;
+
+                        var offsets = morphsearch.getBoundingClientRect();
+                        if( isOpen ) {
+                            classie.remove( morphSearch, 'open' );
+
+                            // trick to hide input text once the search overlay closes
+                            // todo: hardcoded times, should be done after transition ends
+                            if( input.value !== '' ) {
+                                setTimeout(function() {
+                                    classie.add( morphSearch, 'hideInput' );
+                                    setTimeout(function() {
+                                        classie.remove( morphSearch, 'hideInput' );
+                                        input.value = '';
+                                    }, 300 );
+                                }, 500);
+                            }
+
+                            input.blur();
+                        }
+                        else {
+                            classie.add( morphSearch, 'open' );
+                        }
+                        isOpen = !isOpen;
+                    };
+
+                // events
+                input.addEventListener( 'focus', toggleSearch );
+                ctrlClose.addEventListener( 'click', toggleSearch );
+                // esc key closes search overlay
+                // keyboard navigation events
+                document.addEventListener( 'keydown', function( ev ) {
+                    var keyCode = ev.keyCode || ev.which;
+                    if( keyCode === 27 && isOpen ) {
+                        toggleSearch(ev);
+                    }
+                } );
+
+
+                /***** for demo purposes only: don't allow to submit the form *****/
+                morphSearch.querySelector( 'button[type="submit"]' ).addEventListener( 'click', function(ev) { ev.preventDefault(); } );
+            })();
+
+        $('#trigger-alt').on('click', function(){
+            $('#intro-page').hide(600);
+            $('#examples-wrapper').show(600);
+        })
+
+        $('.open-app').on('click', function(){
+                  $("#examples-wrapper").html("");
+                  $("#download-chapter").show();
+                  ajax_loader(this);
+                  Dajaxice.website.examples(function(data) {
+                      Dajax.process(data);
+                      ajax_loader("clear");
+                  }, {chapter_id: $(this).attr('id')});
+           $('#intro-page').hide(300);
+
+            $('#examples-wrapper').show(300);
+        })
+        </script>
+{% csrf_token %}
+    <!--    <script src="{% static 'website/js/main.js' %}"></script>-->
+    <div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
 </body>
 
 </html>
