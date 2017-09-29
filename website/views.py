@@ -74,7 +74,6 @@ def index(request):
         .filter(category=category.id).filter(
         approval_status=1).filter(proposal_id__in=ids).order_by('book')
         d[category] = books_count
-    print d
 
     user = request.user
 
@@ -214,9 +213,6 @@ def index(request):
                 'review_url': review_url,
                 'd': d,
             }
-            print "/////*****"
-            print context
-            print "***/*////"
             if not user.is_anonymous():
                 context['user'] = user
 
