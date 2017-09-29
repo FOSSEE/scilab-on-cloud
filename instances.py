@@ -11,31 +11,31 @@ from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
 SCILAB_3 ,SCILAB_4, SCILAB_5
 
 ''' An object of class ScilabInstance handles spawning and maintaining of multiple
-scilab instances. 
+scilab instances.
 
-maxsize is the upper bound of number of Scilab instances that can be alive at the 
+maxsize is the upper bound of number of Scilab instances that can be alive at the
 same time.
 
 instances list maintains a pool of free Scilab instances.
 
-count is the number of Scilab instances alive currently. 
+count is the number of Scilab instances alive currently.
 
 spawn_instance method is used to create Pexpect objects, which in turn spawn Scilab
-instance. A new instance is spawned only if the count is not exceeding the value of 
-maxsize. 
+instance. A new instance is spawned only if the count is not exceeding the value of
+maxsize.
 
 kill_instances method is used to kill the free Scilab instances in the list instances,
 based on the parameter count passed while invoking the method.
 
-get_available_instance method is used to fetch a non-busy Scilab instance. 
+get_available_instance method is used to fetch a non-busy Scilab instance.
 It receives one from the list instances or else invokes spawn_instances method to
 fetch a new instance to execute the Scilab code. If there are no Scilab instances
 available, the request has to wait until an instance is available.
 
 execute_code method executes the code passed as one of its parameter. It invokes
 get_available_instance method, fetches a Scilab instance and executes the code.
-After the execution of the code, the Pexpect object containing Scilab instance is 
-put back into the instances list. 
+After the execution of the code, the Pexpect object containing Scilab instance is
+put back into the instances list.
 '''
 class ScilabInstance(object):
 
@@ -85,7 +85,7 @@ class ScilabInstance(object):
             'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
         )
         if system_commands.search(code):
-            return { 
+            return {
                 'output': 'System Commands not allowed',
                 }
         #check for clear

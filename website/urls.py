@@ -5,7 +5,7 @@ from website import ajax
 
 urlpatterns = patterns(
     '',
-    url(r'^$', 'website.views.index', name='index'),
+    url(r'^$', 'website.views.landing', name='landing'),
     url(r'^index$', 'website.views.index', name='index'),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     url(r'^submit-revision/$', 'website.ajax.revision_form', name='revision_form'),

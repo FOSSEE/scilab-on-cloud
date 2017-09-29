@@ -2,6 +2,8 @@
 {% load dajaxice_templatetags %}
 <html>
     {% include 'website/templates/head.html' %}
+    <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
+
     <body>
         <div id="header-wrapper">
             <div id="header-inner">
@@ -28,7 +30,7 @@
 
         <div id="content-wrapper">
             <div id="content-inner">
-                
+
                 <div id="review-revisions-wrapper">
                     {% if revisions %}
                         <label>Revisions pending review: </label>
@@ -54,7 +56,7 @@
                 <div id="content">
                     <div id="input">
                         <label>
-                            Scilab Code 
+                            Scilab Code
                             <span id="controls">
                                 <a href="#" id="review-toggle-code">
                                     <img src="{% static 'website/images/icon-toggle.png'%}">
@@ -92,9 +94,9 @@
 
                     <div id="credits">
                         <small>
-                            Disclaimer: Scilab is a trademark of Inria 
-                            (registered at the INPI for France and the rest of the World) 
-                            and Scilab Enterprises is granted exclusive rights for 
+                            Disclaimer: Scilab is a trademark of Inria
+                            (registered at the INPI for France and the rest of the World)
+                            and Scilab Enterprises is granted exclusive rights for
                             Scilab Trademark.
                         </small>
                         Copyright IIT Bombay
@@ -105,7 +107,6 @@
 
     {% include 'website/templates/footer.html' %}
     <script src="{% static 'website/js/review.js'%}"></script>
-
     {% csrf_token %}
     </body>
 </html>
