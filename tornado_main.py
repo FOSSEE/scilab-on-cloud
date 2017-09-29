@@ -19,13 +19,20 @@ from tornado import gen
 from website.dataentry import entry
 from instances import ScilabInstance
 import threading
+import pwd
 
-define('port', type=int, default=8080)
+define('port', type=int, default=8000)
 
 # Custom settings
 from soc.settings import PROJECT_DIR
 from django.core.wsgi import get_wsgi_application
 
+def run_as_nobody():
+    """Runs the current process as nobody."""
+    # Set the effective uid and to that of nobody.
+    nobody = pwd.getpwnam('nobody')
+    os.setegid(nobody.pw_gid)
+    os.seteuid(nobody.pw_uid)
 
 # request_count keeps track of the number of requests at hand, it is incremented
 # when post method is invoked and decremented before exiting post method in
