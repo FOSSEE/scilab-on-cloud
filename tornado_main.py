@@ -19,16 +19,23 @@ from tornado import gen
 from website.dataentry import entry
 from instances import ScilabInstance
 import threading
+import pwd
 
-define('port', type=int, default=8080)
+define('port', type=int, default=8000)
 
 # Custom settings
 from soc.settings import PROJECT_DIR
 from django.core.wsgi import get_wsgi_application
 
+def run_as_nobody():
+    """Runs the current process as nobody."""
+    # Set the effective uid and to that of nobody.
+    nobody = pwd.getpwnam('nobody')
+    os.setegid(nobody.pw_gid)
+    os.seteuid(nobody.pw_uid)
 
-# request_count keeps track of the number of requests at hand, it is incremented 
-# when post method is invoked and decremented before exiting post method in 
+# request_count keeps track of the number of requests at hand, it is incremented
+# when post method is invoked and decremented before exiting post method in
 # class ExecutionHandler.
 DEFAULT_WORKERS = 5
 request_count = 0
@@ -43,7 +50,7 @@ executor = ThreadPoolExecutor(max_workers = DEFAULT_WORKERS)
 scilab_executor = ScilabInstance()
 scilab_executor.spawn_instance()
 
-# instance_manager function is run at a fixed interval to kill the Scilab instances 
+# instance_manager function is run at a fixed interval to kill the Scilab instances
 # not in use. If the number of user requests is more than the count of active Scilab
 # instances, maximum instances defined will be in process. Instances will be killed
 # only when their number is more than the user requests.
@@ -51,7 +58,7 @@ def instance_manager():
   if(scilab_executor.count > request_count):
     scilab_executor.kill_instances(scilab_executor.count-request_count-1)
   threading.Timer(300, instance_manager).start()
-  
+
 instance_manager()
 
 # Whenever django server sends an ajax request,
@@ -59,7 +66,7 @@ instance_manager()
 # post method passes all the parameters received from the ajax call and
 # passes it to the submit method of ThreadPoolExecutor class through its object.
 # yield is used to gather the output asynchronously in the variable data
-class ExecutionHandler(tornado.web.RequestHandler): 
+class ExecutionHandler(tornado.web.RequestHandler):
     @gen.coroutine
     def post(self):
         global request_count
@@ -78,8 +85,10 @@ class ExecutionHandler(tornado.web.RequestHandler):
         print example_id
         print dependency_exists
         dependency_exists = entry(code, example_id, dependency_exists, book_id)
-        data  = yield executor.submit(scilab_executor.execute_code, code, token, 
+        data  = yield executor.submit(scilab_executor.execute_code, code, token,
             book_id, dependency_exists, chapter_id, example_id)
+        print data
+        print "********************************"
         self.write(data)
         request_count -= 1
 

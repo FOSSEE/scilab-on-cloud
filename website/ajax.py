@@ -76,6 +76,7 @@ def books(request, category_id):
 def chapters(request, book_id):
     dajax = Dajax()
     context = {}
+
     if book_id:
         request.session['book_id'] = book_id
         remove_from_session(request, [
@@ -93,7 +94,8 @@ def chapters(request, book_id):
             'chapters': chapters
         }
     chapters = render_to_string('website/templates/ajax-chapters.html', context)
-    dajax.assign('#chapters-wrapper', 'innerHTML', chapters)
+    dajax.clear('#chapters-wrapper'+book_id, 'innerHTML')
+    dajax.assign('#chapters-wrapper'+book_id, 'innerHTML', chapters)
     return dajax.json()
 
 
@@ -111,10 +113,30 @@ def examples(request, chapter_id):
             'code',
         ])
 
+        bk_id = TextbookCompanionChapter.objects.using('scilab')\
+            .filter(id=chapter_id).values('preference_id')
+
+        bk = TextbookCompanionPreference.objects.using('scilab')\
+            .filter(id=bk_id)
+
+        cp = TextbookCompanionChapter.objects.using('scilab')\
+            .filter(id=chapter_id)
+
         examples = TextbookCompanionExample.objects.using('scilab')\
             .filter(chapter_id=chapter_id).order_by('number')
+
+        preference = TextbookCompanionPreference.objects.using('scilab')\
+            .get(id=bk_id)
+
+        proposal = TextbookCompanionProposal.objects.using('scilab')\
+            .get(id=preference.proposal_id)
+
         context = {
-            'examples': examples
+            'bk':bk,
+            'cp':cp,
+            'examples': examples,
+            "preference": preference,
+            "proposal": proposal,
         }
 
     examples = render_to_string('website/templates/ajax-examples.html', context)
@@ -148,6 +170,9 @@ def revisions(request, example_id):
     }
 
     revisions = render_to_string('website/templates/ajax-revisions.html', context)
+    print "**********"
+    print commits
+    print "*****************"
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
 
@@ -312,7 +337,7 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
         msg.content_subtype = "html"
         msg.send()
         dajax.alert("Thank you for your feedback")
-        dajax.redirect('/index?eid=' + ex_id, delay=1000)
+        dajax.redirect('?eid=' + ex_id, delay=1000)
 
     else:
         dajax.remove_css_class('#bug-form input', 'error')
@@ -422,7 +447,7 @@ def revision_form_submit(request, form, code):
         for field in form:
             for error in field.errors:
                 message = '<div class="error-message">* {0}</div>'.format(error)
-                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message) 
+                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message)
         # non field errors
         if form.non_field_errors():
             message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())

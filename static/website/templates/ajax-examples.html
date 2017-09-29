@@ -1,10 +1,86 @@
-{% if examples %}
-<label>Example: </label>
-<select id="examples">
-    <option value="0">Select Example</option>
-{% for example in examples %}
-    <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
-{% endfor %}
-</select>
-{% endif %}
-<a href="#" class="extra-link" id="download-example">Download Example</a>
+{% load static %}
+
+
+<div class="col-md-12">
+    <div class="book-title-sub">
+      {% for book in bk %}
+        {{ book.author }}
+      {% endfor %}
+    </div>
+    <div class="book-title ubuntu">
+      {% for book in bk %}
+        <h1 class="bks_id" id={{ book.id }}>{{ book.book }}</h1>
+        <a class="btn btn-blue btn-white noud" id="download-book" value={{ book.id }}>Download Book<span class="fa fa-download"></span></a>
+        {% for chapter in cp %}
+        <h4 class="chp_id" id={{ chapter.id }}> - Chapter {{ chapter.number }} : {{ chapter.name }} &nbsp;&nbsp;<a class="btn btn-blue btn-white noud" id="download-chapter" value={{ chapter.id }}>Download Chapter<span class="fa fa-download pcolor"></span></a></h4>
+        {% endfor %}
+      {% endfor %}
+    </div>
+</div>
+
+<div class="col-md-8 cards-wrapper">
+  {% for example in examples %}
+    <div class="chapter-card col-sm-3">
+        <div class="chapter-img">.</div>
+        <div class="chapter-text">
+            <div class="chapter-card-title exmp" id={{ example.id }}>
+                <h5 class="ex_id" values={{ example.id }}>Example {{ example.number }}</h5>
+                {{ example.caption }}
+            </div>
+        </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+
+<div class="col-md-4">
+    <div class="side-about">
+        <h2 class="ubuntu black-text">Contributor</h2>
+        <table class="contrib-table">
+            <tr>
+                <td class="tlabel">Name</td>
+                <td>{{ proposal.full_name }}</td>
+            </tr>
+            <tr>
+                <td class="tlabel">Mentor</td>
+                <td>{{ proposal.faculty }}</td>
+            </tr>
+            <tr>
+                <td class="tlabel">Book Reviewer</td>
+                <td>{{ proposal.reviewer }}</td>
+            </tr>
+            <tr>
+                <td class="tlabel">College</td>
+                <td>{{ proposal.university }}</td>
+            </tr>
+        </table>
+<!--
+        <a class="btn btn-blue btn-white btn-small">Contribute</a>
+        <a class="btn btn-blue btn-white btn-small">About</a>
+-->
+
+        <div class="side-app-copy">
+            <br>
+            <p>Disclaimer: Scilab is a trademark of Inria (registered at the INPI
+for France and the rest of the World) and Scilab Enterprises is
+granted exclusive rights for Scilab Trademark.</p>
+            <p class="pcolor">
+                © Copyright 2017 IIT Bombay
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('#trigger-alt').on('click', function(){
+        $('#intro-page').hide(600);
+        $('#examples-wrapper').show(600);
+    })
+
+    $('.open-app').on('click', function(){
+        $('#intro-page').hide(300);
+        $('#examples-wrapper').show(300);
+    })
+</script>
