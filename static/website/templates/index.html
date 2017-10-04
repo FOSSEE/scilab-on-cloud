@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{% static 'website/css/bootstrap-theme.min.css' %}">
     <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
     <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
+    <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
     <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
     <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static 'website/css/component.css' %}">
@@ -44,7 +45,7 @@
         }
 
         .scrollid {
-            height: 75%;
+            height: 100%;
             overflow-y: scroll;
         }
 
@@ -54,13 +55,14 @@
         #submit-revision-wrapper,
         #submit-revision-error-wrapper,
         #diff-wrapper {
-          padding: 35px;
+          padding: 0px;
           background: #ffffff;
+          display: block;
           -webkit-box-shadow: 0 0 10px #ffffff;
-             -moz-box-shadow: 0 0 10px #ffffff;
-               -o-box-shadow: 0 0 10px #ffffff;
-                  box-shadow: 0 0 10px #ffffff;
-}
+          -moz-box-shadow: 0 0 10px #ffffff;
+          -o-box-shadow: 0 0 10px #ffffff;
+          box-shadow: 0 0 10px #ffffff;
+        }
         .scroller {
             overflow-y: scroll;
         }
@@ -95,7 +97,19 @@
       <a href="#">Login / Register</a>
   </div>
 
+  <div id="plotbox-wrapper">
+      <div id="plotbox"></div>
+  </div>
 
+  <div id="bug-form-wrapper">
+  </div>
+
+  <div id="submit-revision-wrapper">
+  </div>
+
+  <div id="submit-revision-error-wrapper">
+  </div>
+  <div id="diff-wrapper"></div>
     <div class="container-ml">
         <!-- Push Wrapper -->
         <div class="mp-pusher" id="mp-pusher">
@@ -239,6 +253,78 @@
                         </div>
 
                     <div id="examples-wrapper">
+                      {% if eid %}
+                          <div class="col-md-12">
+                              <div class="book-title-sub">
+                                {% for book in bk %}
+                                  {{ book.author }}
+                                {% endfor %}
+                              </div>
+                              <div class="book-title ubuntu">
+                                {% for book in bk %}
+                                  <h1 class="bks_id" id={{ book.id }}>{{ book.book }}</h1>
+                                  <a class="btn btn-blue btn-white noud" id="download-book" value={{ book.id }}>Download Book<span class="fa fa-download"></span></a>
+                                  {% for chapter in cp %}
+                                  <h4 class="chp_id" id={{ chapter.id }}> - Chapter {{ chapter.number }} : {{ chapter.name }} &nbsp;&nbsp;<a class="btn btn-blue btn-white noud" id="download-chapter" value={{ chapter.id }}>Download Chapter<span class="fa fa-download pcolor"></span></a></h4>
+                                  {% endfor %}
+                                {% endfor %}
+                              </div>
+                          </div>
+
+                          <div class="col-md-8 cards-wrapper">
+                            {% for example in exmple %}
+                              <div class="chapter-card col-sm-3">
+                                  <div class="chapter-img">.</div>
+                                  <div class="chapter-text">
+                                      <div class="chapter-card-title exmp" id={{ example.id }}>
+                                          <h5 class="ex_id" values={{ example.id }}>Example {{ example.number }}</h5>
+                                          {{ example.caption }}
+                                      </div>
+                                  </div>
+                              </div>
+                            {% endfor %}
+                          </div>
+
+
+
+                          <div class="col-md-4">
+                              <div class="side-about">
+                                  <h2 class="ubuntu black-text">Contributor</h2>
+                                  <table class="contrib-table">
+                                      <tr>
+                                          <td class="tlabel">Name</td>
+                                          <td>{{ proposal.full_name }}</td>
+                                      </tr>
+                                      <tr>
+                                          <td class="tlabel">Mentor</td>
+                                          <td>{{ proposal.faculty }}</td>
+                                      </tr>
+                                      <tr>
+                                          <td class="tlabel">Book Reviewer</td>
+                                          <td>{{ proposal.reviewer }}</td>
+                                      </tr>
+                                      <tr>
+                                          <td class="tlabel">College</td>
+                                          <td>{{ proposal.university }}</td>
+                                      </tr>
+                                  </table>
+                          <!--
+                                  <a class="btn btn-blue btn-white btn-small">Contribute</a>
+                                  <a class="btn btn-blue btn-white btn-small">About</a>
+                          -->
+
+                                  <div class="side-app-copy">
+                                      <br>
+                                      <p>Disclaimer: Scilab is a trademark of Inria (registered at the INPI
+                          for France and the rest of the World) and Scilab Enterprises is
+                          granted exclusive rights for Scilab Trademark.</p>
+                                      <p class="pcolor">
+                                          © Copyright 2017 IIT Bombay
+                                      </p>
+                                  </div>
+                              </div>
+                          </div>
+                      {% endif %}
                     </div>
                     </div>
 
@@ -248,10 +334,33 @@
                               <div class="expand-btn">
                                   <span class="fa fa-expand"></span>
                               </div>
+                              {% if revisions %}
+                                  <div class="styled-select slate" id="revisions-one">
+                                    <select id="revisions">
+                                      <option value="">Select a revision</option>
+                                      {% for revision in revisions %}
+                                          {% if revision.sha == commit_sha %}
+                                            <option value="{{ revision.sha }}" selected>{{ forloop.counter }} - {{ revision.commit.message }}</option>
+                                          {% else %}
+                                            <option value="{{ revision.sha }}">{{ forloop.counter }} - {{ revision.commit.message }}</option>
+                                          {% endif %}
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+
+                                  <div class="styled-select slate" id="revisions-two">
+                                    <select id="revisions-diff">
+                                      <option value="">Select a revision</option>
+                                      {% for revision in revisions %}
+                                          <option value="{{ revision.sha }}">{{ forloop.counter }} - {{ revision.commit.message }}</option>
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+                              {% endif %}
                               <a id="execute" class="btn btn-blue btn-white btn-execute noud">EXECUTE <span class="fa fa-gears"></span></a>
                           </div>
                             <form>
-                                <textarea id="code" placeholder="Write a new code or select existing from above panel..."></textarea>
+                                <textarea id="code" placeholder="Write a new code or select existing from above panel...">{{ code }}</textarea>
                             </form>
                             <div id="hidethis" class="code-footer" style="display: none">
                                 <div class="code-footer-item col-md-6">
@@ -279,7 +388,7 @@
                             </div>
                             <textarea id="result" placeholder="Result will be shown here..."></textarea>
                             <div id="handle"></div>
-                            <div class="code-right-footer">
+                            <div id="bug" class="code-right-footer">
                                 Submit Feedback/Report Bug <span class="fa fa-bug"></span>
                             </div>
                         </div>
@@ -297,19 +406,7 @@
 
     </div>
     <!-- /container -->
-    <div id="plotbox-wrapper">
-        <div id="plotbox"></div>
-    </div>
 
-    <div id="bug-form-wrapper">
-    </div>
-
-    <div id="submit-revision-wrapper">
-    </div>
-
-    <div id="submit-revision-error-wrapper">
-    </div>
-    <div id="diff-wrapper"></div>
     <!--
     <script
 			  src="http://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -340,6 +437,13 @@
     //            $('.container-app-main').toggle();
     });
     </script>
+
+    {% if eid %}
+        <script>
+            $('#intro-page').hide(300);
+            $('#examples-wrapper').show(300);
+        </script>
+    {% endif %}
     <script>
 
         var isResizing = false,

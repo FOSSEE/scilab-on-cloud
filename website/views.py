@@ -74,7 +74,6 @@ def index(request):
         .filter(category=category.id).filter(
         approval_status=1).filter(proposal_id__in=ids).order_by('book')
         d[category] = books_count
-    print d
 
     user = request.user
 
@@ -96,40 +95,39 @@ def index(request):
             'd': d,
         }
 
-        if 'category_id' in request.session:
-            category_id = request.session['category_id']
-            context['category_id'] = int(category_id)
-            context['books'] = get_books(category_id)
+        #if 'category_id' in request.session:
+        #    category_id = request.session['category_id']
+        #    context['category_id'] = int(category_id)
+        #    context['books'] = get_books(category_id)
 
-        if 'book_id' in request.session:
-            book_id = request.session['book_id']
-            context['book_id'] = int(book_id)
-            context['chapters'] = get_chapters(book_id)
+        #if 'book_id' in request.session:
+        #    book_id = request.session['book_id']
+        #    context['book_id'] = int(book_id)
+        #    context['chapters'] = get_chapters(book_id)
 
-        if 'chapter_id' in request.session:
-            chapter_id = request.session['chapter_id']
-            context['chapter_id'] = int(chapter_id)
-            context['examples'] = get_examples(chapter_id)
+        #if 'chapter_id' in request.session:
+        #    chapter_id = request.session['chapter_id']
+        #    context['chapter_id'] = int(chapter_id)
+        #    context['examples'] = get_examples(chapter_id)
 
-        if 'example_id' in request.session:
-            example_id = request.session['example_id']
-            context['eid'] = int(example_id)
-            context['revisions'] = get_revisions(example_id)
-            review = ScilabCloudComment.objects.using('scilab')\
-                .filter(example=example_id).count()
-            review_url = "http://scilab.in/cloud_comments/" + str(example_id)
-            context['review'] = review
-            context['review_url'] = review_url
+        #if 'example_id' in request.session:
+        #    example_id = request.session['example_id']
+        #    context['eid'] = int(example_id)
+        #    context['revisions'] = get_revisions(example_id)
+        #    review = ScilabCloudComment.objects.using('scilab')\
+        #        .filter(example=example_id).count()
+        #    review_url = "http://scilab.in/cloud_comments/" + str(example_id)
+        #    context['review'] = review
+        #    context['review_url'] = review_url
 
-        if 'commit_sha' in request.session:
-            commit_sha = request.session['commit_sha']
-            context['commit_sha'] = commit_sha
+        #if 'commit_sha' in request.session:
+        #    commit_sha = request.session['commit_sha']
+        #    context['commit_sha'] = commit_sha
 
-            if 'code' in request.session:
-                context['code'] = request.session['code']
-            elif 'filepath' in request.session:
-                context['code'] = get_code(request.session['filepath'], commit_sha)
-
+        #    if 'code' in request.session:
+        #        context['code'] = request.session['code']
+        #    elif 'filepath' in request.session:
+        #        context['code'] = get_code(request.session['filepath'], commit_sha)
         return render(request, 'website/templates/index.html', context)
     else:
         try:
@@ -195,6 +193,24 @@ def index(request):
                 code = get_code(example_file.filepath, revisions[0]['sha'])
                 request.session['commit_sha'] = revisions[0]['sha']
 
+                bk_id = TextbookCompanionChapter.objects.using('scilab')\
+                    .filter(id=chapter_id).values('preference_id')
+
+                bk = TextbookCompanionPreference.objects.using('scilab')\
+                    .filter(id=bk_id)
+
+                cp = TextbookCompanionChapter.objects.using('scilab')\
+                    .filter(id=chapter_id)
+
+                exmple = TextbookCompanionExample.objects.using('scilab')\
+                    .filter(chapter_id=chapter_id).order_by('number')
+
+                preference = TextbookCompanionPreference.objects.using('scilab')\
+                    .get(id=bk_id)
+
+                proposal = TextbookCompanionProposal.objects.using('scilab')\
+                    .get(id=preference.proposal_id)
+
             except IndexError:
                 return redirect("/")
 
@@ -213,10 +229,15 @@ def index(request):
                 'review': review,
                 'review_url': review_url,
                 'd': d,
+                'bk':bk,
+                'cp':cp,
+                'exmple': exmple,
+                "preference": preference,
+                "proposal": proposal,
             }
-            print "/////*****"
-            print context
-            print "***/*////"
+            print "////////////////"
+            print eid
+            print "//////////////"
             if not user.is_anonymous():
                 context['user'] = user
 

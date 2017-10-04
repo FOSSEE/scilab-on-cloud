@@ -15,7 +15,7 @@ $(document).ready(function() {
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
         lineWrapping: true,
-        theme: "monokai",
+        theme: "default",
         extraKeys: {
             "F11": function(cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
@@ -28,7 +28,7 @@ $(document).ready(function() {
 
     var result = CodeMirror.fromTextArea(document.getElementById("result"), {
         lineWrapping: true,
-        theme: "monokai",
+        theme: "default",
         readOnly: true,
         extraKeys: {
             "F11": function(cm) {
@@ -50,7 +50,6 @@ $(document).ready(function() {
 
     /* Code Mirror Controls */
     $fullscreen_code = $("#fullscreen-code");
-    $toggle_code = $("#toggle-code");
 
     $fullscreen_code.click(function(e) {
         editor.setOption("fullScreen", !editor.getOption("fullScreen"));
@@ -207,7 +206,7 @@ $(document).ready(function() {
 
     $(".download-example").hide();
 
-    
+
     $(document).on("click", ".exmp", function() {
 
         $("#revisions-wrapper").html("");
@@ -385,6 +384,7 @@ $(document).ready(function() {
 
     /* Bug form handling */
     $(document).on("click", "#bug", function(e) {
+      console.log("testing");
         Dajaxice.website.bug_form(function(data) {
             Dajax.process(data);
             $("#bug-form-wrapper").lightbox_me({
@@ -395,10 +395,10 @@ $(document).ready(function() {
     });
 
     $(document).on("click", "#bug-form-submit", function(e) {
-        ex_id = $("#examples").val();
-        cat_id = $("#categories").val();
-        book_id = $("#books").val();
-        chapter_id = $("#chapters").val();
+        cat_id = $(".chp").attr('id') || 0;
+        book_id: $(".bks_id").attr('id') || 0;
+        chapter_id: $(".chp_id").attr('id') || 0;
+        ex_id: $(".exmpid").attr('id') || 0;
         if (!ex_id) {
             ex_id = "NULL";
         }
