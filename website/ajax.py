@@ -170,9 +170,6 @@ def revisions(request, example_id):
     }
 
     revisions = render_to_string('website/templates/ajax-revisions.html', context)
-    print "**********"
-    print commits
-    print "*****************"
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
 

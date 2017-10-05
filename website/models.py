@@ -21,7 +21,7 @@ These models are used only for django orm reference.
 #     category = models.IntegerField()
 #     approval_status = models.IntegerField()
 #     cloud_pref_err_status = models.IntegerField()
-    
+
 #     class Meta:
 #         db_table = 'textbook_companion_preference'
 
@@ -31,7 +31,7 @@ class TextbookCompanionCategoryList(models.Model):
     category_name = models.CharField(max_length=100)
     category_id = models.IntegerField()
     maincategory = models.CharField(max_length=255)
-    
+
     class Meta:
         db_table = 'list_of_category'
 
@@ -49,7 +49,7 @@ class ScilabCloudComment(models.Model):
     reply_status = models.IntegerField(default='0')
     user = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         db_table = 'scilab_cloud_comment'
 
@@ -59,7 +59,7 @@ class TextbookCompanionSubCategoryList(models.Model):
     subcategory_id = models.IntegerField()
     subcategory = models.CharField(max_length=255)
     maincategory_id = models.IntegerField()
-   
+
     class Meta:
         db_table = 'list_of_subcategory'
 
