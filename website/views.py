@@ -235,9 +235,7 @@ def index(request):
                 "preference": preference,
                 "proposal": proposal,
             }
-            print "////////////////"
-            print eid
-            print "//////////////"
+            
             if not user.is_anonymous():
                 context['user'] = user
 
