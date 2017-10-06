@@ -45,7 +45,7 @@
         }
 
         .scrollid {
-            height: 100%;
+            height: 75%;
             overflow-y: scroll;
         }
 
@@ -55,9 +55,9 @@
         #submit-revision-wrapper,
         #submit-revision-error-wrapper,
         #diff-wrapper {
-          padding: 0px;
+          padding: 35px;
           background: #ffffff;
-          display: block;
+          display: none;
           -webkit-box-shadow: 0 0 10px #ffffff;
           -moz-box-shadow: 0 0 10px #ffffff;
           -o-box-shadow: 0 0 10px #ffffff;
@@ -97,19 +97,6 @@
       <a href="#">Login / Register</a>
   </div>
 
-  <div id="plotbox-wrapper">
-      <div id="plotbox"></div>
-  </div>
-
-  <div id="bug-form-wrapper">
-  </div>
-
-  <div id="submit-revision-wrapper">
-  </div>
-
-  <div id="submit-revision-error-wrapper">
-  </div>
-  <div id="diff-wrapper"></div>
     <div class="container-ml">
         <!-- Push Wrapper -->
         <div class="mp-pusher" id="mp-pusher">
@@ -254,6 +241,9 @@
 
                     <div id="examples-wrapper">
                       {% if eid %}
+                          <br style="display: none" class="ct_id" id={{ category_id }} />
+                          <br style="display: none" class="bk_id" id={{ book_id }} />
+                          <br style="display: none" class="cp_id" id={{ chapter_id }} />
                           <div class="col-md-12">
                               <div class="book-title-sub">
                                 {% for book in bk %}
@@ -277,7 +267,7 @@
                                   <div class="chapter-img">.</div>
                                   <div class="chapter-text">
                                       <div class="chapter-card-title exmp" id={{ example.id }}>
-                                          <h5 class="ex_id" values={{ example.id }}>Example {{ example.number }}</h5>
+                                          <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
                                           {{ example.caption }}
                                       </div>
                                   </div>
@@ -335,6 +325,7 @@
                                   <span class="fa fa-expand"></span>
                               </div>
                               {% if revisions %}
+                                  <br style="display: none" class="ex_id" id={{ eid }} />
                                   <div class="styled-select slate" id="revisions-one">
                                     <select id="revisions">
                                       <option value="">Select a revision</option>
@@ -403,10 +394,21 @@
 
     </div>
     <!-- /pusher -->
+    <div id="plotbox-wrapper">
+        <div id="plotbox"></div>
+    </div>
 
+    <div id="bug-form-wrapper">
+    </div>
+
+    <div id="submit-revision-wrapper">
+    </div>
+
+    <div id="submit-revision-error-wrapper">
+    </div>
+    <div id="diff-wrapper"></div>
     </div>
     <!-- /container -->
-
     <!--
     <script
 			  src="http://code.jquery.com/jquery-3.2.1.slim.min.js"
