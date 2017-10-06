@@ -1,6 +1,8 @@
 {% load static %}
 
-
+<br style="display: none" class="ct_id" id={{ ctid }} />
+<br style="display: none" class="bk_id" id={{ bkid }} />
+<br style="display: none" class="cp_id" id={{ cpid }} />
 <div class="col-md-12">
     <div class="book-title-sub">
       {% for book in bk %}
@@ -24,7 +26,7 @@
         <div class="chapter-img">.</div>
         <div class="chapter-text">
             <div class="chapter-card-title exmp" id={{ example.id }}>
-                <h5 class="ex_id" values={{ example.id }}>Example {{ example.number }}</h5>
+                <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
                 {{ example.caption }}
             </div>
         </div>

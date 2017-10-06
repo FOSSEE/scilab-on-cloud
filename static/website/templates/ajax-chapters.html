@@ -5,7 +5,7 @@
 {% for chapter in chapters %}
 <li >
     <a id="{{ chapter.id }}" href="#" class="chapa" onclick = "show_examples(this)">
-        {{ forloop.counter }}. {{ chapter.name }}
+         {{ chapter.number }} - {{ chapter.name }}
     </a>
 </li>
 {% endfor %}
