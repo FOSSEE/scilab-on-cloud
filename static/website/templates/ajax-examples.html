@@ -1,8 +1,10 @@
 {% load static %}
 
-<br style="display: none" class="ct_id" id={{ ctid }} />
-<br style="display: none" class="bk_id" id={{ bkid }} />
-<br style="display: none" class="cp_id" id={{ cpid }} />
+{% for bks in bk %}
+    <br style="display: none" class="ct_id" id="{{ bks.category }}" />
+    <br style="display: none" class="bk_id" id="{{ bks.id }}" />
+{% endfor %}
+<br style="display: none" class="cp_id" id="{{ cpid }}" />
 <div class="col-md-12">
     <div class="book-title-sub">
       {% for book in bk %}

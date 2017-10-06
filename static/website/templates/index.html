@@ -241,9 +241,9 @@
 
                     <div id="examples-wrapper">
                       {% if eid %}
-                          <br style="display: none" class="ct_id" id={{ category_id }} />
-                          <br style="display: none" class="bk_id" id={{ book_id }} />
-                          <br style="display: none" class="cp_id" id={{ chapter_id }} />
+                          <br style="display: none" class="ct_id" id="{{ category_id }}" />
+                          <br style="display: none" class="bk_id" id="{{ book_id }}" />
+                          <br style="display: none" class="cp_id" id="{{ chapter_id }}" />
                           <div class="col-md-12">
                               <div class="book-title-sub">
                                 {% for book in bk %}
@@ -325,7 +325,7 @@
                                   <span class="fa fa-expand"></span>
                               </div>
                               {% if revisions %}
-                                  <br style="display: none" class="ex_id" id={{ eid }} />
+                                  <br style="display: none" class="ex_id" id="{{ eid }}" />
                                   <div class="styled-select slate" id="revisions-one">
                                     <select id="revisions">
                                       <option value="">Select a revision</option>

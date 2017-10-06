@@ -307,6 +307,7 @@ $(document).ready(function() {
     $plotbox = $("#plotbox");
 
     $(document).on("click", "#execute", function() {
+      console.log($(".bk_id").attr('id'));
         $("#execute-inner").html("Executing...");
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
