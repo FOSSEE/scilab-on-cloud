@@ -225,7 +225,6 @@ $(document).ready(function() {
         }
 
         if ($(this).attr('id')) {
-          console.log(this.id);
             ajax_loader(this);
             Dajaxice.website.revisions(function(data) {
                 Dajax.process(data);
@@ -312,9 +311,9 @@ $(document).ready(function() {
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
             code: editor.getValue(),
-            book_id: $(".bks_id").attr('id') || 0,
-            chapter_id: $(".chp_id").attr('id') || 0,
-            example_id: $(".exmpid").attr('id') || 0
+            book_id: $(".bk_id").attr('id') || 0,
+            chapter_id: $(".ch_id").attr('id') || 0,
+            example_id: $(".ex_id").attr('id') || 0
         };
         $.post("/execute-code", send_data,
         function(data){
@@ -395,14 +394,13 @@ $(document).ready(function() {
     });
 
     $(document).on("click", "#bug-form-submit", function(e) {
-        cat_id = $(".chp").attr('id') || 0;
-        book_id: $(".bks_id").attr('id') || 0;
-        chapter_id: $(".chp_id").attr('id') || 0;
-        ex_id: $(".exmpid").attr('id') || 0;
+        cat_id = $(".ct_id").attr('id') || 0;
+        book_id = $(".bk_id").attr('id') || 0;
+        chapter_id = $(".cp_id").attr('id') || 0;
+        ex_id = $(".ex_id").attr('id') || 0;
         if (!ex_id) {
             ex_id = "NULL";
         }
-        console.log(ex_id);
         Dajaxice.website.bug_form_submit(Dajax.process, {
             form: $("#bug-form").serialize(true),
             cat_id: cat_id,
