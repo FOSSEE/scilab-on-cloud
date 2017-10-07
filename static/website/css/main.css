@@ -224,7 +224,7 @@ p, ul {
     display: inline-block;
 }
 li {
-    margin-top: 10px;
+    margin-top: 0px;
 }
 .how-it-works {
     margin-top: 9vh;
@@ -491,6 +491,8 @@ h1.small {
     color: #36c2de;
     font-size: 15px;
     font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 7px;
 }
 .container-app-main {
     padding: 50px;
@@ -505,13 +507,16 @@ h1.small {
     color: #000;
     display: inline-block;
     margin-top: 10px;
+    margin-bottom: 0px;
 }
 .book-title .btn-white {
-    margin-top: -10px;
+    margin-top: 0px;
     margin-left: 30px;
 }
 .btn-white {
     padding: 4px;
+    padding-left: 15px;
+    padding-right: 15px;
     background: #fff;
     color: #36c2de;
     border: 2px solid #36c2de;
@@ -697,7 +702,9 @@ h1.small {
     cursor: pointer;
 }
 
-
+.book-title > h4 {
+  margin-top: 0;
+}
 
 
 
@@ -834,7 +841,7 @@ p, ul, .example-text-wrap {
     }
 }
 .book-title > h4 {
-    margin-top: -20px;
+    margin-top: 0px;
     font-weight: 300;
 }
 #handle {

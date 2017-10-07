@@ -326,7 +326,7 @@ $(document).ready(function() {
                 $plot = $("<img>");
                 $plot.attr({
                     src: data.plot_path,
-                    width: '90%'
+                    width: '100%'
                 });
                 $plotbox.html($plot);
                 $plotbox_wrapper.lightbox_me({
