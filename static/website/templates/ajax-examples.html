@@ -24,10 +24,10 @@
 
 <div class="col-md-8 cards-wrapper">
   {% for example in examples %}
-    <div class="chapter-card col-sm-3">
+    <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
         <div class="chapter-img">.</div>
         <div class="chapter-text">
-            <div class="chapter-card-title exmp" id={{ example.id }}>
+            <div class="chapter-card-title">
                 <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
                 {{ example.caption }}
             </div>
