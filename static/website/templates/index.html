@@ -246,9 +246,9 @@
                               <div class="book-title ubuntu">
                                 {% for book in bk %}
                                   <h1 class="bks_id" id={{ book.id }}>{{ book.book }}</h1>
-                                  <a class="btn btn-blue btn-white noud" id="download-book" value={{ book.id }}>Download Book<span class="fa fa-download"></span></a>
+                                  <a class="btn btn-blue btn-white noud" id="download-book" value={{ book.id }} style="display:initial">Download Book<span class="fa fa-download"></span></a>
                                   {% for chapter in cp %}
-                                  <h4 class="chp_id" id={{ chapter.id }}> - Chapter {{ chapter.number }} : {{ chapter.name }} &nbsp;&nbsp;<a class="btn btn-blue btn-white noud" id="download-chapter" value={{ chapter.id }}>Download Chapter<span class="fa fa-download pcolor"></span></a></h4>
+                                  <h4 class="chp_id" id={{ chapter.id }}> - Chapter {{ chapter.number }} : {{ chapter.name }} &nbsp;&nbsp;<a class="btn btn-blue btn-white noud" id="download-chapter" value={{ chapter.id }} style="display:initial">Download Chapter<span class="fa fa-download pcolor"></span></a></h4>
                                   {% endfor %}
                                 {% endfor %}
                               </div>
@@ -314,7 +314,7 @@
                     <div class="code-sectionx">
                         <div class="code-left code-panes">
                           <div class="code-header" id="revisions-wrapper">
-                              <div class="expand-btn">
+                              <div class="expand-btn" id="fullscreen-code">
                                   <span class="fa fa-expand"></span>
                               </div>
                               {% if revisions %}
@@ -363,11 +363,11 @@
                         </div>
                         <div class="code-right code-panes">
                             <div class="code-header">
-                                <div class="expand-btn">
+                                <div class="expand-btn" id="fullscreen-result">
                                     <span class="fa fa-expand"></span>
                                 </div>
                                 Result
-                                <a class="btn btn-blue btn-white btn-execute exmpid noud download-example" id="0">DOWNLOAD EXAMPLE<span class="fa fa-download"></span></a>
+                                <a class="btn btn-blue btn-white btn-execute exmpid noud download-example" id="0"  style="display:none">DOWNLOAD EXAMPLE<span class="fa fa-download"></span></a>
                                 <!-- <a id="submit-revision" class="btn btn-blue btn-white btn-execute noud">Submit a Revision <span class="fa fa-gears"></span></a> -->
                             </div>
                             <textarea id="result" placeholder="Result will be shown here..."></textarea>
@@ -428,8 +428,8 @@
     new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
 
     $('.expand-btn').on('click', function(){
-        $('.code-panes').toggleClass('fullscreen');
-        $('.code-sectionx').toggleClass('fullscreen-x');
+        //$('.code-panes').toggleClass('fullscreen');
+        //$('.code-sectionx').toggleClass('fullscreen-x');
     //            $('.container-app-main').toggle();
     });
     </script>
@@ -438,6 +438,7 @@
         <script>
             $('#intro-page').hide(300);
             $('#examples-wrapper').show(300);
+            $(".download-example").css("display", "initial");
         </script>
     {% endif %}
     <script>

@@ -206,7 +206,7 @@ html, body, .containerx, .scroller {
 
 .mp-menu ul li::before {
 	position: relative;
-	top: 40px;
+	top: 34px;
 	left: 10px;
 	z-index: -1;
 	color: rgba(0,0,0,0.2);
