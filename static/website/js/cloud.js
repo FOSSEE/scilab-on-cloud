@@ -101,16 +101,7 @@ $(document).ready(function() {
             }, {category_id: $("#categories").val()});
         }
     });
-    */
 
-    if ($("#books").val() > 0) {
-        $("#contributor").show();
-        $("#download-book").show();
-    } else {
-        $("#contributor").hide();
-        $("#download-book").hide();
-    }
-    /*
     NOT NEEDED
     $(document).on("change", "#books", function() {
         $("#chapters-wrapper").html("");
@@ -151,15 +142,8 @@ $(document).ready(function() {
         }, {book_id: $(this).attr('id')});
     });
 
-    if ($("#chapters").val() > 0) {
-        $("#download-chapter").show();
-    } else {
-        $("#download-chapter").hide();
-    }
-
     examples_ajax = function(current_element){
         $("#examples-wrapper").html("");
-        $("#download-chapter").show();
         ajax_loader(current_element);
         Dajaxice.website.examples(function(data) {
             Dajax.process(data);
@@ -198,15 +182,6 @@ $(document).ready(function() {
         }
     });
     */
-    if ($("#exmpid").attr('id') > 0) {
-        $(".download-example").show();
-    } else {
-        $(".download-example").hide();
-    }
-
-    $(".download-example").hide();
-
-
     $(document).on("click", ".exmp", function() {
 
         $("#revisions-wrapper").html("");
@@ -307,6 +282,7 @@ $(document).ready(function() {
     $plotbox = $("#plotbox");
 
     $(document).on("click", "#execute", function() {
+      console.log($(".bk_id").attr('id'));
         $("#execute-inner").html("Executing...");
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
@@ -325,7 +301,7 @@ $(document).ready(function() {
                 $plot = $("<img>");
                 $plot.attr({
                     src: data.plot_path,
-                    width: '90%'
+                    width: '100%'
                 });
                 $plotbox.html($plot);
                 $plotbox_wrapper.lightbox_me({

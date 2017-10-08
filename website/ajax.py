@@ -119,8 +119,6 @@ def examples(request, chapter_id):
         bk = TextbookCompanionPreference.objects.using('scilab')\
             .filter(id=bk_id)
 
-        ct_id = bk.values('category')
-
         cp = TextbookCompanionChapter.objects.using('scilab')\
             .filter(id=chapter_id)
 
@@ -132,14 +130,14 @@ def examples(request, chapter_id):
 
         proposal = TextbookCompanionProposal.objects.using('scilab')\
             .get(id=preference.proposal_id)
-        request.session['book_id'] = bk_id
-        request.session['category_id'] = ct_id
+        for book in bk:
+            request.session['book_id'] = book.id
+            request.session['category_id'] = book.category
 
 
         context = {
             'bk':bk,
             'bkid': bk_id,
-            'ctid': ct_id,
             'cpid': chapter_id,
             'cp':cp,
             'examples': examples,
