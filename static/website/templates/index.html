@@ -317,6 +317,9 @@
                               <div class="expand-btn" id="fullscreen-code">
                                   <span class="fa fa-expand"></span>
                               </div>
+                              {% if not revisions %}
+                                  Scilab Code
+                              {% endif %}
                               {% if revisions %}
                                   <br style="display: none" class="ex_id" id="{{ eid }}" />
                                   <div class="styled-select slate" id="revisions-one">
@@ -342,6 +345,9 @@
                                   </div>
                               {% endif %}
                               <a id="execute" class="btn btn-blue btn-white btn-execute noud">EXECUTE <span class="fa fa-gears"></span></a>
+                              {% if review %}
+                                  <a id="review" class="btn btn-blue btn-white btn-execute noud" href="{{ review_url}}" target="_blank" >{{ review }} Review <span></span></a>
+                              {% endif %}
                           </div>
                             <form>
                                 <textarea id="code" placeholder="Write a new code or select existing from above panel...">{{ code }}</textarea>
