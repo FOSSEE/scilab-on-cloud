@@ -901,6 +901,7 @@ p, ul, .example-text-wrap {
     font-variant: small-caps;
 }
 .code-right-footer {
+    z-index: 5000;
     position: absolute;
     bottom: 0;
     right: 0;

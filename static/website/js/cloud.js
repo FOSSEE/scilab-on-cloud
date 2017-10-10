@@ -231,7 +231,6 @@ $(document).ready(function() {
     $(document).on("change", "#revisions", function() {
         $("#revisions-two").hide()
         if ($(this).val()) {
-          console.log($(this).val());
             ajax_loader(this);
             Dajaxice.website.code(function(data) {
                 editor.setValue(data.code);
@@ -266,7 +265,6 @@ $(document).ready(function() {
                 $("#diff-area").html(diffString(editor.getValue(), data.code2))
 
                 $("#diff-first").html('editor code')
-                console.log(revName)
                 $("#diff-second").html(revName)
             }, {
                 diff_commit_sha: $(this).val(),
@@ -282,7 +280,6 @@ $(document).ready(function() {
     $plotbox = $("#plotbox");
 
     $(document).on("click", "#execute", function() {
-      console.log($(".bk_id").attr('id'));
         $("#execute-inner").html("Executing...");
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
@@ -293,7 +290,6 @@ $(document).ready(function() {
         };
         $.post("/execute-code", send_data,
         function(data){
-          console.log(data);
             $("#execute-inner").html("Execute");
             result.setValue(data.output);
 
@@ -359,7 +355,6 @@ $(document).ready(function() {
 
     /* Bug form handling */
     $(document).on("click", "#bug", function(e) {
-      console.log("testing");
         Dajaxice.website.bug_form(function(data) {
             Dajax.process(data);
             $("#bug-form-wrapper").lightbox_me({
@@ -393,7 +388,6 @@ $(document).ready(function() {
 
     // submit revision handling
     $(document).on("click", "#submit-revision", function(e) {
-      console.log("clicked");
         // if (editor.getValue() == initial_code) {
         //     Dajaxice.website.revision_error(function(data) {
         //         Dajax.process(data);
