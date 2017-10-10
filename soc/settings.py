@@ -1,9 +1,9 @@
-#Custom Settings
+# Custom Settings
 
-from os.path import *
-from config import *
+import os
+from .config import *
 
-PROJECT_DIR = abspath(dirname(__file__) + '/../')
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__) + '/../')
 
 # Django settings for soc project.
 
@@ -94,7 +94,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'dajaxice.finders.DajaxiceFinder',
 )
 
@@ -138,12 +138,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'dajaxice',
     'dajax',
     'website',
+    'social.apps.django_app.default',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -174,3 +175,47 @@ LOGGING = {
         },
     }
 }
+
+# For social auth
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.google.GooglePlusAuth',
+    'social.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
+SOCIAL_AUTH_GOOGLE_PLUS_USE_DEPRECATED_API = True
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = EMAIL_HOST_SERVER
+
+# Port for sending e-mail.
+EMAIL_PORT = EMAIL_PORT_SERVER
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = EMAIL_HOST_USER_SERVER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD_SERVER
+EMAIL_USE_TLS = EMAIL_USE_TLS_SERVER

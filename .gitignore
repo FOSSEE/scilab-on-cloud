@@ -7,5 +7,6 @@
 *.swp
 *.swo
 *.pyc
-config.py
+soc/config.py
+soc/local.py
 tmp/
