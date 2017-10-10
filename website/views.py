@@ -11,6 +11,7 @@ from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
 from soc.config import UPLOADS_PATH
 import utils
 import base64
+from collections import OrderedDict
 
 def landing(request):
     context = {}
@@ -68,8 +69,9 @@ def index(request):
                 .all().order_by('category_name')
     ids = TextbookCompanionProposal.objects.using('scilab')\
             .filter(proposal_status=3).values('id')
-    d = {}
+    d = OrderedDict()
     for category in categories:
+        print category.category_name
         books_count = TextbookCompanionPreference.objects.using('scilab')\
         .filter(category=category.id).filter(
         approval_status=1).filter(proposal_id__in=ids).order_by('book')
