@@ -284,9 +284,10 @@ $(document).ready(function() {
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
             code: editor.getValue(),
-            book_id: $(".bk_id").attr('id') || 0,
-            chapter_id: $(".ch_id").attr('id') || 0,
-            example_id: $(".ex_id").attr('id') || 0
+            book_id: $(".bks_id").attr("ID") || 0,
+            chapter_id: $(".chp_id").attr("ID") || 0,
+            example_id: $(".ex_id").attr("ID") || 0
+
         };
         $.post("/execute-code", send_data,
         function(data){

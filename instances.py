@@ -126,7 +126,7 @@ class ScilabInstance(object):
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
-        if dependency_exists==True:
+        if dependency_exists==True and book_id != 0 and chapter_id != 0 and example_id != 0:
             f.write(
             'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
         )
