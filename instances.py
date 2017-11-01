@@ -102,7 +102,7 @@ class ScilabInstance(object):
 
         #Finding the plot and appending xs2jpg function
         #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
-        p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
+        p = re.compile(r'plot|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
 
         plot_path = ''
         if p.search(code):
