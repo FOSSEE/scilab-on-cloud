@@ -1,5 +1,5 @@
 {% load static %}
-
+<link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
 {% for bks in bk %}
     <br style="display: none" class="ct_id" id="{{ bks.category }}" />
     <br style="display: none" class="bk_id" id="{{ bks.id }}" />
@@ -24,18 +24,18 @@
 
 <div class="col-md-8 cards-wrapper">
   {% for example in examples %}
-    <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
-        <div class="chapter-img">.</div>
-        <div class="chapter-text">
-            <div class="chapter-card-title">
-                <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
-                {{ example.caption }}
-            </div>
-        </div>
-    </div>
+      <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
+          <div class="chapter-img">.</div>
+          <div class="chapter-text">
+              <div class="chapter-card-title">
+                  <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
+                  {{ example.caption }}
+              </div>
+          </div>
+      </div>
   {% endfor %}
 </div>
-
+<br style="display: none" class="exmp_id active" id="999999999444444555556" />
 
 
 <div class="col-md-4">

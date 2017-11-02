@@ -11,3 +11,13 @@
 {% endfor %}
 
 </ul>
+<script src="{% static 'website/js/jquery-1.10.2.min.js' %}"></script>
+<script>
+    window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+</script>
+<script src="{% static 'website/js/jquery.nicescroll.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $(".scrollid").niceScroll();
+  });
+</script>
