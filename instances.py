@@ -5,6 +5,7 @@ import re
 import time
 import sys
 
+from datetime import datetime
 #importing the local variables
 from soc.settings import PROJECT_DIR
 from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
@@ -102,7 +103,7 @@ class ScilabInstance(object):
 
         #Finding the plot and appending xs2jpg function
         #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
-        p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
+        p = re.compile(r'plot|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
 
         plot_path = ''
         if p.search(code):
@@ -159,6 +160,22 @@ class ScilabInstance(object):
             'output': output,
             'plot_path': plot_path.replace(PROJECT_DIR, '')
         }
+        now = datetime.now()
+        print now
+        log_file_name = now.strftime("%Y-%m-%d")
+        f = open(PROJECT_DIR + '/static/log/'+str(log_file_name)+'.txt', "a")
+        print(output)
+        f.write("************************************" + "\n")
+        f.write(str(datetime.now()) + "\n")
+        f.write("------------------------------------" + "\n")
+        f.write("Book ID: "+ str(book_id) + "\n")
+        f.write("Chapter ID: "+ str(chapter_id) + "\n")
+        f.write("Example ID: "+ str(example_id) + "\n")
+        f.write("------------------------------------" + "\n")
+        f.write("Output" + "\n")
+        f.write("------------------------------------" + "\n")
+        f.write(output + "\n")
+        f.write("************************************" + "\n")
         return data
 
     def trim(self, output):
