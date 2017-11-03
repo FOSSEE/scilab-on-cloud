@@ -11,6 +11,13 @@ from soc.settings import PROJECT_DIR
 from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
 SCILAB_3 ,SCILAB_4, SCILAB_5
 
+from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
+    TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
+    TextbookCompanionPreference, TextbookCompanionChapter,\
+    TextbookCompanionExample, TextbookCompanionExampleFiles,\
+    TextbookCompanionRevision, TextbookCompanionExampleDependency,\
+    TextbookCompanionDependencyFiles
+
 ''' An object of class ScilabInstance handles spawning and maintaining of multiple
 scilab instances.
 
@@ -161,21 +168,26 @@ class ScilabInstance(object):
             'plot_path': plot_path.replace(PROJECT_DIR, '')
         }
         now = datetime.now()
-        print now
         log_file_name = now.strftime("%Y-%m-%d")
-        f = open(PROJECT_DIR + '/static/log/'+str(log_file_name)+'.txt', "a")
-        print(output)
-        f.write("************************************" + "\n")
-        f.write(str(datetime.now()) + "\n")
-        f.write("------------------------------------" + "\n")
-        f.write("Book ID: "+ str(book_id) + "\n")
-        f.write("Chapter ID: "+ str(chapter_id) + "\n")
-        f.write("Example ID: "+ str(example_id) + "\n")
-        f.write("------------------------------------" + "\n")
-        f.write("Output" + "\n")
-        f.write("------------------------------------" + "\n")
-        f.write(output + "\n")
-        f.write("************************************" + "\n")
+        if book_id != 0 and chapter_id != 0 and example_id != 0:
+            book = TextbookCompanionPreference.objects.using('scilab')\
+                .filter(id=book_id)
+            chapter = TextbookCompanionChapter.objects.using('scilab')\
+                .filter(id=chapter_id)
+            example = TextbookCompanionExample.objects.using('scilab')\
+                .filter(id=example_id)
+            f = open(PROJECT_DIR + '/static/log/'+str(log_file_name)+'.txt', "a")
+            f.write("************************************" + "\n")
+            f.write(str(datetime.now()) + "\n")
+            f.write("------------------------------------" + "\n")
+            f.write("Book: {0} [Author: {1}]\n".format(book[0].book,book[0].author))
+            f.write("Chapter: {0}\n".format(chapter[0].name))
+            f.write("Example: ({0}) {1}\n".format(example[0].number,example[0].caption))
+            f.write("------------------------------------" + "\n")
+            f.write("Output" + "\n")
+            f.write("------------------------------------" + "\n")
+            f.write(output + "\n")
+            f.write("************************************" + "\n")
         return data
 
     def trim(self, output):
