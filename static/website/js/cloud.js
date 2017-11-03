@@ -48,7 +48,7 @@ $(document).ready(function() {
     // hide revision submit button initially
     // $("#submit-revision").show()
 
-    /* Code Mirror Controls */
+    /* Code Mirror Controls
     $fullscreen_code = $("#fullscreen-code");
 
     $fullscreen_code.click(function(e) {
@@ -65,7 +65,6 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-    /*
      * Selectors function
      * Write the queries using .on()
      */
