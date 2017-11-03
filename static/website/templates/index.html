@@ -135,7 +135,7 @@
                             <div class="logo-app-wrap">
 
                             </div>
-                            <h2 class="text-center">Choose a book <span class="fa fa-chevron-right pcolor"></span> Choose an example <span class="fa fa-chevron-right pcolor"></span> Execute</h2>
+                            <h2 class="text-center">Choose a category <span class="fa fa-chevron-right pcolor"></span> Choose a book <span class="fa fa-chevron-right pcolor"></span> Choose an example <span class="fa fa-chevron-right pcolor"></span> Execute</h2>
                             <br><br><br>
                             <div class="text-center pcolor"><a data-rel="mobile-menu" href="#" id="trigger-alt" class="pcolor link noud" style="display: none">Or, browse by category</a></div>
                             </div>
@@ -256,15 +256,27 @@
 
                           <div class="col-md-8 cards-wrapper">
                             {% for example in exmple %}
-                              <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
-                                  <div class="chapter-img">.</div>
-                                  <div class="chapter-text">
-                                      <div class="chapter-card-title">
-                                          <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
-                                          {{ example.caption }}
-                                      </div>
-                                  </div>
-                              </div>
+                              {% if example.id == eid %}
+                                <div class="chapter-card col-sm-3 active exmp" id={{ example.id }}>
+                                    <div class="chapter-img">.</div>
+                                    <div class="chapter-text">
+                                        <div class="chapter-card-title">
+                                            <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
+                                            {{ example.caption }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
+                                    <div class="chapter-img">.</div>
+                                    <div class="chapter-text">
+                                        <div class="chapter-card-title">
+                                            <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
+                                            {{ example.caption }}
+                                        </div>
+                                    </div>
+                                </div>
+                              {% endif %}
                             {% endfor %}
                           </div>
 
@@ -416,6 +428,7 @@
     <script>
         window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
     </script>
+    <script src="{% static 'website/js/jquery.nicescroll.js' %}"></script>
     <script src="{% static 'website/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js' %}"></script>
     <script src="{% static 'dajax/jquery.dajax.core.js' %}"></script>
     <script src="{% static 'website/js/codemirror.js'%}"></script>
@@ -432,9 +445,9 @@
     new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
 
     $('.expand-btn').on('click', function(){
-        //$('.code-panes').toggleClass('fullscreen');
-        //$('.code-sectionx').toggleClass('fullscreen-x');
-    //            $('.container-app-main').toggle();
+        $('.code-panes').toggleClass('fullscreen');
+        $('.code-sectionx').toggleClass('fullscreen-x');
+                $('.container-app-main').toggle();
     });
     </script>
 
@@ -445,6 +458,14 @@
             $(".download-example").css("display", "initial");
         </script>
     {% endif %}
+    <script>
+       $(document).ready(function() {
+
+      	var nice = $("html").niceScroll();
+          $(".scrollid").niceScroll();
+
+        });
+    </script>
     <script>
 
         var isResizing = false,

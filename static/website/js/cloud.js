@@ -135,6 +135,9 @@ $(document).ready(function() {
     });
     */
     $(".mmbooks").click( function() {
+        editor.setValue("");
+        result.setValue("");
+        editor.clearHistory();
         ajax_loader(this);
         Dajaxice.website.chapters(function(data) {
             Dajax.process(data);
@@ -143,6 +146,9 @@ $(document).ready(function() {
     });
 
     examples_ajax = function(current_element){
+        editor.setValue("");
+        result.setValue("");
+        editor.clearHistory();
         $("#examples-wrapper").html("");
         ajax_loader(current_element);
         Dajaxice.website.examples(function(data) {
@@ -183,10 +189,12 @@ $(document).ready(function() {
     });
     */
     $(document).on("click", ".exmp", function() {
-
+        document.getElementById($(".exmp_id").attr('id')).className = document.getElementById($(".exmp_id").attr('id')).className.replace( /(?:^|\s)active(?!\S)/g , '' );
+        document.getElementById(this.id).className += " active";
         $("#revisions-wrapper").html("");
         $(".download-example").show();
         $('.exmpid').attr('id', this.id);
+        $('.exmp_id').attr('id', this.id);
 
         // hide revision submit button if one selects different example
         // $("#submit-revision").hide()

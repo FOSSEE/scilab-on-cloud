@@ -1351,3 +1351,11 @@ input[type="search"] { /* reset normalize */
 .modal {
     z-index: 99999;
 }
+.chapter-card.active {
+    background: #fff;
+    color: #36c2de;
+    border: 2px solid #36c2de;
+}
+.chapter-card.active .chapter-img {
+    background: #fff;
+}
