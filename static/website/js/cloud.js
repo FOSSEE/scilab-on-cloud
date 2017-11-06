@@ -188,12 +188,14 @@ $(document).ready(function() {
     });
     */
     $(document).on("click", ".exmp", function() {
+        editor.setValue("");
         document.getElementById($(".exmp_id").attr('id')).className = document.getElementById($(".exmp_id").attr('id')).className.replace( /(?:^|\s)active(?!\S)/g , '' );
         document.getElementById(this.id).className += " active";
         $("#revisions-wrapper").html("");
         $(".download-example").show();
         $('.exmpid').attr('id', this.id);
         $('.exmp_id').attr('id', this.id);
+        result.setValue("");
 
         // hide revision submit button if one selects different example
         // $("#submit-revision").hide()
