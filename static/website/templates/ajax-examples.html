@@ -1,5 +1,6 @@
 {% load static %}
 
+<link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
 {% for bks in bk %}
     <br style="display: none" class="ct_id" id="{{ bks.category }}" />
     <br style="display: none" class="bk_id" id="{{ bks.id }}" />
@@ -35,7 +36,7 @@
     </div>
   {% endfor %}
 </div>
-
+<br style="display: none" class="exmp_id active" id="example-break" />
 
 
 <div class="col-md-4">
