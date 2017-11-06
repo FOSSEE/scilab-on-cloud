@@ -12,6 +12,7 @@ function show_examples(current_element){
 }
 
 $(document).ready(function() {
+
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
         lineWrapping: true,
@@ -133,6 +134,7 @@ $(document).ready(function() {
         }
     });
     */
+
     $(".mmbooks").click( function() {
         editor.setValue("");
         result.setValue("");
@@ -157,6 +159,7 @@ $(document).ready(function() {
               $('#intro-page').hide(300);
               $('#examples-wrapper').show(300);
   }
+
     /*
     NOT NEEDED
     $(document).on("change", "#chapters", function() {
@@ -290,6 +293,7 @@ $(document).ready(function() {
 
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
+        ajax_loader("clear");
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
             code: editor.getValue(),

@@ -134,7 +134,6 @@ def examples(request, chapter_id):
             request.session['book_id'] = book.id
             request.session['category_id'] = book.category
 
-
         context = {
             'bk':bk,
             'bkid': bk_id,
@@ -143,6 +142,7 @@ def examples(request, chapter_id):
             'examples': examples,
             "preference": preference,
             "proposal": proposal,
+            "img_thumb": "<img src='static/website/images/code-thumbnails/code1.png' style='width:100%;height:100%'></img>"
         }
 
     examples = render_to_string('website/templates/ajax-examples.html', context)

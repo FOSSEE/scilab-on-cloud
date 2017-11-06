@@ -26,7 +26,7 @@
 <div class="col-md-8 cards-wrapper">
   {% for example in examples %}
     <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
-        <div class="chapter-img">.</div>
+        <div id="ex-img" class="chapter-img">{{ img_thumb|safe }}</div>
         <div class="chapter-text">
             <div class="chapter-card-title">
                 <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
