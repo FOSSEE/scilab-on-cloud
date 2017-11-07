@@ -432,4 +432,8 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+ $("#close-panel,#plotbox").click(function(){
+     $("#plotbox, #plotbox-wrapper").trigger('close');
+ })
+
 });
