@@ -73,8 +73,9 @@ def index(request):
     for category in categories:
         print category.category_name
         books_count = TextbookCompanionPreference.objects.using('scilab')\
-        .filter(category=category.id).filter(
-        approval_status=1).filter(proposal_id__in=ids).order_by('book')
+        .filter(category=category.id).filter(approval_status=1)\
+        .filter(cloud_pref_err_status=0)\
+        .filter(proposal_id__in=ids).order_by('book')
         d[category] = books_count
 
     user = request.user
