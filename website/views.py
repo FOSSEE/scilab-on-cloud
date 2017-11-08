@@ -237,6 +237,7 @@ def index(request):
                 'exmple': exmple,
                 "preference": preference,
                 "proposal": proposal,
+                "img_thumb": "<img src='static/website/images/code-thumbnails/code1.png' style='width:100%;height:100%;pointer-events:none;'></img>",
             }
 
             if not user.is_anonymous():
