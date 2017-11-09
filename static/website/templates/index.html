@@ -446,7 +446,7 @@
     <script>
     new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
 
-    $('.expand-btn').on('click', function(){
+    $(document.body).on('click','.expand-btn', function(){
         $('.code-panes').toggleClass('fullscreen');
         $('.code-sectionx').toggleClass('fullscreen-x');
                 $('.container-app-main').toggle();
