@@ -317,7 +317,7 @@ $(document).ready(function() {
                 $plotbox_wrapper.lightbox_me({
                     centered: true
                 });
-                var dt = $("#examples option:selected").text();
+                var dt = new Date().getTime();
                 $("#plot_download").show();
                 $("#plot_download").attr("download", dt+'.png');
                 $("#plot_download").attr("href", data.plot_path);
