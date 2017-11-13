@@ -1359,3 +1359,8 @@ input[type="search"] { /* reset normalize */
 .chapter-card.active .chapter-img {
     background: #fff;
 }
+.views-count{
+    float:right;
+    font-size:13px;
+    font-family: 'Roboto', sans-serif;
+}

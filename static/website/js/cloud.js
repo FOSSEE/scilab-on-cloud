@@ -192,13 +192,27 @@ $(document).ready(function() {
     */
     $(document).on("click", ".exmp", function() {
         editor.setValue("");
-        document.getElementById($(".exmp_id").attr('id')).className = document.getElementById($(".exmp_id").attr('id')).className.replace( /(?:^|\s)active(?!\S)/g , '' );
-        document.getElementById(this.id).className += " active";
+        $('.exmp').removeClass("active");
+        //document.getElementById($(".exmp").attr('id')).className = document.getElementById($(".exmp").attr('id')).className.replace( /(?:^|\s)active(?!\S)/g , '' );
+        //document.getElementById(this.id).className += "active";
+        $(this).addClass("active");
         $("#revisions-wrapper").html("");
         $(".download-example").show();
         $('.exmpid').attr('id', this.id);
         $('.exmp_id').attr('id', this.id);
         result.setValue("");
+        var ex_id = $(this).attr('id');
+         $.ajax({
+            url: 'update_view_count/',
+            dataType: 'text',
+            type : 'GET',
+            data: {
+                    ex_id: ex_id,
+            },
+            success: function(data){
+                $('.' + ex_id).text(data);
+            }
+         });
 
         // hide revision submit button if one selects different example
         // $("#submit-revision").hide()

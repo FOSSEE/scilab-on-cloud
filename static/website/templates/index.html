@@ -257,11 +257,22 @@
                           <div class="col-md-8 cards-wrapper">
                             {% for example in exmple %}
                               {% if example.id == eid %}
-                                <div class="chapter-card col-sm-3 active exmp" id={{ example.id }}>
+                                <div class="chapter-card col-sm-3 exmp active" id={{ example.id }}>
                                     <div id="ex-img" class="chapter-img">{{ img_thumb|safe }}</div>
+                                    {% if example.views_count == NULL %}
+                                        <i class="views-count fa fa-eye
+                                        {{ example.id }}" aria-hidden="true">
+                                        </i>
+                                    {% else %}
+                                    <i class="views-count fa fa-eye
+                                        {{ example.id }}" aria-hidden="true">
+                                        {{ example.views_count }}
+                                    </i>
+                                    {% endif %}
                                     <div class="chapter-text">
                                         <div class="chapter-card-title">
-                                            <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
+                                            <h5 class="ex-id" values={{ example.id }}>
+                                            Example {{ example.number }}</h5>
                                             {{ example.caption }}
                                         </div>
                                     </div>
@@ -269,9 +280,19 @@
                                 {% else %}
                                 <div class="chapter-card col-sm-3 exmp" id={{ example.id }}>
                                     <div id="ex-img" class="chapter-img">{{ img_thumb|safe }}</div>
+                                     {% if example.views_count == NULL %}
+                                        <i class="views-count fa fa-eye
+                                         {{ example.id }}" aria-hidden="true">
+                                        </i>
+                                     {% else %}
+                                        <i class="views-count fa fa-eye
+                                         {{ example.id }}" aria-hidden="true">
+                                         {{ example.views_count }}</i>
+                                     {% endif %}
                                     <div class="chapter-text">
                                         <div class="chapter-card-title">
-                                            <h5 class="ex-id" values={{ example.id }}>Example {{ example.number }}</h5>
+                                            <h5 class="ex-id" values={{ example.id }}>
+                                            Example {{ example.number }}</h5>
                                             {{ example.caption }}
                                         </div>
                                     </div>

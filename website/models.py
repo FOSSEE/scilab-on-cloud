@@ -189,3 +189,12 @@ class TextbookCompanionDependencyFiles(models.Model):
 
     class Meta:
         db_table = 'textbook_companion_dependency_files'
+
+class TextbookCompanionExampleViews(models.Model):
+    id = models.IntegerField(primary_key=True)
+    chapter_id = models.IntegerField(default=0)
+    example_id = models.IntegerField(default=0)
+    views_count = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'textbook_companion_example_views'
