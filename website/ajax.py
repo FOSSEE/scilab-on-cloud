@@ -24,7 +24,7 @@ from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
     TextbookCompanionPreference, TextbookCompanionChapter,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionRevision, TextbookCompanionExampleDependency,\
-    TextbookCompanionDependencyFiles
+    TextbookCompanionDependencyFiles, TextbookCompanionExampleViews
 from website.forms import BugForm, RevisionForm
 from website.dataentry import entry
 from website.forms import issues
@@ -122,14 +122,25 @@ def examples(request, chapter_id):
         cp = TextbookCompanionChapter.objects.using('scilab')\
             .filter(id=chapter_id)
 
-        examples = TextbookCompanionExample.objects.using('scilab')\
-            .filter(chapter_id=chapter_id).order_by('number')
+        #examples = TextbookCompanionExample.objects.using('scilab')\
+        #    .filter(chapter_id=chapter_id).order_by('number')
+        examples = TextbookCompanionExample.objects.db_manager('scilab')\
+                    .raw(dedent("""\
+                    SELECT tce.*, tcev.views_count as views_count FROM
+                    textbook_companion_example tce LEFT
+                    JOIN textbook_companion_example_views tcev ON
+                    tce.id = tcev.example_id WHERE tce.chapter_id=%s
+                    ORDER BY tce.number"""), [chapter_id])
 
         preference = TextbookCompanionPreference.objects.using('scilab')\
             .get(id=bk_id)
 
         proposal = TextbookCompanionProposal.objects.using('scilab')\
             .get(id=preference.proposal_id)
+
+        example_views_count = TextbookCompanionExampleViews.objects.using('scilab')\
+                    .filter(chapter_id=chapter_id)
+
         for book in bk:
             request.session['book_id'] = book.id
             request.session['category_id'] = book.category
@@ -142,6 +153,7 @@ def examples(request, chapter_id):
             'examples': examples,
             "preference": preference,
             "proposal": proposal,
+            "example_views": example_views_count,
             "img_thumb": "<img src='static/website/images/code-thumbnails/code1.png' style='width:100%;height:100%;pointer-events:none;'></img>"
         }
 

@@ -2,12 +2,17 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.core.context_processors import csrf
 from django.contrib.auth import logout
+from django.utils import simplejson
+from django.http import HttpResponse
+from django.db.models import F
+from textwrap import dedent
+
 from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
     TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
     TextbookCompanionPreference, TextbookCompanionChapter,\
     TextbookCompanionExample, TextbookCompanionExampleFiles,\
     TextbookCompanionRevision, TextbookCompanionExampleDependency,\
-    TextbookCompanionDependencyFiles
+    TextbookCompanionDependencyFiles, TextbookCompanionExampleViews
 from soc.config import UPLOADS_PATH
 import utils
 import base64
@@ -205,8 +210,16 @@ def index(request):
                 cp = TextbookCompanionChapter.objects.using('scilab')\
                     .filter(id=chapter_id)
 
-                exmple = TextbookCompanionExample.objects.using('scilab')\
-                    .filter(chapter_id=chapter_id).order_by('number')
+                #exmple = TextbookCompanionExample.objects.using('scilab')\
+                #    .filter(chapter_id=chapter_id).order_by('number')
+
+                exmple = TextbookCompanionExample.objects.db_manager('scilab')\
+                    .raw(dedent("""\
+                    SELECT tce.*, tcev.views_count as views_count FROM
+                    textbook_companion_example tce LEFT
+                    JOIN textbook_companion_example_views tcev ON
+                    tce.id = tcev.example_id WHERE tce.chapter_id=%s
+                    ORDER BY tce.number"""), [chapter_id])
 
                 preference = TextbookCompanionPreference.objects.using('scilab')\
                     .get(id=bk_id)
@@ -267,3 +280,21 @@ def review(request):
         'revisions': revisions,
     }
     return render(request, 'website/templates/review-interface.html', context)
+
+def update_view_count(request):
+    ex_id = request.GET.get('ex_id')
+    Example_chapter_id = TextbookCompanionExample.objects.using('scilab')\
+                    .filter(id=ex_id)
+
+    TextbookCompanionExampleViews.objects.using('scilab')\
+        .get_or_create(example_id = ex_id,chapter_id = Example_chapter_id[0]\
+                                    .chapter_id)
+    TextbookCompanionExampleViews.objects.using('scilab')\
+                                    .filter(example_id = ex_id)\
+                                    .update(views_count = F('views_count')+1)
+
+    Example_views_count = TextbookCompanionExampleViews.objects.using('scilab')\
+                            .filter(example_id=ex_id)
+    data = Example_views_count[0].views_count
+    return HttpResponse(data)
+
