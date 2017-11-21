@@ -57,7 +57,7 @@
 		return e.parentNode && closest( e.parentNode, classname );
 	}
 
-	function mlPushMenu( el, trigger, options ) {	
+	function mlPushMenu( el, trigger, options ) {
 		this.el = el;
 		this.trigger = trigger;
 		this.options = extend( this.defaults, options );
