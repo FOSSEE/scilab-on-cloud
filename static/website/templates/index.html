@@ -61,7 +61,8 @@
         }
 
         .side-about {
-            position: fixed;
+            /*position: fixed; */
+            float:right;
         }
 
         .scroller,
@@ -97,7 +98,7 @@
             <!-- mp-menu -->
             <nav id="mp-menu" class="mp-menu">
                 <div class="mp-level">
-                    <img src="{% static 'website/images/scilab-app-logo.svg' %}" class="full-width padding-logo" />
+                    <a href="/index"><img src="{% static 'website/images/scilab-app-logo.svg' %}" class="full-width padding-logo" /></a>
                     <h2 class="icon icon-world" >Categories</h2>
                     <ul class="scrollid">
                       {% for category, books in d.items %}

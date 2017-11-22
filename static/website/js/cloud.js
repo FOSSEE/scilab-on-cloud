@@ -306,21 +306,16 @@ $(document).ready(function() {
     $plotbox = $("#plotbox");
 
     $(document).on("click", "#execute", function() {
-        $("#execute-inner").html("Executing...");
-        ajax_loader("clear");
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
             code: editor.getValue(),
             book_id: $(".bks_id").attr("ID") || 0,
             chapter_id: $(".chp_id").attr("ID") || 0,
             example_id: $(".ex_id").attr("ID") || 0
-
         };
         $.post("/execute-code", send_data,
         function(data){
-            $("#execute-inner").html("Execute");
             result.setValue(data.output);
-
             if(data.plot_path){
                 $plot = $("<img>");
                 $plot.attr({
