@@ -107,7 +107,7 @@
                             <div id="books-wrapper{{ category.id }}" class="mp-level bookss">
                               <img src="{% static 'website/images/scilab-app-logo.svg' %}" class="full-width padding-logo" />
                               <h2 class="icon icon-display">
-                              <i class="fa fa-book"></i> Books</h2>
+                              Books</h2>
                               <ul class="scrollid">
                               {% for book in books %}
                               <li class="icon icon-arrow-left">
@@ -138,7 +138,7 @@
 
                             </div>
                             <h2 class="text-center">
-                            <a href="#" id="catclick" style="color: #808080;">Choose a category</a>
+                            <span id="catclick" style="color: #808080;">Choose a category</span>
                             <span class="fa fa-chevron-right pcolor"></span> Choose a book <span class="fa fa-chevron-right pcolor"></span> Choose an example <span class="fa fa-chevron-right pcolor"></span> Execute</h2>
                             <br><br><br>
                             <div class="text-center pcolor"><a data-rel="mobile-menu" href="#" id="trigger-alt" class="pcolor link noud" style="display: none">Or, browse by category</a></div>
