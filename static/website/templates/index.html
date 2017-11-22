@@ -106,7 +106,8 @@
                             <a id="{{ category.id }}" class="categories" href="#">{{ category.category_name }}</a>
                             <div id="books-wrapper{{ category.id }}" class="mp-level bookss">
                               <img src="{% static 'website/images/scilab-app-logo.svg' %}" class="full-width padding-logo" />
-                              <h2 class="icon icon-display">Books</h2>
+                              <h2 class="icon icon-display">
+                              Books</h2>
                               <ul class="scrollid">
                               {% for book in books %}
                               <li class="icon icon-arrow-left">
@@ -136,7 +137,9 @@
                             <div class="logo-app-wrap">
 
                             </div>
-                            <h2 class="text-center">Choose a category <span class="fa fa-chevron-right pcolor"></span> Choose a book <span class="fa fa-chevron-right pcolor"></span> Choose an example <span class="fa fa-chevron-right pcolor"></span> Execute</h2>
+                            <h2 class="text-center">
+                            <span id="catclick" style="color: #808080;">Choose a category</span>
+                            <span class="fa fa-chevron-right pcolor"></span> Choose a book <span class="fa fa-chevron-right pcolor"></span> Choose an example <span class="fa fa-chevron-right pcolor"></span> Execute</h2>
                             <br><br><br>
                             <div class="text-center pcolor"><a data-rel="mobile-menu" href="#" id="trigger-alt" class="pcolor link noud" style="display: none">Or, browse by category</a></div>
                             </div>
@@ -467,6 +470,7 @@
     <script src="{% static 'website/js/jsdiff.js'%}"></script>
     <script>
     new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('trigger'));
+    new mlPushMenu(document.getElementById('mp-menu'), document.getElementById('catclick'));
 
     $(document.body).on('click','.expand-btn', function(){
         $('.code-panes').toggleClass('fullscreen');
