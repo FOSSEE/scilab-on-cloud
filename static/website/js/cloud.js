@@ -305,7 +305,8 @@ $(document).ready(function() {
     $plotbox_wrapper = $("#plotbox-wrapper");
     $plotbox = $("#plotbox");
 
-    $(document).on("click", "#execute", function() {
+    $(document.body).on("click", "#execute", function() {
+        result.setValue("");
         var send_data = {
             token: $("[name='csrfmiddlewaretoken']").val(),
             code: editor.getValue(),
@@ -313,8 +314,12 @@ $(document).ready(function() {
             chapter_id: $(".chp_id").attr("ID") || 0,
             example_id: $(".ex_id").attr("ID") || 0
         };
+
+       $('#execute span').removeClass('fa fa-gears').addClass('fa fa-spinner fa-pulse fa-2x fa-fw');
         $.post("/execute-code", send_data,
         function(data){
+             $('#execute span').removeClass('fa fa-spinner fa-pulse fa-2x fa-fw').addClass('fa fa-gears');
+
             result.setValue(data.output);
             if(data.plot_path){
                 $plot = $("<img>");
