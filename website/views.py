@@ -7,16 +7,22 @@ from django.http import HttpResponse
 from django.db.models import F
 from textwrap import dedent
 
-from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
-    TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
-    TextbookCompanionPreference, TextbookCompanionChapter,\
-    TextbookCompanionExample, TextbookCompanionExampleFiles,\
-    TextbookCompanionRevision, TextbookCompanionExampleDependency,\
-    TextbookCompanionDependencyFiles, TextbookCompanionExampleViews
+from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
+                            TextbookCompanionSubCategoryList,
+                            TextbookCompanionProposal,
+                            TextbookCompanionPreference,
+                            TextbookCompanionChapter,
+                            TextbookCompanionExample,
+                            TextbookCompanionExampleFiles,
+                            TextbookCompanionRevision,
+                            TextbookCompanionExampleDependency,
+                            TextbookCompanionDependencyFiles,
+                            TextbookCompanionExampleViews)
 from soc.config import UPLOADS_PATH
 import utils
 import base64
 from collections import OrderedDict
+
 
 def landing(request):
     context = {}
@@ -26,17 +32,17 @@ def landing(request):
 def catg(cat_id, all_cat):
     if all_cat is False:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
-                    .get(id=cat_id)
+            .get(id=cat_id)
         return category.category_name
     else:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
-                    .all().order_by('category_name')
+            .all().order_by('category_name')
         return category
 
 
 def get_books(category_id):
     ids = TextbookCompanionProposal.objects.using('scilab')\
-            .filter(proposal_status=3).values('id')
+        .filter(proposal_status=3).values('id')
     books = TextbookCompanionPreference.objects.using('scilab')\
         .filter(category=category_id).filter(approval_status=1)\
         .filter(proposal_id__in=ids).order_by('book')
@@ -45,13 +51,13 @@ def get_books(category_id):
 
 def get_chapters(book_id):
     chapters = TextbookCompanionChapter.objects.using('scilab')\
-                    .filter(preference_id=book_id).order_by('number')
+        .filter(preference_id=book_id).order_by('number')
     return chapters
 
 
 def get_examples(chapter_id):
     examples = TextbookCompanionExample.objects.using('scilab')\
-            .filter(chapter_id=chapter_id).order_by('number')
+        .filter(chapter_id=chapter_id).order_by('number')
     return examples
 
 
@@ -71,16 +77,16 @@ def get_code(file_path, commit_sha):
 def index(request):
     context = {}
     categories = TextbookCompanionCategoryList.objects.using('scilab')\
-                .all().order_by('category_name')
+        .all().order_by('category_name')
     ids = TextbookCompanionProposal.objects.using('scilab')\
-            .filter(proposal_status=3).values('id')
+        .filter(proposal_status=3).values('id')
     d = OrderedDict()
     for category in categories:
         print category.category_name
         books_count = TextbookCompanionPreference.objects.using('scilab')\
-        .filter(category=category.id).filter(approval_status=1)\
-        .filter(cloud_pref_err_status=0)\
-        .filter(proposal_id__in=ids).order_by('book')
+            .filter(category=category.id).filter(approval_status=1)\
+            .filter(cloud_pref_err_status=0)\
+            .filter(proposal_id__in=ids).order_by('book')
         d[category] = books_count
 
     user = request.user
@@ -103,22 +109,22 @@ def index(request):
             'd': d,
         }
 
-        #if 'category_id' in request.session:
+        # if 'category_id' in request.session:
         #    category_id = request.session['category_id']
         #    context['category_id'] = int(category_id)
         #    context['books'] = get_books(category_id)
 
-        #if 'book_id' in request.session:
+        # if 'book_id' in request.session:
         #    book_id = request.session['book_id']
         #    context['book_id'] = int(book_id)
         #    context['chapters'] = get_chapters(book_id)
 
-        #if 'chapter_id' in request.session:
+        # if 'chapter_id' in request.session:
         #    chapter_id = request.session['chapter_id']
         #    context['chapter_id'] = int(chapter_id)
         #    context['examples'] = get_examples(chapter_id)
 
-        #if 'example_id' in request.session:
+        # if 'example_id' in request.session:
         #    example_id = request.session['example_id']
         #    context['eid'] = int(example_id)
         #    context['revisions'] = get_revisions(example_id)
@@ -128,7 +134,7 @@ def index(request):
         #    context['review'] = review
         #    context['review_url'] = review_url
 
-        #if 'commit_sha' in request.session:
+        # if 'commit_sha' in request.session:
         #    commit_sha = request.session['commit_sha']
         #    context['commit_sha'] = commit_sha
 
@@ -146,7 +152,7 @@ def index(request):
         if eid:
             try:
                 review = ScilabCloudComment.objects.using('scilab')\
-                         .filter(example=eid).count()
+                    .filter(example=eid).count()
                 review_url = "http://scilab.in/cloud_comments/" + str(eid)
                 categ_all = TextbookCompanionCategoryList.objects\
                     .using('scilab').all().order_by('category_name')
@@ -245,8 +251,8 @@ def index(request):
                 'review': review,
                 'review_url': review_url,
                 'd': d,
-                'bk':bk,
-                'cp':cp,
+                'bk': bk,
+                'cp': cp,
                 'exmple': exmple,
                 "preference": preference,
                 "proposal": proposal,
@@ -281,20 +287,20 @@ def review(request):
     }
     return render(request, 'website/templates/review-interface.html', context)
 
+
 def update_view_count(request):
     ex_id = request.GET.get('ex_id')
     Example_chapter_id = TextbookCompanionExample.objects.using('scilab')\
-                    .filter(id=ex_id)
+        .filter(id=ex_id)
 
     TextbookCompanionExampleViews.objects.using('scilab')\
-        .get_or_create(example_id = ex_id,chapter_id = Example_chapter_id[0]\
-                                    .chapter_id)
+        .get_or_create(example_id=ex_id, chapter_id=Example_chapter_id[0]
+                       .chapter_id)
     TextbookCompanionExampleViews.objects.using('scilab')\
-                                    .filter(example_id = ex_id)\
-                                    .update(views_count = F('views_count')+1)
+        .filter(example_id=ex_id)\
+        .update(views_count=F('views_count') + 1)
 
     Example_views_count = TextbookCompanionExampleViews.objects.using('scilab')\
-                            .filter(example_id=ex_id)
+        .filter(example_id=ex_id)
     data = Example_views_count[0].views_count
     return HttpResponse(data)
-
