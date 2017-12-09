@@ -17,7 +17,7 @@ class BugForm(forms.Form):
     example = forms.CharField(widget=forms.HiddenInput(), required=False)
     issue = forms.CharField(widget=forms.Select(choices=issues))
     description = forms.CharField(widget=forms.Textarea)
-    email = forms.CharField(widget=forms.TextInput(),required=True)
+    email = forms.CharField(widget=forms.TextInput(), required=True)
 
     def clean_email(self):
         email = self.cleaned_data.get('email', None)
