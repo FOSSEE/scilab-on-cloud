@@ -92,7 +92,8 @@ class TextbookCompanionProposal(models.Model):
 
 class TextbookCompanionPreference(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
-    proposal = models.ForeignKey(TextbookCompanionProposal, on_delete=models.CASCADE)
+    proposal = models.ForeignKey(
+        TextbookCompanionProposal, on_delete=models.CASCADE)
     pref_number = models.IntegerField()
     book = models.CharField(max_length=100L)
     author = models.CharField(max_length=100L)
@@ -110,7 +111,8 @@ class TextbookCompanionPreference(models.Model):
 
 class TextbookCompanionChapter(models.Model):
     id = models.IntegerField(primary_key=True)
-    preference = models.ForeignKey(TextbookCompanionPreference, on_delete=models.CASCADE)
+    preference = models.ForeignKey(
+        TextbookCompanionPreference, on_delete=models.CASCADE)
     number = models.IntegerField()
     name = models.CharField(max_length=255L)
     cloud_chapter_err_status = models.CharField(max_length=255L)
@@ -121,7 +123,8 @@ class TextbookCompanionChapter(models.Model):
 
 class TextbookCompanionExample(models.Model):
     id = models.IntegerField(primary_key=True)
-    chapter = models.ForeignKey(TextbookCompanionChapter, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(
+        TextbookCompanionChapter, on_delete=models.CASCADE)
     approver_uid = models.IntegerField()
     number = models.CharField(max_length=10)
     caption = models.CharField(max_length=255)
@@ -136,7 +139,8 @@ class TextbookCompanionExample(models.Model):
 
 class TextbookCompanionExampleFiles(models.Model):
     id = models.IntegerField(primary_key=True)
-    example = models.ForeignKey(TextbookCompanionExample, on_delete=models.CASCADE)
+    example = models.ForeignKey(
+        TextbookCompanionExample, on_delete=models.CASCADE)
     # =======
     # example_id = models.IntegerField()
     # >>>>>>> upstream/devel
@@ -153,8 +157,10 @@ class TextbookCompanionExampleFiles(models.Model):
 
 
 class TextbookCompanionRevision(models.Model):
-    example_file = models.ForeignKey(TextbookCompanionExampleFiles, on_delete=models.CASCADE)
-    commit_sha = models.CharField(max_length=100L)  # sha checksum of commit in github
+    example_file = models.ForeignKey(
+        TextbookCompanionExampleFiles, on_delete=models.CASCADE)
+    # sha checksum of commit in github
+    commit_sha = models.CharField(max_length=100L)
     committer_name = models.CharField(max_length=100L)
     committer_email = models.EmailField()
     commit_message = models.TextField()
@@ -189,6 +195,7 @@ class TextbookCompanionDependencyFiles(models.Model):
 
     class Meta:
         db_table = 'textbook_companion_dependency_files'
+
 
 class TextbookCompanionExampleViews(models.Model):
     id = models.IntegerField(primary_key=True)

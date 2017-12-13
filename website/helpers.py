@@ -1,10 +1,14 @@
-import os, re, sys, time, subprocess
+import os
+import re
+import sys
+import time
+import subprocess
 from timeout import TimerTask
 from soc.settings import PROJECT_DIR
-from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
-    SCILAB_3, SCILAB_4, SCILAB_5
-from website.models import TextbookCompanionPreference,\
-    TextbookCompanionProposal
+from soc.config import (BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,
+                        SCILAB_3, SCILAB_4, SCILAB_5)
+from website.models import (TextbookCompanionPreference,
+                            TextbookCompanionProposal)
 
 SystemCommands = 'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|\
                   unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
@@ -21,8 +25,8 @@ def scilab_run(code, token, book_id, dependency_exists):
     # Remove all clear;
     if "clc" in code:
         clrIndex = code.index("clc")
-        clc_con = clrIndex==0 or code[clrIndex-1] == " " or \
-                  code[clrIndex-1] == "\n" or code[clrIndex-1] == ";"
+        clc_con = clrIndex == 0 or code[clrIndex - 1] == " " or \
+            code[clrIndex - 1] == "\n" or code[clrIndex - 1] == ";"
         if clc_con:
             code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
 
@@ -38,7 +42,7 @@ def scilab_run(code, token, book_id, dependency_exists):
         code = code + '\n'
         current_time = time.time()
         plot_path = PROJECT_DIR + '/static/tmp/{0}.png'\
-                    .format(str(current_time))
+            .format(str(current_time))
         # code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
     # Check whether to load scimax / maxima
@@ -67,8 +71,8 @@ def scilab_run(code, token, book_id, dependency_exists):
     SCILAB_BIN = '/home/vidhan/scilab-5.5.2/bin/scilab-adv-cli'
     pf = TextbookCompanionPreference.objects.using('scilab').get(id=book_id)
     pr = TextbookCompanionProposal.objects.using('scilab').get(
-                                                            id=pf.proposal_id
-                                                            )
+        id=pf.proposal_id
+    )
 
     # this makes it possible to execute scilab without the problem of \
     # getting stuck in the prompt in case of error
@@ -88,19 +92,19 @@ def scilab_run(code, token, book_id, dependency_exists):
 
 
 def scilab_run_user(code, token, dependency_exists):  # method for users own code
-    #Check for system commands
+    # Check for system commands
     system_commands = re.compile(SystemCommands)
     if system_commands.search(code):
         return {
-        'output': 'System Commands not allowed',
+            'output': 'System Commands not allowed',
         }
 
     # Remove all clear;
 
     if "clc" in code:
         clrIndex = code.index("clc")
-        clc_con = clrIndex == 0 or code[clrIndex-1] == " " or \
-                  code[clrIndex-1] == "\n" or code[clrIndex-1] == ";"
+        clc_con = clrIndex == 0 or code[clrIndex - 1] == " " or \
+            code[clrIndex - 1] == "\n" or code[clrIndex - 1] == ";"
         if clc_con:
             code = re.sub(r'clear.*all|clear|clc\(\)|clc', '', code)
 
@@ -116,7 +120,7 @@ def scilab_run_user(code, token, dependency_exists):  # method for users own cod
         code = code + '\n'
         current_time = time.time()
         plot_path = PROJECT_DIR + '/static/tmp/{0}.png'\
-                    .format(str(current_time))
+            .format(str(current_time))
         # code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
     # Check whether to load scimax / maxima
@@ -142,7 +146,7 @@ def scilab_run_user(code, token, dependency_exists):  # method for users own cod
     f.write('\nquit();')
     f.close()
 
-    SCILAB_BIN = BIN+'/'+SCILAB_5
+    SCILAB_BIN = BIN + '/' + SCILAB_5
 
     SCILAB_BIN += '/bin/scilab-adv-cli'
 

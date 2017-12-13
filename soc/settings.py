@@ -18,20 +18,28 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': DB_NAME_DEFAULT,                      # Or path to database file if using sqlite3.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.mysql',
+        # Or path to database file if using sqlite3.
+        'NAME': DB_NAME_DEFAULT,
         'USER': DB_USER_DEFAULT,
         'PASSWORD': DB_PASS_DEFAULT,
-        'HOST': DB_HOST_DEFAULT,                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': DB_PORT_DEFAULT,                      # Set to empty string for default.
+        # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': DB_HOST_DEFAULT,
+        # Set to empty string for default.
+        'PORT': DB_PORT_DEFAULT,
     },
     'scilab': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': DB_NAME_SCILAB,                      # Or path to database file if using sqlite3.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.mysql',
+        # Or path to database file if using sqlite3.
+        'NAME': DB_NAME_SCILAB,
         'USER': DB_USER_SCILAB,
         'PASSWORD': DB_PASS_SCILAB,
-        'HOST': DB_HOST_SCILAB,                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': DB_PORT_SCILAB,                      # Set to empty string for default.
+        # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': DB_HOST_SCILAB,
+        # Set to empty string for default.
+        'PORT': DB_PORT_SCILAB,
     }
 }
 
