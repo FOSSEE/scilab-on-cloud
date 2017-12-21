@@ -65,6 +65,7 @@ def books(request, category_id):
             .filter(proposal_status=3).values('id')
         books = TextbookCompanionPreference.objects.using('scilab')\
             .filter(category=category_id).filter(approval_status=1)\
+            .filter(cloud_pref_err_status=0)\
             .filter(proposal_id__in=ids).order_by('book')
 
         context = {
