@@ -2,15 +2,28 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.core.context_processors import csrf
 from django.contrib.auth import logout
-from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
-    TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
-    TextbookCompanionPreference, TextbookCompanionChapter,\
-    TextbookCompanionExample, TextbookCompanionExampleFiles,\
-    TextbookCompanionRevision, TextbookCompanionExampleDependency,\
-    TextbookCompanionDependencyFiles
+from django.utils import simplejson
+from django.http import HttpResponse
+from django.core import serializers
+from django.db.models import F
+from textwrap import dedent
+
+from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
+                            TextbookCompanionSubCategoryList,
+                            TextbookCompanionProposal,
+                            TextbookCompanionPreference,
+                            TextbookCompanionChapter,
+                            TextbookCompanionExample,
+                            TextbookCompanionExampleFiles,
+                            TextbookCompanionRevision,
+                            TextbookCompanionExampleDependency,
+                            TextbookCompanionDependencyFiles,
+                            TextbookCompanionPreferenceHits,
+                            TextbookCompanionExampleViews)
 from soc.config import UPLOADS_PATH
 import utils
 import base64
+from collections import OrderedDict
 
 
 def catg(cat_id, all_cat):
