@@ -19,12 +19,16 @@ from website.helpers import scilab_run
 # modified code
 from website.helpers import scilab_run_user
 from website.views import catg
-from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
-    TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
-    TextbookCompanionPreference, TextbookCompanionChapter,\
-    TextbookCompanionExample, TextbookCompanionExampleFiles,\
-    TextbookCompanionRevision, TextbookCompanionExampleDependency,\
-    TextbookCompanionDependencyFiles
+from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
+                            TextbookCompanionSubCategoryList,
+                            TextbookCompanionProposal, TextbookCompanionChapter,
+                            TextbookCompanionPreference,
+                            TextbookCompanionExample,
+                            TextbookCompanionExampleFiles,
+                            TextbookCompanionRevision,
+                            TextbookCompanionExampleDependency,
+                            TextbookCompanionDependencyFiles,
+                            TextbookCompanionExampleViews)
 from website.forms import BugForm, RevisionForm
 from website.dataentry import entry
 from website.forms import issues
@@ -61,6 +65,7 @@ def books(request, category_id):
             .filter(proposal_status=3).values('id')
         books = TextbookCompanionPreference.objects.using('scilab')\
             .filter(category=category_id).filter(approval_status=1)\
+            .filter(cloud_pref_err_status=0)\
             .filter(proposal_id__in=ids).order_by('book')
 
         context = {
@@ -315,7 +320,7 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
         msg.content_subtype = "html"
         msg.send()
         dajax.alert("Thank you for your feedback")
-        dajax.redirect('/index?eid=' + ex_id, delay=1000)
+        dajax.redirect('?eid=' + ex_id, delay=1000)
 
     else:
         dajax.remove_css_class('#bug-form input', 'error')
