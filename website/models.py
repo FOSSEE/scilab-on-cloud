@@ -195,3 +195,23 @@ class TextbookCompanionDependencyFiles(models.Model):
 
     class Meta:
         db_table = 'textbook_companion_dependency_files'
+
+
+class TextbookCompanionExampleViews(models.Model):
+    id = models.IntegerField(primary_key=True)
+    chapter_id = models.IntegerField(default=0)
+    example_id = models.IntegerField(default=0)
+    views_count = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'textbook_companion_example_views'
+
+
+class TextbookCompanionPreferenceHits(models.Model):
+    id = models.IntegerField(primary_key=True)
+    pref_id = models.IntegerField(default=0)
+    hitcount = models.IntegerField(default=0)
+    last_search = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'textbook_companion_preference_hits'
