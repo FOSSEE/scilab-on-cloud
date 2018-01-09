@@ -19,7 +19,7 @@ urlpatterns = patterns(
     # for review interface
     url(r'^review/$', 'website.views.review', name='review'),
 
-    url(r'^reviewer-login/$','django.contrib.auth.views.login', \
-    {'template_name': 'admin/login.html'}),
+    url(r'^reviewer-login/$', 'django.contrib.auth.views.login', \
+        {'template_name': 'admin/login.html'}),
     #url(r'^logout/$', 'website.views.logout', name='logout'),
 )

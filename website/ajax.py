@@ -92,7 +92,8 @@ def chapters(request, book_id):
         context = {
             'chapters': chapters
         }
-    chapters = render_to_string('website/templates/ajax-chapters.html', context)
+    chapters = render_to_string(
+        'website/templates/ajax-chapters.html', context)
     dajax.assign('#chapters-wrapper', 'innerHTML', chapters)
     return dajax.json()
 
@@ -117,7 +118,8 @@ def examples(request, chapter_id):
             'examples': examples
         }
 
-    examples = render_to_string('website/templates/ajax-examples.html', context)
+    examples = render_to_string(
+        'website/templates/ajax-examples.html', context)
     dajax.assign('#examples-wrapper', 'innerHTML', examples)
     return dajax.json()
 
@@ -128,11 +130,11 @@ def revisions(request, example_id):
 
     request.session['example_id'] = example_id
     remove_from_session(request, [
-            'commit_sha',
-            'example_file_id',
-            'filepath',
-            'code',
-        ])
+        'commit_sha',
+        'example_file_id',
+        'filepath',
+        'code',
+    ])
 
     example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
         .get(example_id=example_id, filetype='S')
@@ -147,7 +149,8 @@ def revisions(request, example_id):
         'code': code,
     }
 
-    revisions = render_to_string('website/templates/ajax-revisions.html', context)
+    revisions = render_to_string(
+        'website/templates/ajax-revisions.html', context)
     dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
     return dajax.json()
 
@@ -157,8 +160,8 @@ def code(request, commit_sha):
 
     request.session['commit_sha'] = commit_sha
     remove_from_session(request, [
-                'code',
-            ])
+        'code',
+    ])
 
     code = ''
     review = ''
@@ -182,15 +185,15 @@ def code(request, commit_sha):
 @dajaxice_register
 def execute(request, token, code, book_id, chapter_id, example_id, category_id):
     dependency_exists = TextbookCompanionExampleDependency\
-                        .objects.using('scilab').filter(example_id=example_id)\
-                        .exists()
+        .objects.using('scilab').filter(example_id=example_id)\
+        .exists()
     # modified code
     dependency_exists = entry(code, example_id, dependency_exists, book_id)
     condition = token is 0 or book_id is 0 or example_id is 0 or chapter_id\
-                 is 0 or category_id is 0
-    #modified code
+        is 0 or category_id is 0
+    # modified code
     if condition:
-        data = scilab_run_user(code,token,dependency_exists)
+        data = scilab_run_user(code, token, dependency_exists)
         return simplejson.dumps(data)
     else:
         data = scilab_run(code, token, book_id, dependency_exists)
@@ -249,7 +252,7 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
         email = form.cleaned_data['email']
         print(comment)
         comment_data = TextbookCompanionPreference.objects.db_manager('scilab')\
-                .raw(dedent("""\
+            .raw(dedent("""\
                 SELECT 1 as id, tcp.book as book, tcp.author as author,
                 tcp.publisher as publisher, tcp.year as year,
                 tcp.category as category, tce.chapter_id,
@@ -302,13 +305,13 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
         bcc_email = BCC_EMAIL
         # Send Emails to, cc, bcc
         msg = EmailMultiAlternatives(
-                        subject,
-                        message,
-                        from_email,
-                        [to_email],
-                        bcc=[bcc_email],
-                        cc=[cc_email]
-                    )
+            subject,
+            message,
+            from_email,
+            [to_email],
+            bcc=[bcc_email],
+            cc=[cc_email]
+        )
         msg.content_subtype = "html"
         msg.send()
         dajax.alert("Thank you for your feedback")
@@ -323,13 +326,14 @@ def bug_form_submit(request, form, cat_id, book_id, chapter_id, ex_id):
             dajax.add_css_class('#id_{0}'.format(error), 'error')
         for field in form:
             for error in field.errors:
-                message = '<div class="error-message">* {0}</div>'.format(error)
-                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML',\
-                message)
+                message = '<div class="error-message">* {0}</div>'.format(
+                    error)
+                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML',
+                             message)
         # non field errors
         if form.non_field_errors():
             message = '<div class="error-message"><small>{0}</small></div>'\
-                        .format(form.non_field_errors())
+                .format(form.non_field_errors())
             dajax.append('#non-field-errors', 'innerHTML', message)
     return dajax.json()
 
@@ -344,7 +348,8 @@ def revision_form(request, code, initial_code):
         context = {
             'error_message': 'You have not made any changes',
         }
-        data = render_to_string('website/templates/submit-revision-error.html', context)
+        data = render_to_string(
+            'website/templates/submit-revision-error.html', context)
         dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
         return dajax.json()
 
@@ -353,14 +358,16 @@ def revision_form(request, code, initial_code):
             context = {
                 'error_message': 'Please select a revision',
             }
-            data = render_to_string('website/templates/submit-revision-error.html', context)
+            data = render_to_string(
+                'website/templates/submit-revision-error.html', context)
             dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
             return dajax.json()
 
         form = RevisionForm()
         context = {'form': form}
         context.update(csrf(request))
-        data = render_to_string('website/templates/submit-revision.html', context)
+        data = render_to_string(
+            'website/templates/submit-revision.html', context)
     else:
         data = render_to_string('website/templates/revision-login.html', {})
     dajax.assign('#submit-revision-wrapper', 'innerHTML', data)
@@ -373,7 +380,8 @@ def revision_error(request):
     context = {
         'error_message': 'You have not made any changes',
     }
-    data = render_to_string('website/templates/submit-revision-error.html', context)
+    data = render_to_string(
+        'website/templates/submit-revision-error.html', context)
     dajax.assign('#submit-revision-error-wrapper', 'innerHTML', data)
     return dajax.json()
 
@@ -399,33 +407,37 @@ def revision_form_submit(request, form, code):
             base64.b64encode(code),
             [username, email],
             main_repo=False,
-            )
+        )
 
         if commit_sha is not None:
             # everything is fine
 
             # save the revision info in database
             rev = TextbookCompanionRevision(
-                    example_file_id=request.session['example_file_id'],
-                    commit_sha=commit_sha,
-                    commit_message=commit_message,
-                    committer_name=username,
-                    committer_email=email,
-                )
+                example_file_id=request.session['example_file_id'],
+                commit_sha=commit_sha,
+                commit_message=commit_message,
+                committer_name=username,
+                committer_email=email,
+            )
             rev.save(using='scilab')
 
-            dajax.alert('submitted successfully! \nYour changes will be visible after review.')
+            dajax.alert(
+                'submitted successfully! \nYour changes will be visible after review.')
             dajax.script('$("#submit-revision-wrapper").trigger("close")')
     else:
         for error in form.errors:
             dajax.add_css_class('#id_{0}'.format(error), 'error')
         for field in form:
             for error in field.errors:
-                message = '<div class="error-message">* {0}</div>'.format(error)
-                dajax.append('#id_{0}_wrapper'.format(field.name), 'innerHTML', message) 
+                message = '<div class="error-message">* {0}</div>'.format(
+                    error)
+                dajax.append('#id_{0}_wrapper'.format(
+                    field.name), 'innerHTML', message)
         # non field errors
         if form.non_field_errors():
-            message = '<div class="error-message"><small>{0}</small></div>'.format(form.non_field_errors())
+            message = '<div class="error-message"><small>{0}</small></div>'.format(
+                form.non_field_errors())
             dajax.append('#non-field-errors', 'innerHTML', message)
 
     return dajax.json()
@@ -454,8 +466,10 @@ def diff(request, diff_commit_sha, editor_code):
 
 @dajaxice_register
 def review_revision(request, revision_id):
-    revision = TextbookCompanionRevision.objects.using('scilab').get(id=revision_id)
-    file = utils.get_file(revision.example_file.filepath, revision.commit_sha, main_repo=False)
+    revision = TextbookCompanionRevision.objects.using(
+        'scilab').get(id=revision_id)
+    file = utils.get_file(revision.example_file.filepath,
+                          revision.commit_sha, main_repo=False)
     code = base64.b64decode(file['content'])
 
     request.session['revision_id'] = revision_id
@@ -483,7 +497,8 @@ def push_revision(request, code):
     code: from code editor on review interface
     """
     dajax = Dajax()
-    revision = TextbookCompanionRevision.objects.using('scilab').get(id=request.session['revision_id'])
+    revision = TextbookCompanionRevision.objects.using(
+        'scilab').get(id=request.session['revision_id'])
 
     print('pushing to repo')
     utils.update_file(
@@ -511,7 +526,8 @@ def remove_revision(request):
     """
     dajax = Dajax()
     print(request.session['revision_id'])
-    TextbookCompanionRevision.objects.using('scilab').get(id=request.session['revision_id']).delete()
+    TextbookCompanionRevision.objects.using('scilab').get(
+        id=request.session['revision_id']).delete()
 
     dajax.alert('removed successfully!')
     dajax.script('location.reload()')

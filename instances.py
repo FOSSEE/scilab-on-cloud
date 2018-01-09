@@ -5,10 +5,10 @@ import re
 import time
 import sys
 
-#importing the local variables
+# importing the local variables
 from soc.settings import PROJECT_DIR
 from soc.config import BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,\
-SCILAB_3 ,SCILAB_4, SCILAB_5
+    SCILAB_3, SCILAB_4, SCILAB_5
 
 ''' An object of class ScilabInstance handles spawning and maintaining of multiple
 scilab instances. 
@@ -37,9 +37,11 @@ get_available_instance method, fetches a Scilab instance and executes the code.
 After the execution of the code, the Pexpect object containing Scilab instance is 
 put back into the instances list. 
 '''
+
+
 class ScilabInstance(object):
 
-    #defining instance variables
+    # defining instance variables
     def __init__(self):
         self.maxsize = 5
         self.instances = []
@@ -47,18 +49,18 @@ class ScilabInstance(object):
 
     # spawning an instance
     def spawn_instance(self):
-            if (self.count < self.maxsize):
-                SCILAB_BIN = BIN+'/'
-                SCILAB_BIN+=SCILAB_5
-                SCILAB_BIN+='/bin/scilab-adv-cli'
-                new_instance = pexpect.spawn(SCILAB_BIN)
-                self.count += 1
-                try:
-                    new_instance.expect('-->', timeout = 30)
-                    self.instances.append(new_instance)
-                except:
-                    new_instance.close()
-                    self.count -= 1
+        if (self.count < self.maxsize):
+            SCILAB_BIN = BIN + '/'
+            SCILAB_BIN += SCILAB_5
+            SCILAB_BIN += '/bin/scilab-adv-cli'
+            new_instance = pexpect.spawn(SCILAB_BIN)
+            self.count += 1
+            try:
+                new_instance.expect('-->', timeout=30)
+                self.instances.append(new_instance)
+            except:
+                new_instance.close()
+                self.count -= 1
 
     # killing some spawned instances
     def kill_instances(self, count):
@@ -75,61 +77,62 @@ class ScilabInstance(object):
             pass
         return self.instances.pop(0)
 
-
     def execute_code(self, code, token, book_id, dependency_exists, chapter_id, example_id):
 
-        #Check for system commands
+        # Check for system commands
         print "okk"
-        #print code, token, book_id, dependency_exists
+        # print code, token, book_id, dependency_exists
         system_commands = re.compile(
             'unix\(.*\)|unix_g\(.*\)|unix_w\(.*\)|unix_x\(.*\)|unix_s\(.*\)|host|newfun|execstr|ascii|mputl|dir\(\)'
         )
         if system_commands.search(code):
-            return { 
+            return {
                 'output': 'System Commands not allowed',
-                }
-        #check for clear
+            }
+        # check for clear
         clc_exist = re.compile(r'clear.*all|clear|clc\(\)|clc\\|\bclc\b')
         if clc_exist.search(code):
             add_clear = True
         else:
             add_clear = False
 
-        #Remove all clear;
+        # Remove all clear;
         code = re.sub(r'clear.*all|clear|clc\(\)|clc\\|\bclc\b', '', code)
 
         plot_exists = False
 
-        #Finding the plot and appending xs2jpg function
+        # Finding the plot and appending xs2jpg function
         #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
-        p = re.compile(r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
+        p = re.compile(
+            r'plot*|.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)')
 
         plot_path = ''
         if p.search(code):
             plot_exists = True
             code = code + '\n'
             current_time = time.time()
-            plot_path = PROJECT_DIR + '/static/tmp/{0}.png'.format(str(current_time))
+            plot_path = PROJECT_DIR + \
+                '/static/tmp/{0}.png'.format(str(current_time))
             #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
 
-        #Check whether to load scimax / maxima
+        # Check whether to load scimax / maxima
         if 'syms' in code or 'Syms' in code:
             code = code.replace('syms', 'Syms')
             code = 'exec(\'{0}\');\nmaxinit\n'.format(SCIMAX_LOADER) + code
 
         file_path = PROJECT_DIR + '/static/tmp/' + token + '.sci'
 
-        #traps even syntax errors eg: endfunton
+        # traps even syntax errors eg: endfunton
         f = open(file_path, "w")
         if add_clear:
-          f.write('clear;\n');
+            f.write('clear;\n')
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
-        if dependency_exists==True and book_id != 0 and chapter_id != 0 and example_id != 0:
+        if dependency_exists == True and book_id != 0 and chapter_id != 0 and example_id != 0:
             f.write(
-            'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
-        )
+                'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
+            )
         f.write('lines(0);\n')
         f.write(code)
         f.write('\nxend();')
@@ -137,12 +140,12 @@ class ScilabInstance(object):
 
         cmd = 'exec("' + file_path + '", 2);'
 
-        active_instance= self.get_available_instance()
+        active_instance = self.get_available_instance()
         active_instance.sendline(cmd)
 
         try:
-            active_instance.expect('\[0m ', timeout = 30)
-            active_instance.expect('', timeout = 30)
+            active_instance.expect('\[0m ', timeout=30)
+            active_instance.expect('', timeout=30)
             output = self.trim(active_instance.before)
             self.instances.append(active_instance)
 

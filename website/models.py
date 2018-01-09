@@ -21,7 +21,7 @@ These models are used only for django orm reference.
 #     category = models.IntegerField()
 #     approval_status = models.IntegerField()
 #     cloud_pref_err_status = models.IntegerField()
-    
+
 #     class Meta:
 #         db_table = 'textbook_companion_preference'
 
@@ -31,7 +31,7 @@ class TextbookCompanionCategoryList(models.Model):
     category_name = models.CharField(max_length=100)
     category_id = models.IntegerField()
     maincategory = models.CharField(max_length=255)
-    
+
     class Meta:
         db_table = 'list_of_category'
 
@@ -49,7 +49,7 @@ class ScilabCloudComment(models.Model):
     reply_status = models.IntegerField(default='0')
     user = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         db_table = 'scilab_cloud_comment'
 
@@ -59,7 +59,7 @@ class TextbookCompanionSubCategoryList(models.Model):
     subcategory_id = models.IntegerField()
     subcategory = models.CharField(max_length=255)
     maincategory_id = models.IntegerField()
-   
+
     class Meta:
         db_table = 'list_of_subcategory'
 
@@ -92,7 +92,8 @@ class TextbookCompanionProposal(models.Model):
 
 class TextbookCompanionPreference(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
-    proposal = models.ForeignKey(TextbookCompanionProposal, on_delete=models.CASCADE)
+    proposal = models.ForeignKey(
+        TextbookCompanionProposal, on_delete=models.CASCADE)
     pref_number = models.IntegerField()
     book = models.CharField(max_length=100L)
     author = models.CharField(max_length=100L)
@@ -110,7 +111,8 @@ class TextbookCompanionPreference(models.Model):
 
 class TextbookCompanionChapter(models.Model):
     id = models.IntegerField(primary_key=True)
-    preference = models.ForeignKey(TextbookCompanionPreference, on_delete=models.CASCADE)
+    preference = models.ForeignKey(
+        TextbookCompanionPreference, on_delete=models.CASCADE)
     number = models.IntegerField()
     name = models.CharField(max_length=255L)
     cloud_chapter_err_status = models.CharField(max_length=255L)
@@ -121,7 +123,8 @@ class TextbookCompanionChapter(models.Model):
 
 class TextbookCompanionExample(models.Model):
     id = models.IntegerField(primary_key=True)
-    chapter = models.ForeignKey(TextbookCompanionChapter, on_delete=models.CASCADE)
+    chapter = models.ForeignKey(
+        TextbookCompanionChapter, on_delete=models.CASCADE)
     approver_uid = models.IntegerField()
     number = models.CharField(max_length=10)
     caption = models.CharField(max_length=255)
@@ -136,7 +139,8 @@ class TextbookCompanionExample(models.Model):
 
 class TextbookCompanionExampleFiles(models.Model):
     id = models.IntegerField(primary_key=True)
-    example = models.ForeignKey(TextbookCompanionExample, on_delete=models.CASCADE)
+    example = models.ForeignKey(
+        TextbookCompanionExample, on_delete=models.CASCADE)
     # =======
     # example_id = models.IntegerField()
     # >>>>>>> upstream/devel
@@ -153,8 +157,10 @@ class TextbookCompanionExampleFiles(models.Model):
 
 
 class TextbookCompanionRevision(models.Model):
-    example_file = models.ForeignKey(TextbookCompanionExampleFiles, on_delete=models.CASCADE)
-    commit_sha = models.CharField(max_length=100L)  # sha checksum of commit in github
+    example_file = models.ForeignKey(
+        TextbookCompanionExampleFiles, on_delete=models.CASCADE)
+    # sha checksum of commit in github
+    commit_sha = models.CharField(max_length=100L)
     committer_name = models.CharField(max_length=100L)
     committer_email = models.EmailField()
     commit_message = models.TextField()
