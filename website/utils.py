@@ -5,6 +5,7 @@ import json
 from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT,\
     TEMP_USER, MAIN_USER
 
+
 def get_commits(file_path, main_repo=True):
     """
     return: list of commits, which affected the files in filepath
@@ -41,7 +42,8 @@ def get_file(file_path, ref='master', main_repo=False):
         'Authorization': 'token %s' % access_token,
         'Content-Type': 'application/json'}
 
-    url = urljoin(base_url, owner + '/Scilab-TBC-Uploads/contents/' + file_path)
+    url = urljoin(base_url, owner +
+                  '/Scilab-TBC-Uploads/contents/' + file_path)
 
     params = {
         "ref": ref,
@@ -72,7 +74,8 @@ def update_file(file_path,
         'Authorization': 'token %s' % access_token,
         'Content-Type': 'application/json'}
 
-    url = urljoin(base_url, owner + '/Scilab-TBC-Uploads/contents/' + file_path)
+    url = urljoin(base_url, owner +
+                  '/Scilab-TBC-Uploads/contents/' + file_path)
 
     file_r = requests.get(url, headers=headers)
     if file_r.status_code == requests.codes.ok:

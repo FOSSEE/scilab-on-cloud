@@ -2,30 +2,44 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.core.context_processors import csrf
 from django.contrib.auth import logout
-from website.models import TextbookCompanionCategoryList, ScilabCloudComment,\
-    TextbookCompanionSubCategoryList, TextbookCompanionProposal,\
-    TextbookCompanionPreference, TextbookCompanionChapter,\
-    TextbookCompanionExample, TextbookCompanionExampleFiles,\
-    TextbookCompanionRevision, TextbookCompanionExampleDependency,\
-    TextbookCompanionDependencyFiles
+from django.utils import simplejson
+from django.http import HttpResponse
+from django.core import serializers
+from django.db.models import F
+from textwrap import dedent
+
+from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
+                            TextbookCompanionSubCategoryList,
+                            TextbookCompanionProposal,
+                            TextbookCompanionPreference,
+                            TextbookCompanionChapter,
+                            TextbookCompanionExample,
+                            TextbookCompanionExampleFiles,
+                            TextbookCompanionRevision,
+                            TextbookCompanionExampleDependency,
+                            TextbookCompanionDependencyFiles,
+                            TextbookCompanionPreferenceHits,
+                            TextbookCompanionExampleViews)
 from soc.config import UPLOADS_PATH
 import utils
 import base64
+from collections import OrderedDict
+
 
 def catg(cat_id, all_cat):
     if all_cat is False:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
-                    .get(id=cat_id)
+            .get(id=cat_id)
         return category.category_name
     else:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
-                    .all().order_by('category_name')
+            .all().order_by('category_name')
         return category
 
 
 def get_books(category_id):
     ids = TextbookCompanionProposal.objects.using('scilab')\
-            .filter(proposal_status=3).values('id')
+        .filter(proposal_status=3).values('id')
     books = TextbookCompanionPreference.objects.using('scilab')\
         .filter(category=category_id).filter(approval_status=1)\
         .filter(proposal_id__in=ids).order_by('book')
@@ -34,13 +48,13 @@ def get_books(category_id):
 
 def get_chapters(book_id):
     chapters = TextbookCompanionChapter.objects.using('scilab')\
-                    .filter(preference_id=book_id).order_by('number')
+        .filter(preference_id=book_id).order_by('number')
     return chapters
 
 
 def get_examples(chapter_id):
     examples = TextbookCompanionExample.objects.using('scilab')\
-            .filter(chapter_id=chapter_id).order_by('number')
+        .filter(chapter_id=chapter_id).order_by('number')
     return examples
 
 
@@ -111,7 +125,8 @@ def index(request):
             if 'code' in request.session:
                 context['code'] = request.session['code']
             elif 'filepath' in request.session:
-                context['code'] = get_code(request.session['filepath'], commit_sha)
+                context['code'] = get_code(
+                    request.session['filepath'], commit_sha)
 
         return render(request, 'website/templates/index.html', context)
     else:
@@ -123,7 +138,7 @@ def index(request):
         if eid:
             try:
                 review = ScilabCloudComment.objects.using('scilab')\
-                         .filter(example=eid).count()
+                    .filter(example=eid).count()
                 review_url = "http://scilab.in/cloud_comments/" + str(eid)
                 categ_all = TextbookCompanionCategoryList.objects\
                     .using('scilab').all().order_by('category_name')
