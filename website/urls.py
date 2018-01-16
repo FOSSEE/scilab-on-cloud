@@ -15,6 +15,12 @@ urlpatterns = patterns(
     url(r'^search_book/$', 'website.views.search_book'),
     url(r'^search_book/popular/$', 'website.views.popular'),
     url(r'^search_book/recent/$', 'website.views.recent'),
+    url(r'^get_books/$', 'website.ajax.books'),
+    url(r'^get_chapters/$', 'website.ajax.chapters'),
+    url(r'^get_examples/$', 'website.ajax.examples'),
+    url(r'^get_revisions/$', 'website.ajax.revisions'),
+    url(r'^get_code/$', 'website.ajax.code'),
+    url(r'^get_diff/$', 'website.ajax.diff'),
 
     # Uncomment the next line to enable the admin:
     #url(r'^admin/', include(admin.site.urls)),

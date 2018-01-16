@@ -1,6 +1,6 @@
 /* Ajax loader */
 function ajax_loader(key) {
-    if(key == "clear") {
+    if (key == "clear") {
         $(".ajax-loader").remove();
     } else {
         $(".ajax-loader").remove();
@@ -15,24 +15,29 @@ $(document).ready(function() {
         theme: "monokai",
         extraKeys: {
             "F11": function(cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                cm.setOption("fullScreen", !cm.getOption(
+                    "fullScreen"));
             },
             "Esc": function(cm) {
-                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                if (cm.getOption("fullScreen")) cm.setOption(
+                    "fullScreen", false);
             }
         }
     });
 
-    var result = CodeMirror.fromTextArea(document.getElementById("result"), {
+    var result = CodeMirror.fromTextArea(document.getElementById(
+        "result"), {
         lineWrapping: true,
         theme: "monokai",
         readOnly: true,
         extraKeys: {
             "F11": function(cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                cm.setOption("fullScreen", !cm.getOption(
+                    "fullScreen"));
             },
             "Esc": function(cm) {
-                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                if (cm.getOption("fullScreen")) cm.setOption(
+                    "fullScreen", false);
             }
         }
     });
@@ -41,7 +46,7 @@ $(document).ready(function() {
     // editor.setValue("");
     // result.setValue("");
     // editor.clearHistory();
-    
+
     // hide revision submit button initially
     // $("#submit-revision").show()
 
@@ -50,7 +55,8 @@ $(document).ready(function() {
     $toggle_code = $("#toggle-code");
 
     $fullscreen_code.click(function(e) {
-        editor.setOption("fullScreen", !editor.getOption("fullScreen"));
+        editor.setOption("fullScreen", !editor.getOption(
+            "fullScreen"));
         editor.focus();
         e.preventDefault();
     });
@@ -68,7 +74,8 @@ $(document).ready(function() {
     $toggle_result = $("#toggle-result");
 
     $fullscreen_result.click(function(e) {
-        result.setOption("fullScreen", !result.getOption("fullScreen"));
+        result.setOption("fullScreen", !result.getOption(
+            "fullScreen"));
         result.focus();
         e.preventDefault();
     });
@@ -87,263 +94,6 @@ $(document).ready(function() {
      * Write the queries using .on()
      */
     $("#plot_download").hide();
-    $(document).on("change", "#categories", function() {
-        if ($("#categories").val() == 0) {
-            $("#download-book").hide();
-            $("#books-wrapper").hide();
-            editor.setValue("");
-            result.setValue("");
-            editor.clearHistory();
-            $("#review").hide();
-        } else {
-            $("#books-wrapper").show();
-        }
-
-        $("#books-wrapper").html("");
-        $("#chapters-wrapper").html("");
-        $("#examples-wrapper").html("");
-        $("#contributor").hide();
-        $("#revisions-wrapper").html("");
-
-        // hide revision submit button if one selects different category
-        // $("#submit-revision").hide()
-
-        if ($("#categories").val()) {
-            ajax_loader("#categories");
-            Dajaxice.website.books(function(data) {
-                Dajax.process(data);
-                ajax_loader("clear");
-            }, {category_id: $("#categories").val()});
-        }
-    });
-
-    if ($("#books").val() > 0) {
-        $("#contributor").show();
-        $("#download-book").show();
-    } else {
-        $("#contributor").hide();
-        $("#download-book").hide();
-    }
-
-    $(document).on("change", "#books", function() {
-        $("#chapters-wrapper").html("");
-        $("#examples-wrapper").html("");
-        $("#revisions-wrapper").html("");
-
-        $("#contributor").show();
-        $("#download-book").show();
-
-        if ($("#books").val() == 0) {
-            $("#chapters-wrapper").hide();
-            $("#download-book").hide();
-            editor.setValue("");
-            result.setValue("");
-            editor.clearHistory();
-            $("#review").hide();
-        } else {
-            $("#chapters-wrapper").show();
-        }
-
-        // hide revision submit button if one selects different book
-        // $("#submit-revision").hide()
-
-        if ($("#books").val()) {
-            ajax_loader("#books");
-            Dajaxice.website.chapters(function(data) { 
-                Dajax.process(data);
-                ajax_loader("clear");
-            }, {book_id: $("#books").val()});
-        }
-    });
-
-    if ($("#chapters").val() > 0) {
-        $("#download-chapter").show();
-    } else {
-        $("#download-chapter").hide();
-    }
-
-    $(document).on("change", "#chapters", function() {
-        $("#examples-wrapper").html("");
-        $("#revisions-wrapper").html("");
-        $("#download-chapter").show();
-
-        // hide revision submit button if one selects different chapter
-        // $("#submit-revision").hide()
-
-        if ($("#chapters").val() == 0) {
-            $("#examples-wrapper").hide();
-            $("#download-chapter").hide();
-            editor.setValue("");
-            result.setValue("");
-            editor.clearHistory();
-            $("#review").hide();
-        } else {
-            $("#examples-wrapper").show();
-        }
-
-        if ($(this).val()) {
-            ajax_loader(this);
-            Dajaxice.website.examples(function(data) { 
-                Dajax.process(data);
-                ajax_loader("clear");
-            }, {chapter_id: $(this).val()});
-        }
-    });
-
-    if ($("#examples").val() > 0) {
-        $("#download-example").show();
-    } else {
-        $("#download-example").hide();
-    }
-
-    $(document).on("change", "#examples", function() {
-
-        $("#revisions-wrapper").html("");
-        $("#download-example").show();
-
-        // hide revision submit button if one selects different example
-        // $("#submit-revision").hide()
-
-        if ($("#examples").val() == 0) {
-            $("#download-example").hide();
-            editor.setValue("");
-            result.setValue("");
-            editor.clearHistory();
-            $("#review").hide();
-        }
-
-        if ($(this).val()) {
-            ajax_loader(this);
-            Dajaxice.website.revisions(function(data) { 
-                Dajax.process(data);
-                ajax_loader("clear");
-
-                console.log($('#revisions').val())
-
-                $("#revisions-two").hide()
-                $('#revisions option:eq(1)').prop('selected', true)
-                ajax_loader('#revisions');
-                Dajaxice.website.code(function(data) {
-                    editor.setValue(data.code);
-                    initial_code = editor.getValue()
-
-                    if (data.review != 0) {
-                        $("#review").show();
-                        $("#review").attr("href", data.review_url);
-                        $("#review").text(data.review + " " + "Review");
-                    } else {
-                        $("#review").hide();
-                    }
-
-                    ajax_loader("clear");
-                    $("#submit-revision").show()
-                    $("#revisions-two").show()
-                }, {commit_sha: $('#revisions').val()});
-
-            }, {example_id: $(this).val()});
-        }
-    });
-
-    $(document).on("change", "#revisions", function() {
-        $("#revisions-two").hide()
-        if ($(this).val()) { 
-            ajax_loader(this);
-            Dajaxice.website.code(function(data) {
-                editor.setValue(data.code);
-                initial_code = editor.getValue()
-
-                if (data.review != 0) {
-                    $("#review").show();
-                    $("#review").attr("href", data.review_url);
-                    $("#review").text(data.review + " " + "Review");
-                } else {
-                    $("#review").hide();
-                }
-
-                ajax_loader("clear");
-
-                // show revision submit button when a revision is loaded
-                $("#submit-revision").show()
-                $("#revisions-two").show()
-
-            }, {commit_sha: $(this).val()});
-        }
-    });
-
-    $(document).on("change", "#revisions-diff", function(e) {
-        if ($(this).val()) {
-            ajax_loader(this);
-            var revName = $("#revisions-diff").find(":selected").text();
-            Dajaxice.website.diff(function(data) {
-                Dajax.process(data.dajax)
-                ajax_loader("clear");
-                $("#diff-wrapper").lightbox_me({centered: false});
-                $("#diff-area").html(diffString(editor.getValue(), data.code2))
-
-                $("#diff-first").html('editor code')
-                console.log(revName)
-                $("#diff-second").html(revName)
-            }, {
-                diff_commit_sha: $(this).val(),
-                editor_code: editor.getValue(),
-            });
-            e.preventDefault();
-        }
-    });
-
-    
-    /* Execute the code */
-    $plotbox_wrapper = $("#plotbox-wrapper");
-    $plotbox = $("#plotbox");
-
-    $(document).on("click", "#execute", function() {
-        $("#execute-inner").html("Executing...");
-        var send_data = {
-            token: $("[name='csrfmiddlewaretoken']").val(),
-            code: editor.getValue(),
-            book_id: $("#books").val() || 0,
-            chapter_id: $("#chapters").val() || 0,
-            example_id: $("#examples").val() || 0
-        };   
-        $.post("/execute-code", send_data,
-        function(data){
-            $("#execute-inner").html("Execute");
-            result.setValue(data.output);
-
-            if(data.plot_path){
-                $plot = $("<img>");
-                $plot.attr({
-                    src: data.plot_path,
-                    width: '90%'
-                });
-                $plotbox.html($plot);
-                $plotbox_wrapper.lightbox_me({
-                    centered: true
-                });
-                var dt = $("#examples option:selected").text();
-                $("#plot_download").show();
-                $("#plot_download").attr("download", dt+'.png');
-                $("#plot_download").attr("href", data.plot_path);
-            }
-        });
-    });
-    /* Download book, chapter, example */
-    $(document).on("click", "#download-book", function(e) {
-        window.location = "http://scilab.in/download/book/" + $("#books").val();
-        e.preventDefault();
-    });
-
-    $(document).on("click", "#download-chapter", function(e) {
-        window.location = "http://scilab.in/download/chapter/" + $("#chapters").val();
-        e.preventDefault();
-    });
-
-    $(document).on("click", "#download-example", function(e) {
-        window.location = "http://scilab.in/download/example/" + $("#examples").val();
-        e.preventDefault();
-    });
-
-
     /* Contributor details */
     $(document).on("click", "#contributor", function(e) {
         Dajaxice.website.contributor(function(data) {
@@ -411,11 +161,15 @@ $(document).ready(function() {
         //         $("#submit-revision-error-wrapper").lightbox_me({centered: false});
         //     });
         // } else {
-            Dajaxice.website.revision_form(function(data) {
-                Dajax.process(data);
-                $("#submit-revision-wrapper").lightbox_me({centered: false});
-            },{code: editor.getValue(),
-               initial_code: initial_code});
+        Dajaxice.website.revision_form(function(data) {
+            Dajax.process(data);
+            $("#submit-revision-wrapper").lightbox_me({
+                centered: false
+            });
+        }, {
+            code: editor.getValue(),
+            initial_code: initial_code
+        });
         // }
         e.preventDefault();
     });
@@ -424,27 +178,331 @@ $(document).ready(function() {
     $(document).on("click", "#revision-form-submit", function(e) {
         ajax_loader(this);
         Dajaxice.website.revision_form_submit(function(data) {
-                Dajax.process(data);
-                initial_code = editor.getValue()
-            }, 
-            {
-                form: $('#revision-form').serialize(true),
-                code: editor.getValue(),
-            }
-        );
+            Dajax.process(data);
+            initial_code = editor.getValue()
+        }, {
+            form: $('#revision-form').serialize(true),
+            code: editor.getValue(),
+        });
+        e.preventDefault();
+    });
+    $("#books-wrapper").hide();
+    $("#chapters-wrapper").hide();
+    $("#examples-wrapper").hide();
+    $("#revisions-wrapper").hide();
+    $("#download-book").hide();
+    /*******************************************/
+    /******  Below removed dajax ***************/
+    /*******************************************/
+    /**************** categories change ********/
+    /*******************************************/
+    $(document.body).on("change", "#categories", function() {
+        var cat_id = $('#categories').find(":selected").val();
+        if (cat_id != 0) {
+            $("#books-wrapper").show();
+            $("#books").html("");
+            editor.setValue("");
+            result.setValue("");
+            $("#chapters-wrapper").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-book").hide();
+            $("#submit-revision").hide();
+            $.ajax({
+                url: 'get_books/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    cat_id: cat_id,
+                },
+                success: function(data) {
+                    $("#books").html('');
+                    $("#books").html(
+                        ' <option value="">Select Book</option>'
+                    );
+                    for (var i = 0; i < data.length; i++) {
+                        $('#books').append(
+                            '<option value="' +
+                            data[i].id + '">' +
+                            data[i].book +
+                            ' (by ' + data[i].author +
+                            ' )' + '</option>');
+                    }
+                }
+            });
+        } else {
+            $("#books-wrapper").hide();
+            $("#chapters-wrapper").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-book").hide();
+        }
+    });
+    /*******************************************/
+    /*******************************************/
+    /**************** book change **************/
+    /*******************************************/
+    $(document.body).on("change", "#books", function() {
+        var book_id = $('#books').find(":selected").val();
+        $("#chapters-wrapper").show();
+        console.log(book_id);
+
+        if (book_id != 0) {
+            $("#download-book").show();
+            $("#chapters-wrapper").show();
+            editor.setValue("");
+            result.setValue("");
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-chapter").hide();
+            $("#submit-revision").hide();
+            $.ajax({
+                url: 'get_chapters/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    book_id: book_id,
+                },
+                success: function(data) {
+                    $("#chapters").html('');
+                    $("#chapters").html(
+                        ' <option value="">Select Book</option>'
+                    );
+                    for (var i = 0; i < data.length; i++) {
+                        $('#chapters').append(
+                            '<option value="' +
+                            data[i].id + '">' +
+                            data[i].number +
+                            ' ' + data[i].chapter +
+                            '</option>');
+                    }
+                }
+            });
+        } else {
+            $("#chapters-wrapper").hide();
+            $("#download-book").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            editor.setValue("");
+            result.setValue("");
+            $("#submit-revision").hide();
+        }
+    });
+    /*******************************************/
+    /*******************************************/
+    /************ chapter change ***************/
+    /*******************************************/
+    $(document.body).on("change", "#chapters", function() {
+        var chapter_id = $('#chapters').find(":selected").val();
+        $("#examples-wrapper").show();
+        console.log(chapter_id);
+        if (chapter_id != 0) {
+            $("#examples-wrapper").show();
+            $("#download-chapter").show();
+            editor.setValue("");
+            result.setValue("");
+            $("#revisions-wrapper").hide();
+            $("#download-example").hide();
+            $.ajax({
+                url: 'get_examples/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    chapter_id: chapter_id,
+                },
+                success: function(data) {
+                    $("#examples").html(
+                        ' <option value="">Select Book</option>'
+                    );
+                    for (var i = 0; i < data.length; i++) {
+                        $('#examples').append(
+                            '<option value="' +
+                            data[i].id + '">' +
+                            data[i].number +
+                            ' ' + data[i].caption +
+                            '</option>');
+                    }
+                }
+            });
+        } else {
+            $("#download-chapter").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            editor.setValue("");
+            result.setValue("");
+            $("#submit-revision").hide();
+        }
+    });
+    /*******************************************/
+    /*******************************************/
+    /************ revision change **************/
+    /*******************************************/
+    $(document.body).on("change", "#examples", function() {
+        var example_id = $('#examples').find(":selected").val();
+        //$("#revisions-wrapper").html("");
+        $("#download-example").show();
+        if (example_id != 0) {
+            $("#revisions-wrapper").show();
+            $("#download-example").show();
+            $("#submit-revision").show();
+            editor.setValue("");
+            result.setValue("");
+            ajax_loader('#revisions');
+            $.ajax({
+                url: 'get_revisions/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    example_id: example_id,
+                },
+                success: function(data) {
+                    $("#revisions").html(
+                        ' <option value="">Select a revision</option>'
+                    );
+                    var i = 1;
+                    data.commits.forEach(function(
+                        item) {
+                        $('#revisions').append(
+                            '<option value="' +
+                            item.sha +
+                            '"> ' + i +
+                            ' - ' +
+                            item.commit
+                            .message +
+                            '</option>'
+                        );
+                        i++;
+                    });
+                    ajax_loader("clear");
+                    $('#revisions option:eq(1)').prop(
+                        'selected', true);
+                    $.ajax({
+                        url: 'get_code/',
+                        dataType: 'JSON',
+                        type: 'GET',
+                        data: {
+                            commit_sha: $(
+                                '#revisions'
+                            ).val(),
+                            example_id: example_id,
+                        },
+                        success: function(
+                            data) {
+                            editor.setValue(
+                                data
+                                .code
+                            );
+                            initial_code
+                                =
+                                editor.getValue()
+                        }
+                    });
+                }
+            });
+        } else {
+            $("#revisions-wrapper").hide();
+            $("#download-example").hide();
+            $("#submit-revision").hide();
+            editor.setValue("");
+            result.setValue("");
+        }
+    });
+    /********************************************/
+    /********************************************/
+    /********** revision-diff change ************/
+    /********************************************/
+    $(document).on("change", "#revisions-diff", function(e) {
+        var revName = $("#revisions-diff").find(":selected").text();
+        var example_id = $('#examples').find(":selected").val();
+        if ($(this).val()) {
+            ajax_loader(this);
+            $.ajax({
+                url: 'get_diff/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    diff_commit_sha: $('#revisions').val(),
+                    example_id: example_id,
+                },
+                success: function(data) {
+                    console.log(data);
+                    ajax_loader("clear");
+                    $("#diff-wrapper").lightbox_me({
+                        centered: false
+                    });
+                    $("#diff-area").html(diffString(
+                        editor.getValue(),
+                        data.code2));
+                    $("#diff-first").html(
+                        'editor code')
+                    console.log(revName)
+                    $("#diff-second").html(revName)
+                    editor.setValue(data.code);
+                    initial_code = editor.getValue()
+                }
+            });
+        }
+    });
+    /********************************************/
+    /********************************************/
+    /******** Execute the code ******************/
+    /********************************************/
+    $plotbox_wrapper = $("#plotbox-wrapper");
+    $plotbox = $("#plotbox");
+
+    $(document).on("click", "#execute", function() {
+        $("#execute-inner").html("Executing...");
+        var send_data = {
+            token: $("[name='csrfmiddlewaretoken']").val(),
+            code: editor.getValue(),
+            book_id: $("#books").val() || 0,
+            chapter_id: $("#chapters").val() || 0,
+            example_id: $("#examples").val() || 0
+        };
+        $.post("/execute-code", send_data,
+            function(data) {
+                $("#execute-inner").html("Execute");
+                result.setValue(data.output);
+
+                if (data.plot_path) {
+                    $plot = $("<img>");
+                    $plot.attr({
+                        src: data.plot_path,
+                        width: '90%'
+                    });
+                    $plotbox.html($plot);
+                    $plotbox_wrapper.lightbox_me({
+                        centered: true
+                    });
+                    var dt = $("#examples option:selected")
+                        .text();
+                    $("#plot_download").show();
+                    $("#plot_download").attr("download", dt +
+                        '.png');
+                    $("#plot_download").attr("href", data.plot_path);
+                }
+            });
+    });
+    /********************************************/
+    /********************************************/
+    /****** Download book, chapter, example *****/
+    /********************************************/
+    $(document).on("click", "#download-book", function(e) {
+        window.location = "http://scilab.in/download/book/" + $(
+            "#books").val();
         e.preventDefault();
     });
 
+    $(document).on("click", "#download-chapter", function(e) {
+        window.location = "http://scilab.in/download/chapter/" +
+            $("#chapters").val();
+        e.preventDefault();
+    });
+
+    $(document).on("click", "#download-example", function(e) {
+        window.location = "http://scilab.in/download/example/" +
+            $("#examples").val();
+        e.preventDefault();
+    });
+    /********************************************/
 });
-
-
-
-
-
-
-
-
-
-
-
-

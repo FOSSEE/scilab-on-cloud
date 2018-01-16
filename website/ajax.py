@@ -2,6 +2,10 @@ from dajax.core import Dajax
 from dajaxice.decorators import dajaxice_register
 from dajaxice.utils import deserialize_form
 from django.forms.models import model_to_dict
+from django.utils import simplejson
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.core import serializers
 
 # from django.http import HttpResponse, HttpResponseRedirect
 # from django.shortcuts import render, redirect
@@ -43,166 +47,166 @@ def remove_from_session(request, keys):
         request.session.pop(key, None)
 
 
-@dajaxice_register
-def books(request, category_id):
-    dajax = Dajax()
+def books(request):
     context = {}
+    response_dict = []
+    if request.is_ajax():
+        category_id = int(request.GET.get('cat_id'))
 
-    if category_id:
-        # store category_id in cookie/session
-        request.session['category_id'] = category_id
+        if category_id:
+            # store category_id in cookie/session
+            request.session['category_id'] = category_id
+            remove_from_session(request, [
+                'book_id',
+                'chapter_id',
+                'example_id',
+                'commit_sha',
+                'example_file_id',
+                'filepath',
+                'code',
+            ])
+
+            ids = TextbookCompanionProposal.objects.using('scilab')\
+                .filter(proposal_status=3).values('id')
+            books = TextbookCompanionPreference.objects.using('scilab')\
+                .filter(category=category_id).filter(approval_status=1)\
+                .filter(cloud_pref_err_status=0)\
+                .filter(proposal_id__in=ids).order_by('book')
+
+            print "okkk"
+            for obj in books:
+                response = {
+                    'book': obj.book,
+                    'id': obj.id,
+                    'author': obj.author
+                }
+
+                response_dict.append(response)
+            return HttpResponse(simplejson.dumps(response_dict),
+                                content_type='application/json')
+
+
+def chapters(request):
+    context = {}
+    response_dict = []
+    if request.is_ajax():
+        book_id = int(request.GET.get('book_id'))
+        if book_id:
+            request.session['book_id'] = book_id
+            remove_from_session(request, [
+                'chapter_id',
+                'example_id',
+                'commit_sha',
+                'example_file_id',
+                'filepath',
+                'code',
+            ])
+
+            chapters = TextbookCompanionChapter.objects.using('scilab')\
+                .filter(preference_id=book_id).order_by('number')
+            for obj in chapters:
+                response = {
+                    'id': obj.id,
+                    'number': obj.number,
+                    'chapter': obj.name,
+
+                }
+                print obj.name
+                response_dict.append(response)
+            return HttpResponse(simplejson.dumps(response_dict),
+                                content_type='application/json')
+
+
+def examples(request):
+    context = {}
+    response_dict = []
+    if request.is_ajax():
+        chapter_id = int(request.GET.get('chapter_id'))
+        if chapter_id:
+            request.session['chapter_id'] = chapter_id
+            remove_from_session(request, [
+                'example_id',
+                'commit_sha',
+                'example_file_id',
+                'filepath',
+                'code',
+            ])
+
+            examples = TextbookCompanionExample.objects.using('scilab')\
+                .filter(chapter_id=chapter_id).order_by('number')
+            for obj in examples:
+                response = {
+                    'id': obj.id,
+                    'number': obj.number,
+                    'caption': obj.caption,
+                }
+                print obj.caption
+                response_dict.append(response)
+            return HttpResponse(simplejson.dumps(response_dict),
+                                content_type='application/json')
+
+
+def revisions(request):
+    commits = {}
+    response_dict = []
+    if request.is_ajax():
+        example_id = int(request.GET.get('example_id'))
+        request.session['example_id'] = example_id
         remove_from_session(request, [
-            'book_id',
-            'chapter_id',
-            'example_id',
             'commit_sha',
             'example_file_id',
             'filepath',
             'code',
         ])
 
-        ids = TextbookCompanionProposal.objects.using('scilab')\
-            .filter(proposal_status=3).values('id')
-        books = TextbookCompanionPreference.objects.using('scilab')\
-            .filter(category=category_id).filter(approval_status=1)\
-            .filter(cloud_pref_err_status=0)\
-            .filter(proposal_id__in=ids).order_by('book')
+        example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
+            .get(example_id=example_id, filetype='S')
 
-        context = {
-            'books': books
+        request.session['example_file_id'] = example_file.id
+        request.session['filepath'] = example_file.filepath
+
+        commits = utils.get_commits(file_path=example_file.filepath)
+        print commits
+        response = {
+            'commits': commits
         }
+        response_dict.append(response)
+        return HttpResponse(simplejson.dumps(response),
+                            content_type='application/json')
 
-    books = render_to_string('website/templates/ajax-books.html', context)
-    dajax.assign('#books-wrapper', 'innerHTML', books)
-    return dajax.json()
 
-
-@dajaxice_register
-def chapters(request, book_id):
-    dajax = Dajax()
-    context = {}
-    if book_id:
-        request.session['book_id'] = book_id
+def code(request):
+    commits = {}
+    response_dict = []
+    if request.is_ajax():
+        commit_sha = request.GET.get('commit_sha')
+        request.session['commit_sha'] = commit_sha
         remove_from_session(request, [
-            'chapter_id',
-            'example_id',
-            'commit_sha',
-            'example_file_id',
-            'filepath',
             'code',
         ])
 
-        chapters = TextbookCompanionChapter.objects.using('scilab')\
-            .filter(preference_id=book_id).order_by('number')
-        context = {
-            'chapters': chapters
+        code = ''
+        review = ''
+        review_url = ''
+        example_id = request.session['example_id']
+        if not example_id:
+            example_id = int(request.GET.get('example_id'))
+        file_path = request.session['filepath']
+        review = ScilabCloudComment.objects.using('scilab')\
+            .filter(example=example_id).count()
+        review_url = "http://scilab.in/cloud_comments/" + str(example_id)
+        # example_path = UPLOADS_PATH + '/' + file_path
+
+        file = utils.get_file(file_path, commit_sha, main_repo=True)
+        code = base64.b64decode(file['content'])
+        response = {
+            'code': code,
+            'review': review,
+            'review_url': review_url
         }
-    chapters = render_to_string(
-        'website/templates/ajax-chapters.html', context)
-    dajax.assign('#chapters-wrapper', 'innerHTML', chapters)
-    return dajax.json()
-
-
-@dajaxice_register
-def examples(request, chapter_id):
-    dajax = Dajax()
-    context = {}
-    if chapter_id:
-        request.session['chapter_id'] = chapter_id
-        remove_from_session(request, [
-            'example_id',
-            'commit_sha',
-            'example_file_id',
-            'filepath',
-            'code',
-        ])
-
-        examples = TextbookCompanionExample.objects.using('scilab')\
-            .filter(chapter_id=chapter_id).order_by('number')
-        context = {
-            'examples': examples
-        }
-
-    examples = render_to_string(
-        'website/templates/ajax-examples.html', context)
-    dajax.assign('#examples-wrapper', 'innerHTML', examples)
-    return dajax.json()
-
-
-@dajaxice_register
-def revisions(request, example_id):
-    dajax = Dajax()
-
-    request.session['example_id'] = example_id
-    remove_from_session(request, [
-        'commit_sha',
-        'example_file_id',
-        'filepath',
-        'code',
-    ])
-
-    example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
-        .get(example_id=example_id, filetype='S')
-
-    request.session['example_file_id'] = example_file.id
-    request.session['filepath'] = example_file.filepath
-
-    commits = utils.get_commits(file_path=example_file.filepath)
-
-    context = {
-        'revisions': commits,
-        'code': code,
-    }
-
-    revisions = render_to_string(
-        'website/templates/ajax-revisions.html', context)
-    dajax.assign('#revisions-wrapper', 'innerHTML', revisions)
-    return dajax.json()
-
-
-@dajaxice_register
-def code(request, commit_sha):
-
-    request.session['commit_sha'] = commit_sha
-    remove_from_session(request, [
-        'code',
-    ])
-
-    code = ''
-    review = ''
-    review_url = ''
-    example_id = request.session['example_id']
-    file_path = request.session['filepath']
-    review = ScilabCloudComment.objects.using('scilab')\
-        .filter(example=example_id).count()
-    review_url = "http://scilab.in/cloud_comments/" + str(example_id)
-    # example_path = UPLOADS_PATH + '/' + file_path
-
-    file = utils.get_file(file_path, commit_sha, main_repo=True)
-    code = base64.b64decode(file['content'])
-    return simplejson.dumps({
-        'code': code,
-        'review': review,
-        'review_url': review_url
-    })
-
-
-@dajaxice_register
-def execute(request, token, code, book_id, chapter_id, example_id, category_id):
-    dependency_exists = TextbookCompanionExampleDependency\
-        .objects.using('scilab').filter(example_id=example_id)\
-        .exists()
-    # modified code
-    dependency_exists = entry(code, example_id, dependency_exists, book_id)
-    condition = token is 0 or book_id is 0 or example_id is 0 or chapter_id\
-        is 0 or category_id is 0
-    # modified code
-    if condition:
-        data = scilab_run_user(code, token, dependency_exists)
-        return simplejson.dumps(data)
-    else:
-        data = scilab_run(code, token, book_id, dependency_exists)
-        return simplejson.dumps(data)
+        response_dict.append(response)
+        return HttpResponse(simplejson.dumps(response),
+                            content_type='application/json')
 
 
 @dajaxice_register
@@ -448,22 +452,19 @@ def revision_form_submit(request, form, code):
     return dajax.json()
 
 
-@dajaxice_register
-def diff(request, diff_commit_sha, editor_code):
-    dajax = Dajax()
+def diff(request):
+    if request.is_ajax():
+        diff_commit_sha = request.GET.get('diff_commit_sha')
+        editor_code = request.GET.get('editor_code')
     context = {}
     file_path = request.session['filepath']
     file = utils.get_file(file_path, diff_commit_sha, main_repo=True)
     code = base64.b64decode(file['content'])
-    page = render_to_string('website/templates/diff.html', context)
-    dajax.assign('#diff-wrapper', 'innerHTML', page)
-
-    data = {
-        'dajax': json.loads(dajax.json()),
+    response = {
         'code2': code,
     }
-
-    return simplejson.dumps(data)
+    return HttpResponse(simplejson.dumps(response),
+                        content_type='application/json')
 
 # ------------------------------------------------------------
 # review interface functions
