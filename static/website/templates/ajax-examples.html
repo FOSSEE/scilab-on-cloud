@@ -1,10 +1,14 @@
-{% if examples %}
-<label>Example: </label>
-<select id="examples">
-    <option value="0">Select Example</option>
-{% for example in examples %}
-    <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
-{% endfor %}
-</select>
-{% endif %}
+
+                        <label>Example: </label>
+                        <select id="examples">
+                            <option value="0">Select Example</option>
+                            <!-- <! modified option value > -->
+
+                            {% for example in examples %} {% if eid == example.id %}
+                            <option value="{{ example.id }}" selected>{{ example.number }} - {{ example.caption }}</option>
+                            {% else %}
+                            <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
+                            {% endif %} {% endfor %}
+                        </select>
+
 <a href="#" class="extra-link" id="download-example">Download Example</a>
