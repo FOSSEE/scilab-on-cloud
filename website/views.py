@@ -24,25 +24,56 @@ from soc.config import UPLOADS_PATH
 import utils
 import base64
 from collections import OrderedDict
+from django.db.models import Q
 
 
 def catg(cat_id, all_cat):
     if all_cat is False:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
-            .get(id=cat_id)
-        return category.category_name
+            .get(category_id=cat_id)
+        return category.maincategory
     else:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
-            .all().order_by('category_name')
+            .filter(~Q(category_id=0)).order_by('maincategory')
         return category
+
+
+def subcatg(subcat_id, all_subcat):
+    if all_subcat is False:
+        category = TextbookCompanionSubCategoryList.objects.using('scilab')\
+            .get(id=subcat_id)
+        return category.subcategory
+    else:
+        category = TextbookCompanionSubCategoryList.objects.using('scilab')\
+            .all().order_by('subcategory')
+        return category
+
+
+def get_subcategories(maincat_id):
+    subcategories = TextbookCompanionSubCategoryList.objects.using('scilab')\
+        .filter(maincategory_id=maincat_id).order_by('number')
+    return subcategories
 
 
 def get_books(category_id):
     ids = TextbookCompanionProposal.objects.using('scilab')\
         .filter(proposal_status=3).values('id')
-    books = TextbookCompanionPreference.objects.using('scilab')\
-        .filter(category=category_id).filter(approval_status=1)\
-        .filter(proposal_id__in=ids).order_by('book')
+    books = TextbookCompanionPreference.objects\
+        .db_manager('scilab').raw("""
+                        SELECT DISTINCT (loc.category_id),pe.id,
+                        tcbm.sub_category,loc.maincategory, pe.book as
+                        book,loc.category_id,tcbm.sub_category,
+                        pe.author as author, pe.publisher as publisher,
+                        pe.year as year, pe.id as pe_id, pe.edition,
+                        po.approval_date as approval_date
+                        FROM textbook_companion_preference pe LEFT JOIN
+                        textbook_companion_proposal po ON pe.proposal_id = po.id
+                        LEFT JOIN textbook_companion_book_main_subcategories
+                        tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
+                        loc ON tcbm.main_category = loc.category_id WHERE
+                        po.proposal_status = 3 AND pe.approval_status = 1
+                        AND pe.category>0 AND pe.id = tcbm.pref_id AND 
+                        tcbm.sub_category=%s""", [category_id])
     return books
 
 
@@ -89,13 +120,19 @@ def index(request):
 
     if not request.GET.get('eid'):
         catg_all = catg(None, all_cat=True)
+        subcatg_all = subcatg(None, all_subcat=True)
         context = {
             'catg': catg_all,
+            'subcatg': subcatg_all,
         }
+        if 'maincat_id' in request.session:
+            maincat_id = request.session['maincat_id']
+            context['maincat_id'] = int(maincat_id)
+            context['subcategories'] = get_subcategories(maincat_id)
 
-        if 'category_id' in request.session:
-            category_id = request.session['category_id']
-            context['category_id'] = int(category_id)
+        if 'subcategory_id' in request.session:
+            category_id = request.session['subcategory_id']
+            context['subcategory_id'] = int(category_id)
             context['books'] = get_books(category_id)
 
         if 'book_id' in request.session:
@@ -140,8 +177,7 @@ def index(request):
                 review = ScilabCloudComment.objects.using('scilab')\
                     .filter(example=eid).count()
                 review_url = "http://scilab.in/cloud_comments/" + str(eid)
-                categ_all = TextbookCompanionCategoryList.objects\
-                    .using('scilab').all().order_by('category_name')
+
                 examples = TextbookCompanionExample.objects\
                     .db_manager('scilab').raw("""
                         SELECT id, id as example_id,
@@ -154,35 +190,37 @@ def index(request):
                 chapter_id = examples[0].chapter_id
                 chapters = TextbookCompanionChapter.objects\
                     .db_manager('scilab').raw("""
-                        SELECT id, name,
-                            number, preference_id
+                        SELECT id, name, number, preference_id
                         FROM textbook_companion_chapter
                         WHERE cloud_chapter_err_status = 0 AND
-                              preference_id = (SELECT preference_id
-                                               FROM textbook_companion_chapter
-                                               WHERE id = %s)
-                                               ORDER BY number ASC""", [chapter_id])
+                        preference_id = (SELECT preference_id
+                        FROM textbook_companion_chapter WHERE id = %s)
+                        ORDER BY number ASC""", [chapter_id])
                 preference_id = chapters[0].preference_id
 
                 books = TextbookCompanionPreference.objects\
                     .db_manager('scilab').raw("""
-                        SELECT pre.id, pre.book,
-                            author, category
-                        FROM textbook_companion_preference pre
-                        WHERE pre.approval_status=1 AND
-                              pre.category = (SELECT category
-                                              FROM textbook_companion_preference
-                                              WHERE id = %s) AND
-                              cloud_pref_err_status=0 AND
-                              pre.proposal_id IN (SELECT id
-                                                  FROM textbook_companion_proposal 
-                                                  WHERE proposal_status=3)
-                        ORDER BY pre.book ASC""", [preference_id])
-                category_id = books[0].category
-                example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
-                    .get(example_id=eid, filetype='S')
+                        SELECT DISTINCT (loc.category_id),pe.id,
+                        tcbm.sub_category,loc.maincategory, pe.book as
+                        book,loc.category_id,tcbm.sub_category,
+                        pe.author as author, pe.publisher as publisher,
+                        pe.year as year, pe.id as pe_id, pe.edition,
+                        po.approval_date as approval_date
+                        FROM textbook_companion_preference pe LEFT JOIN
+                        textbook_companion_proposal po ON pe.proposal_id = po.id
+                        LEFT JOIN textbook_companion_book_main_subcategories
+                        tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
+                        loc ON tcbm.main_category = loc.category_id WHERE
+                        po.proposal_status = 3 AND pe.approval_status = 1
+                        AND pe.category>0 AND pe.id = tcbm.pref_id AND
+                        pe.id=%s""", [preference_id])
+                maincat_id = books[0].category_id
+                subcat_id = books[0].sub_category
+                example_file = TextbookCompanionExampleFiles.objects\
+                    .using('scilab').get(example_id=eid, filetype='S')
 
-                request.session['category_id'] = category_id
+                request.session['maincat_id'] = maincat_id
+                request.session['subcategory_id'] = subcat_id
                 request.session['book_id'] = preference_id
                 request.session['chapter_id'] = chapter_id
                 request.session['example_id'] = eid
@@ -195,10 +233,17 @@ def index(request):
 
             except IndexError:
                 return redirect("/")
+            subcateg_all = TextbookCompanionSubCategoryList.objects\
+                .using('scilab').filter(maincategory_id=maincat_id)\
+                .order_by('subcategory_id')
+            categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
+                .filter(~Q(category_id=0)).order_by('maincategory')
 
             context = {
                 'catg': categ_all,
-                'category_id': category_id,
+                'subcatg': subcateg_all,
+                'maincat_id': maincat_id,
+                'subcategory_id': books[0].sub_category,
                 'books': books,
                 'book_id': preference_id,
                 'chapters': chapters,

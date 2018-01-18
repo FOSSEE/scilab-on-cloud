@@ -15,6 +15,7 @@ urlpatterns = patterns(
     url(r'^search_book/$', 'website.views.search_book'),
     url(r'^search_book/popular/$', 'website.views.popular'),
     url(r'^search_book/recent/$', 'website.views.recent'),
+    url(r'^get_subcategories/$', 'website.ajax.subcategories'),
     url(r'^get_books/$', 'website.ajax.books'),
     url(r'^get_chapters/$', 'website.ajax.chapters'),
     url(r'^get_examples/$', 'website.ajax.examples'),

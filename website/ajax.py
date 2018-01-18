@@ -47,15 +47,37 @@ def remove_from_session(request, keys):
         request.session.pop(key, None)
 
 
+def subcategories(request):
+    context = {}
+    response_dict = []
+    if request.is_ajax():
+        maincategory_id = int(request.GET.get('maincat_id'))
+        if maincategory_id:
+            request.session['maincat_id'] = maincategory_id
+            subcategory = TextbookCompanionSubCategoryList.objects.using('scilab')\
+                .filter(maincategory_id=maincategory_id)
+
+            for obj in subcategory:
+                response = {
+                    'subcategory': obj.subcategory,
+                    'subcategory_id': obj.subcategory_id,
+                }
+                response_dict.append(response)
+            return HttpResponse(simplejson.dumps(response_dict),
+                                content_type='application/json')
+
+
 def books(request):
     context = {}
     response_dict = []
     if request.is_ajax():
+        main_category_id = int(request.GET.get('maincat_id'))
         category_id = int(request.GET.get('cat_id'))
 
         if category_id:
             # store category_id in cookie/session
             request.session['category_id'] = category_id
+            request.session['maincat_id'] = main_category_id
             remove_from_session(request, [
                 'book_id',
                 'chapter_id',
@@ -68,12 +90,28 @@ def books(request):
 
             ids = TextbookCompanionProposal.objects.using('scilab')\
                 .filter(proposal_status=3).values('id')
-            books = TextbookCompanionPreference.objects.using('scilab')\
-                .filter(category=category_id).filter(approval_status=1)\
-                .filter(cloud_pref_err_status=0)\
-                .filter(proposal_id__in=ids).order_by('book')
+           # books = TextbookCompanionPreference.objects.using('scilab')\
+           #     .filter(category=category_id).filter(approval_status=1)\
+           #     .filter(cloud_pref_err_status=0)\
+           #     .filter(proposal_id__in=ids).order_by('book')
 
-            print "okkk"
+            books = TextbookCompanionPreference.objects\
+                .db_manager('scilab').raw("""
+                        SELECT DISTINCT (loc.category_id),pe.id,
+                        tcbm.sub_category,loc.maincategory, pe.book as book,
+                        pe.author as author, pe.publisher as publisher,
+                        pe.year as year, pe.id as pe_id, pe.edition,
+                        po.approval_date as approval_date
+                        FROM textbook_companion_preference pe LEFT JOIN
+                        textbook_companion_proposal po ON pe.proposal_id = po.id
+                        LEFT JOIN textbook_companion_book_main_subcategories
+                        tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
+                        loc ON tcbm.main_category = loc.category_id WHERE
+                        po.proposal_status = 3 AND pe.approval_status = 1
+                        AND pe.category>0 AND pe.id = tcbm.pref_id AND
+                        loc.category_id= %s AND tcbm.sub_category = %s""",
+                                          [main_category_id, category_id])
+
             for obj in books:
                 response = {
                     'book': obj.book,

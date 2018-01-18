@@ -1,0 +1,11 @@
+
+                    <label>Sub Category: </label>
+                    <select id="categories">
+                            <option value="0">Select Subcategory</option>
+                            {% for category in subcatg %} {% if subcategory_id == category.subcategory_id %}
+                            <option value="{{ category.subcategory_id }}" selected>{{ category.subcategory }}</option>
+                            {% else %}
+                            <option value="{{ category.subcategory_id }}">{{ category.subcategory }}</option>
+                            {% endif %} {% endfor %}
+                        </select>
+                    <a href="#" class="extra-link" id="contributor">+Contributor</a>

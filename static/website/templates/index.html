@@ -40,18 +40,11 @@
     <div id="content-wrapper">
         <div id="content-inner">
             <div id="selectors">
+                <div id="main-category-wrapper">
+                {% include 'website/templates/ajax-maincategories.html' %}
+                </div>
                 <div id="category-wrapper">
-                    {% if catg %}
-                    <label>Category: </label>
-                    <select id="categories">
-                            <option value="0">Select Category</option>
-                            {% for category in catg %} {% if category_id == category.id %}
-                            <option value="{{ category.id }}" selected>{{ category.category_name }}</option>
-                            {% else %}
-                            <option value="{{ category.id }}">{{ category.category_name }}</option>
-                            {% endif %} {% endfor %}
-                        </select> {% endif %}
-                    <a href="#" class="extra-link" id="contributor">+Contributor</a>
+                {% include 'website/templates/ajax-subcategories.html' %}
                 </div>
                 <div id="books-wrapper">
                     {% include 'website/templates/ajax-books.html' %}
