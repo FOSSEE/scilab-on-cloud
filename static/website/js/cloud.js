@@ -186,19 +186,103 @@ $(document).ready(function() {
         });
         e.preventDefault();
     });
-    $("#books-wrapper").hide();
-    $("#chapters-wrapper").hide();
-    $("#examples-wrapper").hide();
-    $("#revisions-wrapper").hide();
-    $("#download-book").hide();
+    $("#diff-wrapper").hide();
+    if($("#main_categories").val() == 0){
+        $("#category-wrapper").hide();
+        $("#books-wrapper").hide();
+        $("#chapters-wrapper").hide();
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+    }
+    if($("#categories").val() == 0){
+        $("#books-wrapper").hide();
+        $("#chapters-wrapper").hide();
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+    }
+    if($("#books").val() == 0){
+        $("#chapters-wrapper").hide();
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+    }
+    if($("#chapters").val() == 0){
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+    }
+    if($("#examples").val() == 0){
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+    }
     /*******************************************/
     /******  Below removed dajax ***************/
     /*******************************************/
-    /**************** categories change ********/
+    /*********** Main categories change ********/
+    /*******************************************/
+    $(document.body).on("change", "#main_categories", function() {
+        var maincat_id = $('#main_categories').find(":selected").val();
+        if (maincat_id != 0) {
+            $("#categories").html("");
+            $("#category-wrapper").show();
+            $("#books").html("");
+            editor.setValue("");
+            result.setValue("");
+            $("#chapters-wrapper").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-book").hide();
+            $("#submit-revision").hide();
+            $("#review-link").hide();
+            $.ajax({
+                url: 'get_subcategories/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    maincat_id: maincat_id,
+                },
+                success: function(data) {
+                    $("#categories").html('');
+                    $("#categories").html(
+                        ' <option value="">Select Subcategory</option>'
+                    );
+                    for (var i = 0; i < data.length; i++) {
+                        $('#categories').append(
+                            '<option value="' +
+                            data[i].subcategory_id + '">' +
+                            data[i].subcategory + '</option>');
+                    }
+                }
+            });
+        } else {
+            editor.setValue("");
+            result.setValue("");
+            $("#categories").html("");
+            $("#category-wrapper").hide();
+            $("#review-link").hide();
+            $("#books-wrapper").hide();
+            $("#chapters-wrapper").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-book").hide();
+            $("#diff-wrapper").hide();
+        }
+    });
+    /*******************************************/
+    /*******************************************/
+    /**************** sub categories change ********/
     /*******************************************/
     $(document.body).on("change", "#categories", function() {
-        var cat_id = $('#categories').find(":selected").val();
-        if (cat_id != 0) {
+        var maincat_id = $('#main_categories').find(":selected").val();
+        var subcat_id = $('#categories').find(":selected").val();
+        if (subcat_id != 0) {
             $("#books-wrapper").show();
             $("#books").html("");
             editor.setValue("");
@@ -208,12 +292,14 @@ $(document).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
             $("#submit-revision").hide();
+            $("#review-link").hide();
             $.ajax({
                 url: 'get_books/',
                 dataType: 'JSON',
                 type: 'GET',
                 data: {
-                    cat_id: cat_id,
+                    maincat_id: maincat_id,
+                    cat_id: subcat_id,
                 },
                 success: function(data) {
                     $("#books").html('');
@@ -231,11 +317,15 @@ $(document).ready(function() {
                 }
             });
         } else {
+            editor.setValue("");
+            result.setValue("");
+            $("#review-link").hide();
             $("#books-wrapper").hide();
             $("#chapters-wrapper").hide();
             $("#examples-wrapper").hide();
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
+            $("#diff-wrapper").hide();
         }
     });
     /*******************************************/
@@ -256,6 +346,7 @@ $(document).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-chapter").hide();
             $("#submit-revision").hide();
+            $("#review-link").hide();
             $.ajax({
                 url: 'get_chapters/',
                 dataType: 'JSON',
@@ -286,6 +377,8 @@ $(document).ready(function() {
             editor.setValue("");
             result.setValue("");
             $("#submit-revision").hide();
+            $("#review-link").hide();
+            $("#diff-wrapper").hide();
         }
     });
     /*******************************************/
@@ -303,6 +396,7 @@ $(document).ready(function() {
             result.setValue("");
             $("#revisions-wrapper").hide();
             $("#download-example").hide();
+            $("#review-link").hide();
             $.ajax({
                 url: 'get_examples/',
                 dataType: 'JSON',
@@ -312,7 +406,7 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     $("#examples").html(
-                        ' <option value="">Select Book</option>'
+                        ' <option value="">Select Example</option>'
                     );
                     for (var i = 0; i < data.length; i++) {
                         $('#examples').append(
@@ -331,6 +425,8 @@ $(document).ready(function() {
             editor.setValue("");
             result.setValue("");
             $("#submit-revision").hide();
+            $("#review-link").hide();
+            $("#diff-wrapper").hide();
         }
     });
     /*******************************************/
@@ -405,6 +501,7 @@ $(document).ready(function() {
             $("#submit-revision").hide();
             editor.setValue("");
             result.setValue("");
+            $("#diff-wrapper").hide();
         }
     });
     /********************************************/
