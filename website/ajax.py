@@ -76,7 +76,7 @@ def books(request):
 
         if category_id:
             # store category_id in cookie/session
-            request.session['category_id'] = category_id
+            request.session['subcategory_id'] = category_id
             request.session['maincat_id'] = main_category_id
             remove_from_session(request, [
                 'book_id',
@@ -247,22 +247,41 @@ def code(request):
                             content_type='application/json')
 
 
-@dajaxice_register
-def contributor(request, book_id):
-    dajax = Dajax()
-    preference = TextbookCompanionPreference.objects.using('scilab')\
-        .get(id=book_id)
-    proposal = TextbookCompanionProposal.objects.using('scilab')\
-        .get(id=preference.proposal_id)
-    context = {
-        "preference": preference,
-        "proposal": proposal,
-    }
-    contributor = render_to_string(
-        'website/templates/ajax-contributor.html',
-        context)
-    dajax.assign('#databox', 'innerHTML', contributor)
-    return dajax.json()
+def contributor(request):
+    context = {}
+    contributor = {}
+    response_dict = []
+    if request.is_ajax():
+        book_id = int(request.GET.get('book_id'))
+
+        contributor = TextbookCompanionPreference.objects\
+            .db_manager('scilab').raw("""SELECT preference.id,
+            preference.book as preference_book,
+            preference.author as preference_author,
+            preference.isbn as preference_isbn,
+            preference.publisher as preference_publisher,
+            preference.edition as preference_edition,
+            preference.year as preference_year,
+            proposal.full_name as proposal_full_name,
+            proposal.faculty as proposal_faculty,
+            proposal.reviewer as proposal_reviewer,
+            proposal.course as proposal_course,
+            proposal.branch as proposal_branch,
+            proposal.university as proposal_university
+            FROM textbook_companion_proposal proposal
+            LEFT JOIN textbook_companion_preference preference ON proposal.id =
+            preference.proposal_id WHERE preference.id=%s""", [book_id])
+
+        for obj in contributor:
+            response = {
+                "contributor_name": obj.proposal_full_name,
+                "proposal_faculty": obj.proposal_faculty,
+                "proposal_reviewer": obj.proposal_reviewer,
+                "proposal_university": obj.proposal_university,
+            }
+            response_dict.append(response)
+    return HttpResponse(simplejson.dumps(response),
+                        content_type='application/json')
 
 
 @dajaxice_register
