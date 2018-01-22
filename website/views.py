@@ -51,13 +51,12 @@ def subcatg(subcat_id, all_subcat):
 
 def get_subcategories(maincat_id):
     subcategories = TextbookCompanionSubCategoryList.objects.using('scilab')\
-        .filter(maincategory_id=maincat_id).order_by('number')
+        .filter(maincategory_id=maincat_id).order_by('subcategory_id')
     return subcategories
 
 
 def get_books(category_id):
-    ids = TextbookCompanionProposal.objects.using('scilab')\
-        .filter(proposal_status=3).values('id')
+
     books = TextbookCompanionPreference.objects\
         .db_manager('scilab').raw("""
                         SELECT DISTINCT (loc.category_id),pe.id,
@@ -128,7 +127,7 @@ def index(request):
         if 'maincat_id' in request.session:
             maincat_id = request.session['maincat_id']
             context['maincat_id'] = int(maincat_id)
-            context['subcategories'] = get_subcategories(maincat_id)
+            context['subcatg'] = get_subcategories(maincat_id)
 
         if 'subcategory_id' in request.session:
             category_id = request.session['subcategory_id']
@@ -214,6 +213,8 @@ def index(request):
                         po.proposal_status = 3 AND pe.approval_status = 1
                         AND pe.category>0 AND pe.id = tcbm.pref_id AND
                         pe.id=%s""", [preference_id])
+
+                books = get_books(books[0].sub_category)
                 maincat_id = books[0].category_id
                 subcat_id = books[0].sub_category
                 example_file = TextbookCompanionExampleFiles.objects\

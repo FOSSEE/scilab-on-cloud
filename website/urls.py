@@ -22,6 +22,7 @@ urlpatterns = patterns(
     url(r'^get_revisions/$', 'website.ajax.revisions'),
     url(r'^get_code/$', 'website.ajax.code'),
     url(r'^get_diff/$', 'website.ajax.diff'),
+    url(r'^get_contributor/$', 'website.ajax.contributor'),
 
     # Uncomment the next line to enable the admin:
     #url(r'^admin/', include(admin.site.urls)),

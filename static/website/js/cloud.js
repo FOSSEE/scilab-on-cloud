@@ -95,29 +95,8 @@ $(document).ready(function() {
      */
     $("#plot_download").hide();
     /* Contributor details */
-    $(document).on("click", "#contributor", function(e) {
-        Dajaxice.website.contributor(function(data) {
-            Dajax.process(data);
-            $("#databox-wrapper").lightbox_me({
-                centered: true
-            });
-        }, {
-            book_id: $("#books").val()
-        });
-        e.preventDefault();
-    });
 
-    $(document).on("click", ".node", function(e) {
-        Dajaxice.website.node(function(data) {
-            Dajax.process(data);
-            $("#databox-wrapper").lightbox_me({
-                centered: true
-            });
-        }, {
-            key: $(this).data("key")
-        });
-        e.preventDefault();
-    });
+
 
     /* Bug form handling */
     $(document).on("click", "#bug", function(e) {
@@ -195,6 +174,8 @@ $(document).ready(function() {
         $("#revisions-wrapper").hide();
         $("#download-book").hide();
         $("#diff-wrapper").hide();
+        $("#contributor").hide();
+        $("#databox-wrapper").hide();
     }
     if($("#categories").val() == 0){
         $("#books-wrapper").hide();
@@ -203,6 +184,7 @@ $(document).ready(function() {
         $("#revisions-wrapper").hide();
         $("#download-book").hide();
         $("#diff-wrapper").hide();
+        $("#contributor").hide();
     }
     if($("#books").val() == 0){
         $("#chapters-wrapper").hide();
@@ -210,17 +192,25 @@ $(document).ready(function() {
         $("#revisions-wrapper").hide();
         $("#download-book").hide();
         $("#diff-wrapper").hide();
+        $("#contributor").hide();
+    }else{
+            $("#download-book").show();
+            $("#contributor").show();
     }
     if($("#chapters").val() == 0){
         $("#examples-wrapper").hide();
         $("#revisions-wrapper").hide();
-        $("#download-book").hide();
         $("#diff-wrapper").hide();
+        $("#download-chapter").hide();
+    }else{
+            $("#download-chapter").show();
     }
     if($("#examples").val() == 0){
         $("#revisions-wrapper").hide();
-        $("#download-book").hide();
         $("#diff-wrapper").hide();
+        $("#download-example").hide();
+    }else{
+        $("#download-example").show();
     }
     /*******************************************/
     /******  Below removed dajax ***************/
@@ -241,6 +231,7 @@ $(document).ready(function() {
             $("#download-book").hide();
             $("#submit-revision").hide();
             $("#review-link").hide();
+            $("#contributor").hide();
             $.ajax({
                 url: 'get_subcategories/',
                 dataType: 'JSON',
@@ -326,6 +317,7 @@ $(document).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
             $("#diff-wrapper").hide();
+            $("#contributor").hide();
         }
     });
     /*******************************************/
@@ -339,6 +331,7 @@ $(document).ready(function() {
 
         if (book_id != 0) {
             $("#download-book").show();
+            $("#contributor").show();
             $("#chapters-wrapper").show();
             editor.setValue("");
             result.setValue("");
@@ -357,14 +350,14 @@ $(document).ready(function() {
                 success: function(data) {
                     $("#chapters").html('');
                     $("#chapters").html(
-                        ' <option value="">Select Book</option>'
+                        ' <option value="">Select Chapter</option>'
                     );
                     for (var i = 0; i < data.length; i++) {
                         $('#chapters').append(
                             '<option value="' +
                             data[i].id + '">' +
                             data[i].number +
-                            ' ' + data[i].chapter +
+                            ' - ' + data[i].chapter +
                             '</option>');
                     }
                 }
@@ -377,6 +370,7 @@ $(document).ready(function() {
             editor.setValue("");
             result.setValue("");
             $("#submit-revision").hide();
+            $("#contributor").hide();
             $("#review-link").hide();
             $("#diff-wrapper").hide();
         }
@@ -413,7 +407,7 @@ $(document).ready(function() {
                             '<option value="' +
                             data[i].id + '">' +
                             data[i].number +
-                            ' ' + data[i].caption +
+                            ' - ' + data[i].caption +
                             '</option>');
                     }
                 }
@@ -599,6 +593,43 @@ $(document).ready(function() {
     $(document).on("click", "#download-example", function(e) {
         window.location = "http://scilab.in/download/example/" +
             $("#examples").val();
+        e.preventDefault();
+    });
+    /********************************************/
+    /********************************************/
+    /****** Get contributor *********************/
+    /********************************************/
+    $(document).on("click", "#contributor", function(e) {
+            $.ajax({
+                url: 'get_contributor/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    book_id: $("#books").val()
+                },
+                success: function(data) {
+
+                $('#full_name').html(data.contributor_name);
+                $('#faculty').html(data.proposal_faculty);
+                $('#reviewer').html(data.proposal_reviewer);
+                $('#university').html(data.proposal_university);
+                $("#databox-wrapper").lightbox_me({
+                centered: true
+            });
+                }
+            });
+        e.preventDefault();
+    });
+
+    $(document).on("click", ".node", function(e) {
+        Dajaxice.website.node(function(data) {
+            Dajax.process(data);
+            $("#databox-wrapper").lightbox_me({
+                centered: true
+            });
+        }, {
+            key: $(this).data("key")
+        });
         e.preventDefault();
     });
     /********************************************/
