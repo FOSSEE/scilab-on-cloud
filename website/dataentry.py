@@ -17,7 +17,7 @@ def entry(code, example_id, dependency_exists, book_id):
 
     index = 0
     while index < len(code):
-        index = code.find('exec(\'', index)
+        index = code.find('exec(', index)
         if index == -1:
             break
         if index > 0:
