@@ -227,11 +227,13 @@ $(document).ready(function() {
             result.setValue("");
             $("#chapters-wrapper").hide();
             $("#examples-wrapper").hide();
+            $("#books-wrapper").hide();
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
             $("#submit-revision").hide();
             $("#review-link").hide();
             $("#contributor").hide();
+            $("#databox-wrapper").hide();
             $.ajax({
                 url: 'get_subcategories/',
                 dataType: 'JSON',
@@ -264,6 +266,7 @@ $(document).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
             $("#diff-wrapper").hide();
+            $("#databox-wrapper").hide();
         }
     });
     /*******************************************/
