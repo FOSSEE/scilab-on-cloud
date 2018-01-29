@@ -5,7 +5,8 @@ from website import ajax
 
 urlpatterns = patterns(
     '',
-    url(r'^$', 'website.views.landing', name='landing'),
+    #url(r'^$', 'website.views.landing', name='landing'),
+    url(r'^$', 'website.views.index', name='index'),
     url(r'^index$', 'website.views.index', name='index'),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     url(r'^submit-revision/$', 'website.ajax.revision_form',
@@ -15,12 +16,14 @@ urlpatterns = patterns(
     url(r'^search_book/$', 'website.views.search_book'),
     url(r'^search_book/popular/$', 'website.views.popular'),
     url(r'^search_book/recent/$', 'website.views.recent'),
+    url(r'^get_subcategories/$', 'website.ajax.subcategories'),
     url(r'^get_books/$', 'website.ajax.books'),
     url(r'^get_chapters/$', 'website.ajax.chapters'),
     url(r'^get_examples/$', 'website.ajax.examples'),
     url(r'^get_revisions/$', 'website.ajax.revisions'),
     url(r'^get_code/$', 'website.ajax.code'),
     url(r'^get_diff/$', 'website.ajax.diff'),
+    url(r'^get_contributor/$', 'website.ajax.contributor'),
 
     # Uncomment the next line to enable the admin:
     #url(r'^admin/', include(admin.site.urls)),

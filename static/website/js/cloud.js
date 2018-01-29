@@ -95,29 +95,8 @@ $(document).ready(function() {
      */
     $("#plot_download").hide();
     /* Contributor details */
-    $(document).on("click", "#contributor", function(e) {
-        Dajaxice.website.contributor(function(data) {
-            Dajax.process(data);
-            $("#databox-wrapper").lightbox_me({
-                centered: true
-            });
-        }, {
-            book_id: $("#books").val()
-        });
-        e.preventDefault();
-    });
 
-    $(document).on("click", ".node", function(e) {
-        Dajaxice.website.node(function(data) {
-            Dajax.process(data);
-            $("#databox-wrapper").lightbox_me({
-                centered: true
-            });
-        }, {
-            key: $(this).data("key")
-        });
-        e.preventDefault();
-    });
+
 
     /* Bug form handling */
     $(document).on("click", "#bug", function(e) {
@@ -186,19 +165,121 @@ $(document).ready(function() {
         });
         e.preventDefault();
     });
-    $("#books-wrapper").hide();
-    $("#chapters-wrapper").hide();
-    $("#examples-wrapper").hide();
-    $("#revisions-wrapper").hide();
-    $("#download-book").hide();
+    $("#diff-wrapper").hide();
+    if($("#main_categories").val() == 0){
+        $("#category-wrapper").hide();
+        $("#books-wrapper").hide();
+        $("#chapters-wrapper").hide();
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+        $("#contributor").hide();
+        $("#databox-wrapper").hide();
+    }
+    if($("#categories").val() == 0){
+        $("#books-wrapper").hide();
+        $("#chapters-wrapper").hide();
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+        $("#contributor").hide();
+        $("#databox-wrapper").hide();
+    }
+    if($("#books").val() == 0){
+        $("#chapters-wrapper").hide();
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#download-book").hide();
+        $("#diff-wrapper").hide();
+        $("#contributor").hide();
+        $("#databox-wrapper").hide();
+    }else{
+            $("#download-book").show();
+            $("#contributor").show();
+    }
+    if($("#chapters").val() == 0){
+        $("#examples-wrapper").hide();
+        $("#revisions-wrapper").hide();
+        $("#diff-wrapper").hide();
+        $("#download-chapter").hide();
+    }else{
+            $("#download-chapter").show();
+    }
+    if($("#examples").val() == 0){
+        $("#revisions-wrapper").hide();
+        $("#diff-wrapper").hide();
+        $("#download-example").hide();
+        $("#databox-wrapper").hide();
+    }else{
+        $("#download-example").show();
+    }
     /*******************************************/
     /******  Below removed dajax ***************/
     /*******************************************/
-    /**************** categories change ********/
+    /*********** Main categories change ********/
+    /*******************************************/
+    $(document.body).on("change", "#main_categories", function() {
+        var maincat_id = $('#main_categories').find(":selected").val();
+        if (maincat_id != 0) {
+            $("#categories").html("");
+            $("#category-wrapper").show();
+            $("#books").html("");
+            editor.setValue("");
+            result.setValue("");
+            $("#chapters-wrapper").hide();
+            $("#examples-wrapper").hide();
+            $("#books-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-book").hide();
+            $("#submit-revision").hide();
+            $("#review-link").hide();
+            $("#contributor").hide();
+            $("#databox-wrapper").hide();
+            $.ajax({
+                url: 'get_subcategories/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    maincat_id: maincat_id,
+                },
+                success: function(data) {
+                    $("#categories").html('');
+                    $("#categories").html(
+                        ' <option value="">Select Subcategory</option>'
+                    );
+                    for (var i = 0; i < data.length; i++) {
+                        $('#categories').append(
+                            '<option value="' +
+                            data[i].subcategory_id + '">' +
+                            data[i].subcategory + '</option>');
+                    }
+                }
+            });
+        } else {
+            editor.setValue("");
+            result.setValue("");
+            $("#categories").html("");
+            $("#category-wrapper").hide();
+            $("#review-link").hide();
+            $("#books-wrapper").hide();
+            $("#chapters-wrapper").hide();
+            $("#examples-wrapper").hide();
+            $("#revisions-wrapper").hide();
+            $("#download-book").hide();
+            $("#diff-wrapper").hide();
+            $("#databox-wrapper").hide();
+        }
+    });
+    /*******************************************/
+    /*******************************************/
+    /**************** sub categories change ********/
     /*******************************************/
     $(document.body).on("change", "#categories", function() {
-        var cat_id = $('#categories').find(":selected").val();
-        if (cat_id != 0) {
+        var maincat_id = $('#main_categories').find(":selected").val();
+        var subcat_id = $('#categories').find(":selected").val();
+        if (subcat_id != 0) {
             $("#books-wrapper").show();
             $("#books").html("");
             editor.setValue("");
@@ -208,12 +289,14 @@ $(document).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
             $("#submit-revision").hide();
+            $("#review-link").hide();
             $.ajax({
                 url: 'get_books/',
                 dataType: 'JSON',
                 type: 'GET',
                 data: {
-                    cat_id: cat_id,
+                    maincat_id: maincat_id,
+                    cat_id: subcat_id,
                 },
                 success: function(data) {
                     $("#books").html('');
@@ -231,11 +314,16 @@ $(document).ready(function() {
                 }
             });
         } else {
+            editor.setValue("");
+            result.setValue("");
+            $("#review-link").hide();
             $("#books-wrapper").hide();
             $("#chapters-wrapper").hide();
             $("#examples-wrapper").hide();
             $("#revisions-wrapper").hide();
             $("#download-book").hide();
+            $("#diff-wrapper").hide();
+            $("#contributor").hide();
         }
     });
     /*******************************************/
@@ -249,6 +337,7 @@ $(document).ready(function() {
 
         if (book_id != 0) {
             $("#download-book").show();
+            $("#contributor").show();
             $("#chapters-wrapper").show();
             editor.setValue("");
             result.setValue("");
@@ -256,6 +345,7 @@ $(document).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-chapter").hide();
             $("#submit-revision").hide();
+            $("#review-link").hide();
             $.ajax({
                 url: 'get_chapters/',
                 dataType: 'JSON',
@@ -266,14 +356,14 @@ $(document).ready(function() {
                 success: function(data) {
                     $("#chapters").html('');
                     $("#chapters").html(
-                        ' <option value="">Select Book</option>'
+                        ' <option value="">Select Chapter</option>'
                     );
                     for (var i = 0; i < data.length; i++) {
                         $('#chapters').append(
                             '<option value="' +
                             data[i].id + '">' +
                             data[i].number +
-                            ' ' + data[i].chapter +
+                            ' - ' + data[i].chapter +
                             '</option>');
                     }
                 }
@@ -286,6 +376,9 @@ $(document).ready(function() {
             editor.setValue("");
             result.setValue("");
             $("#submit-revision").hide();
+            $("#contributor").hide();
+            $("#review-link").hide();
+            $("#diff-wrapper").hide();
         }
     });
     /*******************************************/
@@ -303,6 +396,7 @@ $(document).ready(function() {
             result.setValue("");
             $("#revisions-wrapper").hide();
             $("#download-example").hide();
+            $("#review-link").hide();
             $.ajax({
                 url: 'get_examples/',
                 dataType: 'JSON',
@@ -312,14 +406,14 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     $("#examples").html(
-                        ' <option value="">Select Book</option>'
+                        ' <option value="">Select Example</option>'
                     );
                     for (var i = 0; i < data.length; i++) {
                         $('#examples').append(
                             '<option value="' +
                             data[i].id + '">' +
                             data[i].number +
-                            ' ' + data[i].caption +
+                            ' - ' + data[i].caption +
                             '</option>');
                     }
                 }
@@ -331,6 +425,8 @@ $(document).ready(function() {
             editor.setValue("");
             result.setValue("");
             $("#submit-revision").hide();
+            $("#review-link").hide();
+            $("#diff-wrapper").hide();
         }
     });
     /*******************************************/
@@ -345,6 +441,7 @@ $(document).ready(function() {
             $("#revisions-wrapper").show();
             $("#download-example").show();
             $("#submit-revision").show();
+            $("#databox-wrapper").hide();
             editor.setValue("");
             result.setValue("");
             ajax_loader('#revisions');
@@ -359,6 +456,7 @@ $(document).ready(function() {
                     $("#revisions").html(
                         ' <option value="">Select a revision</option>'
                     );
+
                     var i = 1;
                     data.commits.forEach(function(
                         item) {
@@ -388,13 +486,24 @@ $(document).ready(function() {
                         },
                         success: function(
                             data) {
+                         console.log("okkkkk");
+                    console.log(data.review_url);
+                    if (data.review != 0) {
+                        $("#review").show();
+                        console.log(data.review_url);
+                                                console.log("okkkkk");
+                        $("#review").attr("href", data.review_url);
+                        $("#review").text(data.review + " " + "Review");
+                    } else {
+                        $("#review").hide();
+                    }
                             editor.setValue(
                                 data
                                 .code
                             );
                             initial_code
                                 =
-                                editor.getValue()
+                                editor.getValue();
                         }
                     });
                 }
@@ -405,6 +514,8 @@ $(document).ready(function() {
             $("#submit-revision").hide();
             editor.setValue("");
             result.setValue("");
+            $("#diff-wrapper").hide();
+            $("#databox-wrapper").hide();
         }
     });
     /********************************************/
@@ -502,6 +613,43 @@ $(document).ready(function() {
     $(document).on("click", "#download-example", function(e) {
         window.location = "http://scilab.in/download/example/" +
             $("#examples").val();
+        e.preventDefault();
+    });
+    /********************************************/
+    /********************************************/
+    /****** Get contributor *********************/
+    /********************************************/
+    $(document).on("click", "#contributor", function(e) {
+            $.ajax({
+                url: 'get_contributor/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    book_id: $("#books").val()
+                },
+                success: function(data) {
+
+                $('#full_name').html(data.contributor_name);
+                $('#faculty').html(data.proposal_faculty);
+                $('#reviewer').html(data.proposal_reviewer);
+                $('#university').html(data.proposal_university);
+                $("#databox-wrapper").lightbox_me({
+                centered: true
+            });
+                }
+            });
+        e.preventDefault();
+    });
+
+    $(document).on("click", ".node", function(e) {
+        Dajaxice.website.node(function(data) {
+            Dajax.process(data);
+            $("#databox-wrapper").lightbox_me({
+                centered: true
+            });
+        }, {
+            key: $(this).data("key")
+        });
         e.preventDefault();
     });
     /********************************************/

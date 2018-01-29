@@ -6,7 +6,7 @@ select {
     display: inline;
     margin-bottom: 15px;
     min-width: 220px;
-    max-width: 40%;
+    max-width: 100%;
     width: auto;
 }
 .CodeMirror {
@@ -64,11 +64,11 @@ body, html {
 }
 #selectors label {
     display: inline-block;
-    min-width: 75px;
+    min-width: 100px;
 }
 #content {
     position: absolute;
-    top: 250px;
+    top: 300px;
     bottom: 20px;
     width: 100%;
     min-height: 400px;

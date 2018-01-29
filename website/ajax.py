@@ -47,15 +47,37 @@ def remove_from_session(request, keys):
         request.session.pop(key, None)
 
 
+def subcategories(request):
+    context = {}
+    response_dict = []
+    if request.is_ajax():
+        maincategory_id = int(request.GET.get('maincat_id'))
+        if maincategory_id:
+            request.session['maincat_id'] = maincategory_id
+            subcategory = TextbookCompanionSubCategoryList.objects.using('scilab')\
+                .filter(maincategory_id=maincategory_id)
+
+            for obj in subcategory:
+                response = {
+                    'subcategory': obj.subcategory,
+                    'subcategory_id': obj.subcategory_id,
+                }
+                response_dict.append(response)
+            return HttpResponse(simplejson.dumps(response_dict),
+                                content_type='application/json')
+
+
 def books(request):
     context = {}
     response_dict = []
     if request.is_ajax():
+        main_category_id = int(request.GET.get('maincat_id'))
         category_id = int(request.GET.get('cat_id'))
 
         if category_id:
             # store category_id in cookie/session
-            request.session['category_id'] = category_id
+            request.session['subcategory_id'] = category_id
+            request.session['maincat_id'] = main_category_id
             remove_from_session(request, [
                 'book_id',
                 'chapter_id',
@@ -68,12 +90,29 @@ def books(request):
 
             ids = TextbookCompanionProposal.objects.using('scilab')\
                 .filter(proposal_status=3).values('id')
-            books = TextbookCompanionPreference.objects.using('scilab')\
-                .filter(category=category_id).filter(approval_status=1)\
-                .filter(cloud_pref_err_status=0)\
-                .filter(proposal_id__in=ids).order_by('book')
+           # books = TextbookCompanionPreference.objects.using('scilab')\
+           #     .filter(category=category_id).filter(approval_status=1)\
+           #     .filter(cloud_pref_err_status=0)\
+           #     .filter(proposal_id__in=ids).order_by('book')
 
-            print "okkk"
+            books = TextbookCompanionPreference.objects\
+                .db_manager('scilab').raw("""
+                        SELECT DISTINCT (loc.category_id),pe.id,
+                        tcbm.sub_category,loc.maincategory, pe.book as book,
+                        pe.author as author, pe.publisher as publisher,
+                        pe.year as year, pe.id as pe_id, pe.edition,
+                        po.approval_date as approval_date
+                        FROM textbook_companion_preference pe LEFT JOIN
+                        textbook_companion_proposal po ON pe.proposal_id = po.id
+                        LEFT JOIN textbook_companion_book_main_subcategories
+                        tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
+                        loc ON tcbm.main_category = loc.category_id WHERE
+                        po.proposal_status = 3 AND pe.approval_status = 1
+                        AND pe.category>0 AND pe.id = tcbm.pref_id
+                        AND pe.cloud_pref_err_status = 0 AND
+                        loc.category_id= %s AND tcbm.sub_category = %s""",
+                                          [main_category_id, category_id])
+
             for obj in books:
                 response = {
                     'book': obj.book,
@@ -103,7 +142,8 @@ def chapters(request):
             ])
 
             chapters = TextbookCompanionChapter.objects.using('scilab')\
-                .filter(preference_id=book_id).order_by('number')
+                .filter(preference_id=book_id).filter(cloud_chapter_err_status=0)\
+                .order_by('number')
             for obj in chapters:
                 response = {
                     'id': obj.id,
@@ -133,7 +173,8 @@ def examples(request):
             ])
 
             examples = TextbookCompanionExample.objects.using('scilab')\
-                .filter(chapter_id=chapter_id).order_by('number')
+                .filter(chapter_id=chapter_id).filter(cloud_err_status=0)\
+                .order_by('number')
             for obj in examples:
                 response = {
                     'id': obj.id,
@@ -194,6 +235,8 @@ def code(request):
         file_path = request.session['filepath']
         review = ScilabCloudComment.objects.using('scilab')\
             .filter(example=example_id).count()
+        print example_id
+        print review
         review_url = "http://scilab.in/cloud_comments/" + str(example_id)
         # example_path = UPLOADS_PATH + '/' + file_path
 
@@ -202,29 +245,48 @@ def code(request):
         response = {
             'code': code,
             'review': review,
-            'review_url': review_url
+            'review_url': review_url,
         }
-        response_dict.append(response)
+        #response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
 
 
-@dajaxice_register
-def contributor(request, book_id):
-    dajax = Dajax()
-    preference = TextbookCompanionPreference.objects.using('scilab')\
-        .get(id=book_id)
-    proposal = TextbookCompanionProposal.objects.using('scilab')\
-        .get(id=preference.proposal_id)
-    context = {
-        "preference": preference,
-        "proposal": proposal,
-    }
-    contributor = render_to_string(
-        'website/templates/ajax-contributor.html',
-        context)
-    dajax.assign('#databox', 'innerHTML', contributor)
-    return dajax.json()
+def contributor(request):
+    context = {}
+    contributor = {}
+    response_dict = []
+    if request.is_ajax():
+        book_id = int(request.GET.get('book_id'))
+
+        contributor = TextbookCompanionPreference.objects\
+            .db_manager('scilab').raw("""SELECT preference.id,
+            preference.book as preference_book,
+            preference.author as preference_author,
+            preference.isbn as preference_isbn,
+            preference.publisher as preference_publisher,
+            preference.edition as preference_edition,
+            preference.year as preference_year,
+            proposal.full_name as proposal_full_name,
+            proposal.faculty as proposal_faculty,
+            proposal.reviewer as proposal_reviewer,
+            proposal.course as proposal_course,
+            proposal.branch as proposal_branch,
+            proposal.university as proposal_university
+            FROM textbook_companion_proposal proposal
+            LEFT JOIN textbook_companion_preference preference ON proposal.id =
+            preference.proposal_id WHERE preference.id=%s""", [book_id])
+
+        for obj in contributor:
+            response = {
+                "contributor_name": obj.proposal_full_name,
+                "proposal_faculty": obj.proposal_faculty,
+                "proposal_reviewer": obj.proposal_reviewer,
+                "proposal_university": obj.proposal_university,
+            }
+            response_dict.append(response)
+    return HttpResponse(simplejson.dumps(response),
+                        content_type='application/json')
 
 
 @dajaxice_register

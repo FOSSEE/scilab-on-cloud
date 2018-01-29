@@ -1,0 +1,10 @@
+
+                    <label>Main Category: </label>
+                    <select id="main_categories">
+                            <option value="0">Select Main Category</option>
+                            {% for category in catg %} {% if maincat_id == category.category_id %}
+                            <option value="{{ category.category_id }}" selected>{{ category.maincategory }}</option>
+                            {% else %}
+                            <option value="{{ category.category_id }}">{{ category.maincategory }}</option>
+                            {% endif %} {% endfor %}
+                        </select>

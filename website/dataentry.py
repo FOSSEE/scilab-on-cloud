@@ -8,12 +8,12 @@ from soc.config import UPLOADS_PATH
 import mimetypes
 import time
 
-
 def entry(code, example_id, dependency_exists, book_id):
     foo = "exec"
     b = 0
     c = 1303985023
     d = example_id
+    #QUOTED_STRING_RE = re.compile(r'exec\(".*"\)')
 
     index = 0
     while index < len(code):
@@ -21,17 +21,17 @@ def entry(code, example_id, dependency_exists, book_id):
         if index == -1:
             break
         if index > 0:
-            bb = code.find('\'', index + 7)
-            value = code[(index + 6):bb]
+            bb = code.find('\'',index+7)
+            value = code[(index+6):bb]
         elif (index == code.find('exec (\"')):
-            bb = code.find('\"', index + 7)
-            value = code[(index + 7):bb]
+            bb = code.find('\"',index+7)
+            value = code[(index+7):bb]
         elif(index == code.find('exec(\"')):
-            bb = code.find('\'', index + 7)
-            value = code[(index + 6):bb]
+            bb = code.find('\'',index+7)
+            value = code[(index+6):bb]
         else:
             print("unknown exec format")
-            dependency_exists = False
+            dependency_exists= False
             return dependency_exists
         print "file name: " + value
         data_df = TextbookCompanionDependencyFiles.objects.using('scilab')\

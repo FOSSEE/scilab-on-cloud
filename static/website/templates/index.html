@@ -24,7 +24,7 @@
                         <li><a class="node" data-key="about" href="#">About</a></li>
                         <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
                         <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                        <li><a class="node" data-key="login" href="#">Log In</a></li>
+                        <!-- <li><a class="node" data-key="login" href="#">Log In</a></li> -->
                         {% endif %}
                         <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
                     </ul>
@@ -40,18 +40,11 @@
     <div id="content-wrapper">
         <div id="content-inner">
             <div id="selectors">
+                <div id="main-category-wrapper">
+                {% include 'website/templates/ajax-maincategories.html' %}
+                </div>
                 <div id="category-wrapper">
-                    {% if catg %}
-                    <label>Category: </label>
-                    <select id="categories">
-                            <option value="0">Select Category</option>
-                            {% for category in catg %} {% if category_id == category.id %}
-                            <option value="{{ category.id }}" selected>{{ category.category_name }}</option>
-                            {% else %}
-                            <option value="{{ category.id }}">{{ category.category_name }}</option>
-                            {% endif %} {% endfor %}
-                        </select> {% endif %}
-                    <a href="#" class="extra-link" id="contributor">+Contributor</a>
+                {% include 'website/templates/ajax-subcategories.html' %}
                 </div>
                 <div id="books-wrapper">
                     {% include 'website/templates/ajax-books.html' %}
@@ -96,7 +89,7 @@
                 </div>
                 <!-- /#input -->
                 <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
-                <a id="submit-revision" class="button">Submit a revision</a>
+                <!-- <a id="submit-revision" class="button">Submit a revision</a> -->
                 <div id="output">
                     <label>
                             Result
@@ -134,6 +127,7 @@
     </div>
     <!-- /#plotbox-wrapper -->
     <div id="databox-wrapper">
+        {% include 'website/templates/ajax-contributor.html' %}
         <div id="databox"></div>
     </div>
     <!-- /#databox-wrapper -->
