@@ -72,19 +72,22 @@ def get_books(category_id):
                         loc ON tcbm.main_category = loc.category_id WHERE
                         po.proposal_status = 3 AND pe.approval_status = 1
                         AND pe.category>0 AND pe.id = tcbm.pref_id AND 
+                        pe.cloud_pref_err_status = 0 AND
                         tcbm.sub_category=%s""", [category_id])
     return books
 
 
 def get_chapters(book_id):
     chapters = TextbookCompanionChapter.objects.using('scilab')\
-        .filter(preference_id=book_id).order_by('number')
+        .filter(preference_id=book_id).filter(cloud_chapter_err_status=0)\
+        .order_by('number')
     return chapters
 
 
 def get_examples(chapter_id):
     examples = TextbookCompanionExample.objects.using('scilab')\
-        .filter(chapter_id=chapter_id).order_by('number')
+        .filter(chapter_id=chapter_id).filter(cloud_err_status=0)\
+        .order_by('number')
     return examples
 
 
@@ -212,6 +215,7 @@ def index(request):
                         loc ON tcbm.main_category = loc.category_id WHERE
                         po.proposal_status = 3 AND pe.approval_status = 1
                         AND pe.category>0 AND pe.id = tcbm.pref_id AND
+                        pe.cloud_pref_err_status = 0 AND
                         pe.id=%s""", [preference_id])
 
                 books = get_books(books[0].sub_category)

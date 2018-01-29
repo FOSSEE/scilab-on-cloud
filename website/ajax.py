@@ -108,7 +108,8 @@ def books(request):
                         tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
                         loc ON tcbm.main_category = loc.category_id WHERE
                         po.proposal_status = 3 AND pe.approval_status = 1
-                        AND pe.category>0 AND pe.id = tcbm.pref_id AND
+                        AND pe.category>0 AND pe.id = tcbm.pref_id
+                        AND pe.cloud_pref_err_status = 0 AND
                         loc.category_id= %s AND tcbm.sub_category = %s""",
                                           [main_category_id, category_id])
 
@@ -141,7 +142,8 @@ def chapters(request):
             ])
 
             chapters = TextbookCompanionChapter.objects.using('scilab')\
-                .filter(preference_id=book_id).order_by('number')
+                .filter(preference_id=book_id).filter(cloud_chapter_err_status=0)\
+                .order_by('number')
             for obj in chapters:
                 response = {
                     'id': obj.id,
@@ -171,7 +173,8 @@ def examples(request):
             ])
 
             examples = TextbookCompanionExample.objects.using('scilab')\
-                .filter(chapter_id=chapter_id).order_by('number')
+                .filter(chapter_id=chapter_id).filter(cloud_err_status=0)\
+                .order_by('number')
             for obj in examples:
                 response = {
                     'id': obj.id,
@@ -232,6 +235,8 @@ def code(request):
         file_path = request.session['filepath']
         review = ScilabCloudComment.objects.using('scilab')\
             .filter(example=example_id).count()
+        print example_id
+        print review
         review_url = "http://scilab.in/cloud_comments/" + str(example_id)
         # example_path = UPLOADS_PATH + '/' + file_path
 
@@ -240,9 +245,9 @@ def code(request):
         response = {
             'code': code,
             'review': review,
-            'review_url': review_url
+            'review_url': review_url,
         }
-        response_dict.append(response)
+        #response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
 

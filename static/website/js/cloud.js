@@ -185,6 +185,7 @@ $(document).ready(function() {
         $("#download-book").hide();
         $("#diff-wrapper").hide();
         $("#contributor").hide();
+        $("#databox-wrapper").hide();
     }
     if($("#books").val() == 0){
         $("#chapters-wrapper").hide();
@@ -193,6 +194,7 @@ $(document).ready(function() {
         $("#download-book").hide();
         $("#diff-wrapper").hide();
         $("#contributor").hide();
+        $("#databox-wrapper").hide();
     }else{
             $("#download-book").show();
             $("#contributor").show();
@@ -209,6 +211,7 @@ $(document).ready(function() {
         $("#revisions-wrapper").hide();
         $("#diff-wrapper").hide();
         $("#download-example").hide();
+        $("#databox-wrapper").hide();
     }else{
         $("#download-example").show();
     }
@@ -438,6 +441,7 @@ $(document).ready(function() {
             $("#revisions-wrapper").show();
             $("#download-example").show();
             $("#submit-revision").show();
+            $("#databox-wrapper").hide();
             editor.setValue("");
             result.setValue("");
             ajax_loader('#revisions');
@@ -452,6 +456,7 @@ $(document).ready(function() {
                     $("#revisions").html(
                         ' <option value="">Select a revision</option>'
                     );
+
                     var i = 1;
                     data.commits.forEach(function(
                         item) {
@@ -481,13 +486,24 @@ $(document).ready(function() {
                         },
                         success: function(
                             data) {
+                         console.log("okkkkk");
+                    console.log(data.review_url);
+                    if (data.review != 0) {
+                        $("#review").show();
+                        console.log(data.review_url);
+                                                console.log("okkkkk");
+                        $("#review").attr("href", data.review_url);
+                        $("#review").text(data.review + " " + "Review");
+                    } else {
+                        $("#review").hide();
+                    }
                             editor.setValue(
                                 data
                                 .code
                             );
                             initial_code
                                 =
-                                editor.getValue()
+                                editor.getValue();
                         }
                     });
                 }
@@ -499,6 +515,7 @@ $(document).ready(function() {
             editor.setValue("");
             result.setValue("");
             $("#diff-wrapper").hide();
+            $("#databox-wrapper").hide();
         }
     });
     /********************************************/
