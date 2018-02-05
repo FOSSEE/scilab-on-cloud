@@ -275,7 +275,8 @@ def login(request):
 # def logout(request):
 #     print('logging out..')
 #     auth_logout(request)
-#     return render_to_response('registration/logged-out.html', {}, RequestContext(request))
+#     return render_to_response('registration/logged-out.html', {},
+#           RequestContext(request))
 
 
 @user_passes_test(lambda u: u.is_staff)
