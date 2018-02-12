@@ -3,7 +3,7 @@ from django.core.validators import validate_email
 from dajax.core import Dajax
 
 issues = (
-    ('', '-- Select Type of issue --'),
+    (0, '-- Select Type of issue --'),
     (1, 'Blank Code / Incorrect code'),
     (2, 'Output error'),
     (3, 'Execution error'),
@@ -15,7 +15,7 @@ issues = (
 
 class BugForm(forms.Form):
     example = forms.CharField(widget=forms.HiddenInput(), required=False)
-    issue = forms.CharField(widget=forms.Select(choices=issues))
+    issue = forms.CharField(widget=forms.Select(choices=issues), required=True)
     description = forms.CharField(widget=forms.Textarea)
     email = forms.CharField(widget=forms.TextInput(), required=True)
 

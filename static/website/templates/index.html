@@ -24,7 +24,7 @@
                         <li><a class="node" data-key="about" href="#">About</a></li>
                         <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
                         <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                        <!-- <li><a class="node" data-key="login" href="#">Log In</a></li> -->
+                         <li><a class="node" data-key="login" href="#">Log In</a></li>
                         {% endif %}
                         <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
                     </ul>
@@ -89,7 +89,7 @@
                 </div>
                 <!-- /#input -->
                 <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
-                <!-- <a id="submit-revision" class="button">Submit a revision</a> -->
+                <a id="submit-revision" class="button">Submit a revision</a>
                 <div id="output">
                     <label>
                             Result
@@ -131,12 +131,15 @@
         <div id="databox"></div>
     </div>
     <!-- /#databox-wrapper -->
+        <div id="node-wrapper">
+    </div>
     <div id="bug-form-wrapper">
     </div>
     <!-- /#databox-wrapper -->
     <div id="submit-revision-wrapper">
     </div>
     <div id="submit-revision-error-wrapper">
+    <p>{{ error_message }}</p>
     </div>
     <div id="diff-wrapper">
         {% include 'website/templates/diff.html' %}

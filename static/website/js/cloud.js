@@ -9,7 +9,8 @@ function ajax_loader(key) {
 }
 
 $(document).ready(function() {
-    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    var editor = CodeMirror.fromTextArea(document.getElementById(
+        "code"), {
         lineNumbers: true,
         lineWrapping: true,
         theme: "monokai",
@@ -19,8 +20,9 @@ $(document).ready(function() {
                     "fullScreen"));
             },
             "Esc": function(cm) {
-                if (cm.getOption("fullScreen")) cm.setOption(
-                    "fullScreen", false);
+                if (cm.getOption("fullScreen")) cm
+                    .setOption(
+                        "fullScreen", false);
             }
         }
     });
@@ -36,8 +38,9 @@ $(document).ready(function() {
                     "fullScreen"));
             },
             "Esc": function(cm) {
-                if (cm.getOption("fullScreen")) cm.setOption(
-                    "fullScreen", false);
+                if (cm.getOption("fullScreen")) cm
+                    .setOption(
+                        "fullScreen", false);
             }
         }
     });
@@ -93,80 +96,14 @@ $(document).ready(function() {
      * Selectors function
      * Write the queries using .on()
      */
-    $("#plot_download").hide();
     /* Contributor details */
-
-
-
-    /* Bug form handling */
-    $(document).on("click", "#bug", function(e) {
-        Dajaxice.website.bug_form(function(data) {
-            Dajax.process(data);
-            $("#bug-form-wrapper").lightbox_me({
-                centered: false
-            });
-        });
-        e.preventDefault();
-    });
-
-    $(document).on("click", "#bug-form-submit", function(e) {
-        ex_id = $("#examples").val();
-        cat_id = $("#categories").val();
-        book_id = $("#books").val();
-        chapter_id = $("#chapters").val();
-        if (!ex_id) {
-            ex_id = "NULL";
-        }
-        console.log(ex_id);
-        Dajaxice.website.bug_form_submit(Dajax.process, {
-            form: $("#bug-form").serialize(true),
-            cat_id: cat_id,
-            book_id: book_id,
-            chapter_id: chapter_id,
-            ex_id: ex_id,
-        });
-        e.preventDefault();
-    });
-
     // $(document).on("click", "#bug-form #id_notify", function() {
     //     $("#id_email_wrapper").toggle(this.checked);
     // });
 
-    // submit revision handling
-    $(document).on("click", "#submit-revision", function(e) {
-        // if (editor.getValue() == initial_code) {
-        //     Dajaxice.website.revision_error(function(data) {
-        //         Dajax.process(data);
-        //         $("#submit-revision-error-wrapper").lightbox_me({centered: false});
-        //     });
-        // } else {
-        Dajaxice.website.revision_form(function(data) {
-            Dajax.process(data);
-            $("#submit-revision-wrapper").lightbox_me({
-                centered: false
-            });
-        }, {
-            code: editor.getValue(),
-            initial_code: initial_code
-        });
-        // }
-        e.preventDefault();
-    });
-
-    // onclick callback for revision-submit button click
-    $(document).on("click", "#revision-form-submit", function(e) {
-        ajax_loader(this);
-        Dajaxice.website.revision_form_submit(function(data) {
-            Dajax.process(data);
-            initial_code = editor.getValue()
-        }, {
-            form: $('#revision-form').serialize(true),
-            code: editor.getValue(),
-        });
-        e.preventDefault();
-    });
+    $("#plot_download").hide();
     $("#diff-wrapper").hide();
-    if($("#main_categories").val() == 0){
+    if ($("#main_categories").val() == 0) {
         $("#category-wrapper").hide();
         $("#books-wrapper").hide();
         $("#chapters-wrapper").hide();
@@ -177,7 +114,7 @@ $(document).ready(function() {
         $("#contributor").hide();
         $("#databox-wrapper").hide();
     }
-    if($("#categories").val() == 0){
+    if ($("#categories").val() == 0) {
         $("#books-wrapper").hide();
         $("#chapters-wrapper").hide();
         $("#examples-wrapper").hide();
@@ -187,7 +124,7 @@ $(document).ready(function() {
         $("#contributor").hide();
         $("#databox-wrapper").hide();
     }
-    if($("#books").val() == 0){
+    if ($("#books").val() == 0) {
         $("#chapters-wrapper").hide();
         $("#examples-wrapper").hide();
         $("#revisions-wrapper").hide();
@@ -195,24 +132,24 @@ $(document).ready(function() {
         $("#diff-wrapper").hide();
         $("#contributor").hide();
         $("#databox-wrapper").hide();
-    }else{
-            $("#download-book").show();
-            $("#contributor").show();
+    } else {
+        $("#download-book").show();
+        $("#contributor").show();
     }
-    if($("#chapters").val() == 0){
+    if ($("#chapters").val() == 0) {
         $("#examples-wrapper").hide();
         $("#revisions-wrapper").hide();
         $("#diff-wrapper").hide();
         $("#download-chapter").hide();
-    }else{
-            $("#download-chapter").show();
+    } else {
+        $("#download-chapter").show();
     }
-    if($("#examples").val() == 0){
+    if ($("#examples").val() == 0) {
         $("#revisions-wrapper").hide();
         $("#diff-wrapper").hide();
         $("#download-example").hide();
         $("#databox-wrapper").hide();
-    }else{
+    } else {
         $("#download-example").show();
     }
     /*******************************************/
@@ -220,65 +157,74 @@ $(document).ready(function() {
     /*******************************************/
     /*********** Main categories change ********/
     /*******************************************/
-    $(document.body).on("change", "#main_categories", function() {
-        var maincat_id = $('#main_categories').find(":selected").val();
-        if (maincat_id != 0) {
-            $("#categories").html("");
-            $("#category-wrapper").show();
-            $("#books").html("");
-            editor.setValue("");
-            result.setValue("");
-            $("#chapters-wrapper").hide();
-            $("#examples-wrapper").hide();
-            $("#books-wrapper").hide();
-            $("#revisions-wrapper").hide();
-            $("#download-book").hide();
-            $("#submit-revision").hide();
-            $("#review-link").hide();
-            $("#contributor").hide();
-            $("#databox-wrapper").hide();
-            $.ajax({
-                url: 'get_subcategories/',
-                dataType: 'JSON',
-                type: 'GET',
-                data: {
-                    maincat_id: maincat_id,
-                },
-                success: function(data) {
-                    $("#categories").html('');
-                    $("#categories").html(
-                        ' <option value="">Select Subcategory</option>'
-                    );
-                    for (var i = 0; i < data.length; i++) {
-                        $('#categories').append(
-                            '<option value="' +
-                            data[i].subcategory_id + '">' +
-                            data[i].subcategory + '</option>');
+    $(document.body).on("change", "#main_categories",
+        function() {
+            var maincat_id = $('#main_categories').find(
+                ":selected").val();
+            if (maincat_id != 0) {
+                $("#categories").html("");
+                $("#category-wrapper").show();
+                $("#books").html("");
+                editor.setValue("");
+                result.setValue("");
+                $("#chapters-wrapper").hide();
+                $("#examples-wrapper").hide();
+                $("#books-wrapper").hide();
+                $("#revisions-wrapper").hide();
+                $("#download-book").hide();
+                $("#submit-revision").hide();
+                $("#review-link").hide();
+                $("#contributor").hide();
+                $("#databox-wrapper").hide();
+                $.ajax({
+                    url: 'get_subcategories/',
+                    dataType: 'JSON',
+                    type: 'GET',
+                    data: {
+                        maincat_id: maincat_id,
+                    },
+                    success: function(data) {
+                        $("#categories").html(
+                            '');
+                        $("#categories").html(
+                            ' <option value="">Select Subcategory</option>'
+                        );
+                        for (var i = 0; i <
+                            data.length; i++) {
+                            $('#categories').append(
+                                '<option value="' +
+                                data[i].subcategory_id +
+                                '">' +
+                                data[i].subcategory +
+                                '</option>'
+                            );
+                        }
                     }
-                }
-            });
-        } else {
-            editor.setValue("");
-            result.setValue("");
-            $("#categories").html("");
-            $("#category-wrapper").hide();
-            $("#review-link").hide();
-            $("#books-wrapper").hide();
-            $("#chapters-wrapper").hide();
-            $("#examples-wrapper").hide();
-            $("#revisions-wrapper").hide();
-            $("#download-book").hide();
-            $("#diff-wrapper").hide();
-            $("#databox-wrapper").hide();
-        }
-    });
+                });
+            } else {
+                editor.setValue("");
+                result.setValue("");
+                $("#categories").html("");
+                $("#category-wrapper").hide();
+                $("#review-link").hide();
+                $("#books-wrapper").hide();
+                $("#chapters-wrapper").hide();
+                $("#examples-wrapper").hide();
+                $("#revisions-wrapper").hide();
+                $("#download-book").hide();
+                $("#diff-wrapper").hide();
+                $("#databox-wrapper").hide();
+            }
+        });
     /*******************************************/
     /*******************************************/
     /**************** sub categories change ********/
     /*******************************************/
     $(document.body).on("change", "#categories", function() {
-        var maincat_id = $('#main_categories').find(":selected").val();
-        var subcat_id = $('#categories').find(":selected").val();
+        var maincat_id = $('#main_categories').find(
+            ":selected").val();
+        var subcat_id = $('#categories').find(
+            ":selected").val();
         if (subcat_id != 0) {
             $("#books-wrapper").show();
             $("#books").html("");
@@ -303,13 +249,18 @@ $(document).ready(function() {
                     $("#books").html(
                         ' <option value="">Select Book</option>'
                     );
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i <
+                        data.length; i++) {
                         $('#books').append(
                             '<option value="' +
-                            data[i].id + '">' +
+                            data[i].id +
+                            '">' +
                             data[i].book +
-                            ' (by ' + data[i].author +
-                            ' )' + '</option>');
+                            ' (by ' +
+                            data[i].author +
+                            ' )' +
+                            '</option>'
+                        );
                     }
                 }
             });
@@ -354,17 +305,22 @@ $(document).ready(function() {
                     book_id: book_id,
                 },
                 success: function(data) {
-                    $("#chapters").html('');
+                    $("#chapters").html(
+                        '');
                     $("#chapters").html(
                         ' <option value="">Select Chapter</option>'
                     );
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i <
+                        data.length; i++) {
                         $('#chapters').append(
                             '<option value="' +
-                            data[i].id + '">' +
+                            data[i].id +
+                            '">' +
                             data[i].number +
-                            ' - ' + data[i].chapter +
-                            '</option>');
+                            ' - ' +
+                            data[i].chapter +
+                            '</option>'
+                        );
                     }
                 }
             });
@@ -386,7 +342,8 @@ $(document).ready(function() {
     /************ chapter change ***************/
     /*******************************************/
     $(document.body).on("change", "#chapters", function() {
-        var chapter_id = $('#chapters').find(":selected").val();
+        var chapter_id = $('#chapters').find(
+            ":selected").val();
         $("#examples-wrapper").show();
         console.log(chapter_id);
         if (chapter_id != 0) {
@@ -408,13 +365,17 @@ $(document).ready(function() {
                     $("#examples").html(
                         ' <option value="">Select Example</option>'
                     );
-                    for (var i = 0; i < data.length; i++) {
+                    for (var i = 0; i <
+                        data.length; i++) {
                         $('#examples').append(
                             '<option value="' +
-                            data[i].id + '">' +
+                            data[i].id +
+                            '">' +
                             data[i].number +
-                            ' - ' + data[i].caption +
-                            '</option>');
+                            ' - ' +
+                            data[i].caption +
+                            '</option>'
+                        );
                     }
                 }
             });
@@ -434,7 +395,8 @@ $(document).ready(function() {
     /************ revision change **************/
     /*******************************************/
     $(document.body).on("change", "#examples", function() {
-        var example_id = $('#examples').find(":selected").val();
+        var example_id = $('#examples').find(
+            ":selected").val();
         //$("#revisions-wrapper").html("");
         $("#download-example").show();
         if (example_id != 0) {
@@ -458,52 +420,131 @@ $(document).ready(function() {
                     );
 
                     var i = 1;
-                    data.commits.forEach(function(
-                        item) {
-                        $('#revisions').append(
-                            '<option value="' +
-                            item.sha +
-                            '"> ' + i +
-                            ' - ' +
-                            item.commit
-                            .message +
-                            '</option>'
-                        );
-                        i++;
-                    });
+                    data.commits.forEach(
+                        function(
+                            item) {
+                            $(
+                                '#revisions'
+                            ).append(
+                                '<option value="' +
+                                item
+                                .sha +
+                                '"> ' +
+                                i +
+                                ' - ' +
+                                item
+                                .commit
+                                .message +
+                                '</option>'
+                            );
+                            i++;
+                        });
+                    $("#revisions-diff").html(
+                        ' <option value="">Select a revision</option>'
+                    );
+                    var i = 1;
+                    data.commits.forEach(
+                        function(
+                            item) {
+                            $(
+                                '#revisions-diff'
+                            ).append(
+                                '<option value="' +
+                                item
+                                .sha +
+                                '"> ' +
+                                i +
+                                ' - ' +
+                                item
+                                .commit
+                                .message +
+                                '</option>'
+                            );
+                            i++;
+                        });
                     ajax_loader("clear");
-                    $('#revisions option:eq(1)').prop(
-                        'selected', true);
+                    $(
+                        '#revisions option:eq(1)'
+                    ).prop(
+                        'selected',
+                        true);
                     $.ajax({
                         url: 'get_code/',
                         dataType: 'JSON',
                         type: 'GET',
                         data: {
                             commit_sha: $(
-                                '#revisions'
-                            ).val(),
+                                    '#revisions'
+                                )
+                                .val(),
                             example_id: example_id,
                         },
                         success: function(
-                            data) {
-                         console.log("okkkkk");
-                    console.log(data.review_url);
-                    if (data.review != 0) {
-                        $("#review").show();
-                        console.log(data.review_url);
-                                                console.log("okkkkk");
-                        $("#review").attr("href", data.review_url);
-                        $("#review").text(data.review + " " + "Review");
-                    } else {
-                        $("#review").hide();
-                    }
-                            editor.setValue(
+                            data
+                        ) {
+                            console
+                                .log(
+                                    "okkkkk"
+                                );
+                            console
+                                .log(
+                                    data
+                                    .review_url
+                                );
+                            if (
                                 data
-                                .code
-                            );
+                                .review !=
+                                0
+                            ) {
+                                $
+                                    (
+                                        "#review"
+                                    )
+                                    .show();
+                                console
+                                    .log(
+                                        data
+                                        .review_url
+                                    );
+                                console
+                                    .log(
+                                        "okkkkk"
+                                    );
+                                $
+                                    (
+                                        "#review"
+                                    )
+                                    .attr(
+                                        "href",
+                                        data
+                                        .review_url
+                                    );
+                                $
+                                    (
+                                        "#review"
+                                    )
+                                    .text(
+                                        data
+                                        .review +
+                                        " " +
+                                        "Review"
+                                    );
+                            } else {
+                                $
+                                    (
+                                        "#review"
+                                    )
+                                    .hide();
+                            }
+                            editor
+                                .setValue(
+                                    data
+                                    .code
+                                );
                             initial_code
                                 =
-                                editor.getValue();
+                                editor
+                                .getValue();
                         }
                     });
                 }
@@ -523,8 +564,10 @@ $(document).ready(function() {
     /********** revision-diff change ************/
     /********************************************/
     $(document).on("change", "#revisions-diff", function(e) {
-        var revName = $("#revisions-diff").find(":selected").text();
-        var example_id = $('#examples').find(":selected").val();
+        var revName = $("#revisions-diff").find(
+            ":selected").text();
+        var example_id = $('#examples').find(
+            ":selected").val();
         if ($(this).val()) {
             ajax_loader(this);
             $.ajax({
@@ -532,7 +575,8 @@ $(document).ready(function() {
                 dataType: 'JSON',
                 type: 'GET',
                 data: {
-                    diff_commit_sha: $('#revisions').val(),
+                    diff_commit_sha: $(
+                        '#revisions').val(),
                     example_id: example_id,
                 },
                 success: function(data) {
@@ -541,15 +585,20 @@ $(document).ready(function() {
                     $("#diff-wrapper").lightbox_me({
                         centered: false
                     });
-                    $("#diff-area").html(diffString(
-                        editor.getValue(),
-                        data.code2));
+                    $("#diff-area").html(
+                        diffString(
+                            editor.getValue(),
+                            data.code2
+                        ));
                     $("#diff-first").html(
-                        'editor code')
+                        'editor code'
+                    )
                     console.log(revName)
-                    $("#diff-second").html(revName)
+                    $("#diff-second").html(
+                        revName)
                     editor.setValue(data.code);
-                    initial_code = editor.getValue()
+                    initial_code = editor
+                        .getValue()
                 }
             });
         }
@@ -564,7 +613,9 @@ $(document).ready(function() {
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
         var send_data = {
-            token: $("[name='csrfmiddlewaretoken']").val(),
+            token: $(
+                "[name='csrfmiddlewaretoken']"
+            ).val(),
             code: editor.getValue(),
             book_id: $("#books").val() || 0,
             chapter_id: $("#chapters").val() || 0,
@@ -572,7 +623,8 @@ $(document).ready(function() {
         };
         $.post("/execute-code", send_data,
             function(data) {
-                $("#execute-inner").html("Execute");
+                $("#execute-inner").html(
+                    "Execute");
                 result.setValue(data.output);
 
                 if (data.plot_path) {
@@ -585,12 +637,17 @@ $(document).ready(function() {
                     $plotbox_wrapper.lightbox_me({
                         centered: true
                     });
-                    var dt = $("#examples option:selected")
+                    var dt = $(
+                            "#examples option:selected"
+                        )
                         .text();
                     $("#plot_download").show();
-                    $("#plot_download").attr("download", dt +
+                    $("#plot_download").attr(
+                        "download", dt +
                         '.png');
-                    $("#plot_download").attr("href", data.plot_path);
+                    $("#plot_download").attr(
+                        "href", data.plot_path
+                    );
                 }
             });
     });
@@ -599,19 +656,22 @@ $(document).ready(function() {
     /****** Download book, chapter, example *****/
     /********************************************/
     $(document).on("click", "#download-book", function(e) {
-        window.location = "http://scilab.in/download/book/" + $(
-            "#books").val();
+        window.location =
+            "http://scilab.in/download/book/" + $(
+                "#books").val();
         e.preventDefault();
     });
 
     $(document).on("click", "#download-chapter", function(e) {
-        window.location = "http://scilab.in/download/chapter/" +
+        window.location =
+            "http://scilab.in/download/chapter/" +
             $("#chapters").val();
         e.preventDefault();
     });
 
     $(document).on("click", "#download-example", function(e) {
-        window.location = "http://scilab.in/download/example/" +
+        window.location =
+            "http://scilab.in/download/example/" +
             $("#examples").val();
         e.preventDefault();
     });
@@ -620,37 +680,189 @@ $(document).ready(function() {
     /****** Get contributor *********************/
     /********************************************/
     $(document).on("click", "#contributor", function(e) {
-            $.ajax({
-                url: 'get_contributor/',
-                dataType: 'JSON',
-                type: 'GET',
-                data: {
-                    book_id: $("#books").val()
-                },
-                success: function(data) {
+        $.ajax({
+            url: 'get_contributor/',
+            dataType: 'JSON',
+            type: 'GET',
+            data: {
+                book_id: $("#books").val()
+            },
+            success: function(data) {
 
-                $('#full_name').html(data.contributor_name);
+                $('#full_name').html(data
+                    .contributor_name
+                );
                 $('#faculty').html(data.proposal_faculty);
                 $('#reviewer').html(data.proposal_reviewer);
-                $('#university').html(data.proposal_university);
+                $('#university').html(
+                    data.proposal_university
+                );
                 $("#databox-wrapper").lightbox_me({
-                centered: true
-            });
-                }
-            });
-        e.preventDefault();
-    });
-
-    $(document).on("click", ".node", function(e) {
-        Dajaxice.website.node(function(data) {
-            Dajax.process(data);
-            $("#databox-wrapper").lightbox_me({
-                centered: true
-            });
-        }, {
-            key: $(this).data("key")
+                    centered: true
+                });
+            }
         });
         e.preventDefault();
     });
     /********************************************/
-});
+    /********************************************/
+    /****** Node popup handling *******************/
+    /********************************************/
+    $(document).on("click", ".node", function(e) {
+        $.ajax({
+            url: 'get_node/',
+            dataType: 'JSON',
+            type: 'GET',
+            data: {
+                key: $(this).data("key")
+            },
+            success: function(data) {
+                console.log(data);
+                $('#node-wrapper').html(
+                    data);
+                $("#node-wrapper").lightbox_me({
+                    centered: true
+                });
+            }
+        });
+        e.preventDefault();
+    });
+    /********************************************/
+    /********************************************/
+    /****** Bug form handling *******************/
+    /********************************************/
+    $(document).on("click", "#bug", function(e) {
+
+        $.ajax({
+            url: 'get_bug_form/',
+            dataType: 'JSON',
+            type: 'GET',
+            data: {
+                bug_form: 'bug_form_pop'
+            },
+            success: function(data) {
+                console.log(data);
+                $('#bug-form-wrapper').html(
+                    data);
+                $("#bug-form-wrapper").lightbox_me({
+                    centered: false
+                });
+            }
+        });
+        e.preventDefault();
+    });
+    /********************************************/
+
+    $(document).on("click", "#bug-form-submit", function(e) {
+        ajax_loader(this);
+        ex_id = $("#examples").val();
+        cat_id = $("#categories").val();
+        book_id = $("#books").val();
+        chapter_id = $("#chapters").val();
+        issue_id = $("#id_issue").val();
+        id_description_wrapper = $(
+            "id_description_wrapper").val().trim();
+        id_email = $("id_email").val().trim();
+        if (issue_id == 0) {
+            $('#id_issue').css({
+                "border": '#FF0000 1px solid'
+            });
+            alert("Please select any issues");
+        } else if (id_description_wrapper.length == 0) {
+            $('#id_issue').css({
+                "border": '#FF0000 1px solid'
+            });
+            alert("Please insert issue description");
+        } else if (id_email.length == 0) {
+            $('#id_email').css({
+                "border": '#FF0000 1px solid'
+            });
+            alert("Please insert email id");
+        } else {
+            if (!ex_id) {
+                ex_id = "NULL";
+            }
+            console.log(ex_id);
+            $.ajax({
+                url: 'get_bug_form_submit/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    form: $("#bug-form").serialize(
+                        true),
+                    cat_id: cat_id,
+                    book_id: book_id,
+                    chapter_id: chapter_id,
+                    ex_id: ex_id,
+                },
+                success: function(data) {
+                    console.log(data);
+                    alert(data);
+                    ajax_loader("clear");
+                    $("#bug-form-wrapper")
+                        .trigger("close");
+                }
+            });
+
+        }
+
+        e.preventDefault();
+    });
+    /********************************************/
+    /********************************************/
+    /************ submit revision handling ******/
+    /********************************************/
+    $(document).on("click", "#submit-revision", function(e) {
+
+
+        $.ajax({
+            url: 'get_submit_revision_form/',
+            dataType: 'JSON',
+            type: 'GET',
+            data: {
+                code: editor.getValue(),
+                initial_code: initial_code
+            },
+            success: function(data) {
+                $(
+                    "#submit-revision-wrapper"
+                ).html(data);
+                $(
+                    "#submit-revision-wrapper"
+                ).lightbox_me({
+                    centered: false
+                });
+            }
+        });
+        e.preventDefault();
+    });
+    /********************************************/
+    /********************************************/
+    /********* submit revision form submit ******/
+    /********************************************/
+    $(document).on("click", "#revision-form-submit", function(
+        e) {
+        ajax_loader(this);
+
+        $.ajax({
+            url: 'get_submit_revision_form_submit/',
+            dataType: 'JSON',
+            type: 'GET',
+            data: {
+                form: $('#revision-form').serialize(
+                    true),
+                code: editor.getValue(),
+            },
+            success: function(data) {
+                initial_code = editor.getValue()
+                alert(data);
+                $(
+                    "#submit-revision-wrapper"
+                ).trigger("close");
+            }
+        });
+    });
+    /********************************************/
+
+
+}); //document.readOnly()
