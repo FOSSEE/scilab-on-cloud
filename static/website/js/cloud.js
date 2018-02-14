@@ -159,6 +159,7 @@ $(document).ready(function() {
     /*******************************************/
     $(document.body).on("change", "#main_categories",
         function() {
+            ajax_loader(this);
             var maincat_id = $('#main_categories').find(
                 ":selected").val();
             if (maincat_id != 0) {
@@ -184,6 +185,7 @@ $(document).ready(function() {
                         maincat_id: maincat_id,
                     },
                     success: function(data) {
+                    ajax_loader("clear");
                         $("#categories").html(
                             '');
                         $("#categories").html(
@@ -221,6 +223,7 @@ $(document).ready(function() {
     /**************** sub categories change ********/
     /*******************************************/
     $(document.body).on("change", "#categories", function() {
+        ajax_loader(this);
         var maincat_id = $('#main_categories').find(
             ":selected").val();
         var subcat_id = $('#categories').find(
@@ -245,6 +248,7 @@ $(document).ready(function() {
                     cat_id: subcat_id,
                 },
                 success: function(data) {
+                    ajax_loader("clear");
                     $("#books").html('');
                     $("#books").html(
                         ' <option value="">Select Book</option>'
@@ -283,6 +287,7 @@ $(document).ready(function() {
     /*******************************************/
     $(document.body).on("change", "#books", function() {
         var book_id = $('#books').find(":selected").val();
+        ajax_loader(this);
         $("#chapters-wrapper").show();
         console.log(book_id);
 
@@ -305,6 +310,7 @@ $(document).ready(function() {
                     book_id: book_id,
                 },
                 success: function(data) {
+                ajax_loader("clear");
                     $("#chapters").html(
                         '');
                     $("#chapters").html(
@@ -342,6 +348,7 @@ $(document).ready(function() {
     /************ chapter change ***************/
     /*******************************************/
     $(document.body).on("change", "#chapters", function() {
+        ajax_loader(this);
         var chapter_id = $('#chapters').find(
             ":selected").val();
         $("#examples-wrapper").show();
@@ -362,6 +369,7 @@ $(document).ready(function() {
                     chapter_id: chapter_id,
                 },
                 success: function(data) {
+                    ajax_loader("clear");
                     $("#examples").html(
                         ' <option value="">Select Example</option>'
                     );
@@ -395,6 +403,7 @@ $(document).ready(function() {
     /************ revision change **************/
     /*******************************************/
     $(document.body).on("change", "#examples", function() {
+        ajax_loader(this);
         var example_id = $('#examples').find(
             ":selected").val();
         //$("#revisions-wrapper").html("");
@@ -415,6 +424,7 @@ $(document).ready(function() {
                     example_id: example_id,
                 },
                 success: function(data) {
+                    ajax_loader("clear");
                     $("#revisions").html(
                         ' <option value="">Select a revision</option>'
                     );
@@ -423,18 +433,9 @@ $(document).ready(function() {
                     data.commits.forEach(
                         function(
                             item) {
-                            $(
-                                '#revisions'
-                            ).append(
-                                '<option value="' +
-                                item
-                                .sha +
-                                '"> ' +
-                                i +
-                                ' - ' +
-                                item
-                                .commit
-                                .message +
+                            $('#revisions').append(
+                                '<option value="' + item.sha + '"> ' +
+                                i + ' - ' + item.commit.message +
                                 '</option>'
                             );
                             i++;
@@ -446,23 +447,13 @@ $(document).ready(function() {
                     data.commits.forEach(
                         function(
                             item) {
-                            $(
-                                '#revisions-diff'
-                            ).append(
-                                '<option value="' +
-                                item
-                                .sha +
-                                '"> ' +
-                                i +
-                                ' - ' +
-                                item
-                                .commit
-                                .message +
+                            $('#revisions-diff').append(
+                                '<option value="' + item.sha + '"> ' +
+                                i + ' - ' + item.commit.message +
                                 '</option>'
                             );
                             i++;
                         });
-                    ajax_loader("clear");
                     $(
                         '#revisions option:eq(1)'
                     ).prop(
@@ -473,78 +464,20 @@ $(document).ready(function() {
                         dataType: 'JSON',
                         type: 'GET',
                         data: {
-                            commit_sha: $(
-                                    '#revisions'
-                                )
-                                .val(),
+                            commit_sha: $('#revisions').val(),
                             example_id: example_id,
                         },
-                        success: function(
-                            data
-                        ) {
-                            console
-                                .log(
-                                    "okkkkk"
-                                );
-                            console
-                                .log(
-                                    data
-                                    .review_url
-                                );
-                            if (
-                                data
-                                .review !=
-                                0
-                            ) {
-                                $
-                                    (
-                                        "#review"
-                                    )
-                                    .show();
-                                console
-                                    .log(
-                                        data
-                                        .review_url
-                                    );
-                                console
-                                    .log(
-                                        "okkkkk"
-                                    );
-                                $
-                                    (
-                                        "#review"
-                                    )
-                                    .attr(
-                                        "href",
-                                        data
-                                        .review_url
-                                    );
-                                $
-                                    (
-                                        "#review"
-                                    )
-                                    .text(
-                                        data
-                                        .review +
-                                        " " +
-                                        "Review"
-                                    );
+                        success: function(data) {
+                                                    ajax_loader("clear");
+                            if (data.review != 0) {
+                                   $("#review").show();
+                    $("#review").attr("href",data.review_url);
+                    $("#review").text(data.review + " " + "Review");
                             } else {
-                                $
-                                    (
-                                        "#review"
-                                    )
-                                    .hide();
+                                $("#review").hide();
                             }
-                            editor
-                                .setValue(
-                                    data
-                                    .code
-                                );
-                            initial_code
-                                =
-                                editor
-                                .getValue();
+                            editor.setValue(data.code);
+                            initial_code = editor .getValue();
                         }
                     });
                 }
@@ -557,6 +490,46 @@ $(document).ready(function() {
             result.setValue("");
             $("#diff-wrapper").hide();
             $("#databox-wrapper").hide();
+        }
+    });
+    /********************************************/
+    /********************************************/
+    /********** revision-change ************/
+    /********************************************/
+    $(document.body).on("change", "#revisions", function(e) {
+        ajax_loader(this);
+        $("#revisions-two").hide()
+                var example_id = $('#examples').find(
+            ":selected").val();
+        if ($(this).val()) {
+
+            $.ajax({
+                        url: 'get_code/',
+                        dataType: 'JSON',
+                        type: 'GET',
+                        data: {
+                            commit_sha: $('#revisions').val(),
+                            example_id: example_id,
+                        },
+                        success: function(data) {
+                        ajax_loader("clear");
+                            if (data.review != 0) {
+                                   $("#review").show();
+                        $("#review").attr("href",data.review_url);
+                        $("#review").text(data.review + " " + "Review");
+                            } else {
+                                $("#review").hide();
+                            }
+                            editor.setValue(data.code);
+                            initial_code = editor .getValue();
+                        }
+                    });
+
+
+
+                // show revision submit button when a revision is loaded
+                $("#submit-revision").show();
+                $("#revisions-two").show();
         }
     });
     /********************************************/

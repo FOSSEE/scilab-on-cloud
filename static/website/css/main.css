@@ -71,7 +71,7 @@ body, html {
     top: 280px;
     bottom: 20px;
     width: 100%;
-    min-height: 400px;
+    min-height: 300px;
     bottom: 50px;
     background: #eeeeee;
 }
@@ -166,6 +166,9 @@ body, html {
 }
 #databox-wrapper,#node-wrapper, p {
     text-align: justify;
+}
+#submit-revision-wrapper, #submit-revision-error-wrapper{
+    display: none;
 }
 a.extra-link {
     float: right;
