@@ -290,3 +290,127 @@ def review(request):
         'revisions': revisions,
     }
     return render(request, 'website/templates/review-interface.html', context)
+
+def update_pref_hits(pref_id):
+    updatecount = TextbookCompanionPreferenceHits.objects.using('scilab')\
+        .filter(pref_id=pref_id)\
+        .update(hitcount=F('hitcount') + 1)
+    if not updatecount:
+        insertcount = TextbookCompanionPreferenceHits.objects.using('scilab')\
+        .get_or_create(pref_id=pref_id, hitcount=1)
+    return
+
+def search_book(request):
+    result = {}
+    response_dict = []
+    if request.is_ajax():
+        exact_search_string = request.GET.get('search_string')
+        search_string = "%" + exact_search_string + "%"
+        result = TextbookCompanionPreference.objects\
+            .db_manager('scilab').raw("""
+                            SELECT pe.id, pe.book as book, pe.author as author,
+                            pe.publisher as publisher,pe.year as year,
+                            pe.id as pe_id, po.approval_date as approval_date
+                            FROM textbook_companion_preference pe
+                            LEFT JOIN textbook_companion_proposal po ON
+                            pe.proposal_id = po.id WHERE po.proposal_status = 3
+                            AND pe.approval_status = 1 AND pe.book like %s
+                            ORDER BY (pe.book = %s) DESC,
+                            length(pe.book) """,
+                                      [search_string, str(exact_search_string)])
+        if len(list(result)) == 0:
+            response = {
+                'book': "Not found",
+                'author': "Not found"
+            }
+            response_dict.append(response)
+        else:
+            for obj in result:
+                update_pref_hits(obj.id)
+                response = {
+                    'book': obj.book,
+                    'author': obj.author,
+                }
+                response_dict.append(response)
+    else:
+        response_dict = 'fail'
+        response = {'book': "Please try again later!"}
+        response_dict.append(response)
+    return HttpResponse(simplejson.dumps(response_dict),
+                        content_type='application/json')
+
+def popular(request):
+    result = {}
+    response_dict = []
+    if request.is_ajax():
+        search_string = request.GET.get('search_string')
+        search_string = "%" + search_string + "%"
+        result = TextbookCompanionPreference.objects\
+            .db_manager('scilab').raw("""
+                            SELECT pe.id, pe.book as book, pe.author as author,
+                            pe.publisher as publisher,pe.year as year,
+                            pe.id as pe_id, po.approval_date as approval_date,
+                            tcph.hitcount FROM textbook_companion_preference pe
+                            left join textbook_companion_preference_hits tcph on
+                            tcph.pref_id = pe.id
+                            LEFT JOIN textbook_companion_proposal po ON
+                            pe.proposal_id = po.id WHERE po.proposal_status = 3
+                            AND pe.approval_status = 1
+                            ORDER BY tcph.hitcount DESC LIMIT 10 """)
+        if len(list(result)) == 0:
+            response = {
+                'book': "Not found",
+                'author': "Not found"
+            }
+            response_dict.append(response)
+        else:
+            for obj in result:
+                response = {
+                    'book': obj.book,
+                    'author': obj.author,
+                }
+                response_dict.append(response)
+    else:
+        response_dict = 'fail'
+        response = {'book': "Please try again later!"}
+        response_dict.append(response)
+    return HttpResponse(simplejson.dumps(response_dict),
+                        content_type='application/json')
+def recent(request):
+    result = {}
+    response_dict = []
+    if request.is_ajax():
+        exact_search_string = request.GET.get('search_string')
+        search_string = "%" + exact_search_string + "%"
+        result = TextbookCompanionPreference.objects\
+            .db_manager('scilab').raw("""
+                            SELECT pe.id, pe.book as book, pe.author as author,
+                            pe.publisher as publisher,pe.year as year,
+                            pe.id as pe_id, po.approval_date as approval_date,
+                            tcph.hitcount, tcph.last_search
+                            FROM textbook_companion_preference pe
+                            left join textbook_companion_preference_hits tcph
+                            on tcph.pref_id = pe.id
+                            LEFT JOIN textbook_companion_proposal po ON
+                            pe.proposal_id = po.id WHERE po.proposal_status = 3
+                            AND pe.approval_status = 1
+                            ORDER BY tcph.last_search DESC LIMIT 10 """)
+        if len(list(result)) == 0:
+            response = {
+                'book': "Not found",
+                'author': "Not found"
+            }
+            response_dict.append(response)
+        else:
+            for obj in result:
+                response = {
+                    'book': obj.book,
+                    'author': obj.author,
+                }
+                response_dict.append(response)
+    else:
+        response_dict = 'fail'
+        response = {'book': "Please try again later!"}
+        response_dict.append(response)
+    return HttpResponse(simplejson.dumps(response_dict),
+                        content_type='application/json')

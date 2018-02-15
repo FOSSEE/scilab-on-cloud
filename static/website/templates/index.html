@@ -1,5 +1,8 @@
 {% load static %} {% load dajaxice_templatetags %}
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 {% include 'website/templates/head.html' %}
 <body>
     <div id="header-wrapper">
@@ -12,6 +15,7 @@
                 <div id="navlinks">
                     <ul>
                         {% if user and not user.is_anonymous %} {% if not user.is_staff %}
+                        <li><a id = "search_book" data-toggle="modal" data-target="#search_wrapper" href="">Search Book</a></li>
                         <li><a class="node" data-key="about" href="#">About</a></li>
                         <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
                         <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
@@ -21,6 +25,7 @@
                         <li><a data-key="logout" href="/logout">Log out</a></li>
                         <li> <a style="color:red">Hello, {{ user.get_full_name }}!</a></li>
                         {% else %}
+                        <li><a id = "search_book" data-toggle="modal" data-target="#search_wrapper" href="">Search Book</a></li>
                         <li><a class="node" data-key="about" href="#">About</a></li>
                         <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
                         <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
@@ -147,6 +152,42 @@
     {% include 'website/templates/footer.html' %}
     <script src="{% static 'website/js/cloud.js'%}"></script>
     {% csrf_token %}
+
+<!-- Modal -->
+<div id="search_wrapper" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Search book</h4>
+        <div class="input-group">
+            <input id="search-input" type="text" class="form-control">
+                <span class="input-group-btn">
+                    <button id="search" class="btn btn-default" type="button">Search!</button>
+                </span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="col-xs-12">
+            <div id="relevant" class="col-xs-12 col-sm-6 col-md-3 col-lg-4" >
+            </div>
+            <div id="popular" class="col-xs-12 col-sm-6 col-md-3 col-lg-4" style="background-color:#bbb;word-wrap: break-word;overflow:auto;">
+            </div>
+            <div id="recent" class="col-xs-12 col-sm-6 col-md-3 col-lg-4"  style="background-color:#aaa;word-wrap: break-word;overflow:auto;">
+            </div>
+        <br>
+        </div>
+      <div>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 </body>
 
 </html>

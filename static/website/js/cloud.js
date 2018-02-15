@@ -836,6 +836,108 @@ $(document).ready(function() {
         });
     });
     /********************************************/
+ $(document).on("click", "#search", function() {
+        $("#relevant").html('');
+        var search_string = $("#search-input").val();
+        if (search_string == ''){
+        search_string = 'Null';
+        }
+         $.ajax({
+            url: 'search_book/',
+            dataType: 'JSON',
+            type : 'GET',
+            data: {
+                    search_string: search_string,
+            },
+            success: function(data){
+                $("#relevant").html('<h2>Relevant</h2><hr>');
+                for (var i = 0; i < data.length; i++) {
+                $("#relevant").append(
+                '<a  href="#" class="">' + data[i].book +
+                ' (Author: ' + data[i].author + ')</a><hr>');
+                }
+            }
+         }),
+         $.ajax({
+            url: 'search_book/popular/',
+            dataType: 'JSON',
+            type : 'GET',
+            data: {
+                    search_string: search_string,
+            },
+            success: function(data){
+
+                $("#popular").html('<h2>Popular</h2><hr>');
+                for (var i = 0; i < data.length; i++) {
+                $("#popular").append(
+                '<a  href="#" class="">' + data[i].book
+                + ' (Author: ' + data[i].author + ')</a><hr>');
+                }
+            }
+         }),
+            $.ajax({
+                url: 'search_book/recent/',
+                dataType: 'JSON',
+                type : 'GET',
+                data: {
+                        search_string: search_string,
+                },
+            success: function(data){
+                $("#recent").html('<h2>Recent</h2><hr>');
+                for (var i = 0; i < data.length; i++) {
+                $("#recent").append(
+                '<a  href="#" class="">' + data[i].book +
+                ' (Author: ' + data[i].author + ')</a><hr>');
+                }
+            }
+         });
 
 
+ });
+
+ $(document).on("click", "#search_book", function(e) {
+        $("#popular").html('');
+        $("#recent").html('');
+        var search_string = 'popular';
+        if (search_string == ''){
+        search_string = 'Null';
+        }
+         $.ajax({
+            url: 'search_book/popular/',
+            dataType: 'JSON',
+            type : 'GET',
+            data: {
+                    search_string: search_string,
+            },
+            success: function(data){
+               console.log(data);
+                $("#popular").html('<h2>Popular</h2><hr>');
+                for (var i = 0; i < data.length; i++) {
+                    $("#popular").append(
+                '<a  href="#" class="">' + data[i].book
+                + ' (Author: ' + data[i].author + ')</a><hr>');
+                }
+            }
+         }),
+            $.ajax({
+                url: 'search_book/recent/',
+                dataType: 'JSON',
+                type : 'GET',
+                data: {
+                        search_string: search_string,
+                },
+            success: function(data){
+               console.log(data);
+                $("#recent").html('<h2>Recent</h2><hr>');
+                for (var i = 0; i < data.length; i++) {
+                $("#recent").append(
+                '<a  href="#" class="">' + data[i].book +
+                ' (Author: ' + data[i].author + ')</a><hr>');
+                }
+            }
+         });
+e.preventDefault();
+
+ });
+ 
 }); //document.readOnly()
