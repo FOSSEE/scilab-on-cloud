@@ -106,7 +106,7 @@ def get_code(file_path, commit_sha):
 
 def index(request):
     context = {}
-
+    book_id = request.GET.get('book_id')
     user = request.user
 
     # if not user.is_anonymous():
@@ -120,7 +120,7 @@ def index(request):
     #         'user': user
     #     }
 
-    if not request.GET.get('eid'):
+    if not (request.GET.get('eid') or request.GET.get('book_id')):
         catg_all = catg(None, all_cat=True)
         subcatg_all = subcatg(None, all_subcat=True)
         context = {
@@ -167,6 +167,56 @@ def index(request):
                 context['code'] = get_code(
                     request.session['filepath'], commit_sha)
 
+        return render(request, 'website/templates/index.html', context)
+    elif book_id:
+        books = TextbookCompanionPreference.objects\
+                    .db_manager('scilab').raw("""
+                        SELECT DISTINCT (loc.category_id),pe.id,
+                        tcbm.sub_category,loc.maincategory, pe.book as
+                        book,loc.category_id,tcbm.sub_category,
+                        pe.author as author, pe.publisher as publisher,
+                        pe.year as year, pe.id as pe_id, pe.edition,
+                        po.approval_date as approval_date
+                        FROM textbook_companion_preference pe LEFT JOIN
+                        textbook_companion_proposal po ON pe.proposal_id = po.id
+                        LEFT JOIN textbook_companion_book_main_subcategories
+                        tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
+                        loc ON tcbm.main_category = loc.category_id WHERE
+                        po.proposal_status = 3 AND pe.approval_status = 1
+                        AND pe.category>0 AND pe.id = tcbm.pref_id AND
+                        pe.cloud_pref_err_status = 0 AND
+                        pe.id=%s""", [book_id])
+        books = list(books)
+
+        if len(books) == 0:
+            catg_all = catg(None, all_cat=True)
+            context = {
+                'catg': catg_all,
+                'err_msg': 'This book is not supported by Scilab on Cloud. You are redirected to home page'
+            }
+            #context['err_msg'] = 'This book is not supported by scilab on cloud'
+            return render(request, 'website/templates/index.html', context)
+
+        books = get_books(books[0].sub_category)
+        maincat_id = books[0].category_id
+        subcat_id = books[0].sub_category
+        request.session['maincat_id'] = maincat_id
+        request.session['subcategory_id'] = subcat_id
+        request.session['book_id'] = book_id
+        subcateg_all = TextbookCompanionSubCategoryList.objects\
+            .using('scilab').filter(maincategory_id=maincat_id)\
+            .order_by('subcategory_id')
+        categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
+            .filter(~Q(category_id=0)).order_by('maincategory')
+        context = {
+            'catg': categ_all,
+            'subcatg': subcateg_all,
+            'maincat_id': maincat_id,
+            'subcategory_id': books[0].sub_category,
+            'books': books,
+            'book_id': int(book_id),
+
+        }
         return render(request, 'website/templates/index.html', context)
     else:
         try:
@@ -328,6 +378,7 @@ def search_book(request):
             for obj in result:
                 update_pref_hits(obj.id)
                 response = {
+                    'ids': obj.id,
                     'book': obj.book,
                     'author': obj.author,
                 }
@@ -366,6 +417,7 @@ def popular(request):
         else:
             for obj in result:
                 response = {
+                    'ids': int(obj.id),
                     'book': obj.book,
                     'author': obj.author,
                 }
@@ -404,6 +456,7 @@ def recent(request):
         else:
             for obj in result:
                 response = {
+                    'ids': int(obj.id),
                     'book': obj.book,
                     'author': obj.author,
                 }

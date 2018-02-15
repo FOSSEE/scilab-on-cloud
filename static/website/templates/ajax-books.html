@@ -1,7 +1,7 @@
 
                         <label>Book: </label>
                         <select id="books">
-                            <option value="">Select Book</option>
+                            <option value="">Select Book </option>
                             {% for book in books %} {% if book_id == book.id %}
                             <option value="{{ book.id }}" selected>{{ book.book }} (by {{ book.author }})</option>
                             {% else %}

@@ -853,7 +853,7 @@ $(document).ready(function() {
                 $("#relevant").html('<h2>Relevant</h2><hr>');
                 for (var i = 0; i < data.length; i++) {
                 $("#relevant").append(
-                '<a  href="#" class="">' + data[i].book +
+                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book +
                 ' (Author: ' + data[i].author + ')</a><hr>');
                 }
             }
@@ -870,7 +870,7 @@ $(document).ready(function() {
                 $("#popular").html('<h2>Popular</h2><hr>');
                 for (var i = 0; i < data.length; i++) {
                 $("#popular").append(
-                '<a  href="#" class="">' + data[i].book
+                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book
                 + ' (Author: ' + data[i].author + ')</a><hr>');
                 }
             }
@@ -886,7 +886,7 @@ $(document).ready(function() {
                 $("#recent").html('<h2>Recent</h2><hr>');
                 for (var i = 0; i < data.length; i++) {
                 $("#recent").append(
-                '<a  href="#" class="">' + data[i].book +
+                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book +
                 ' (Author: ' + data[i].author + ')</a><hr>');
                 }
             }
@@ -914,7 +914,7 @@ $(document).ready(function() {
                 $("#popular").html('<h2>Popular</h2><hr>');
                 for (var i = 0; i < data.length; i++) {
                     $("#popular").append(
-                '<a  href="#" class="">' + data[i].book
+                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book
                 + ' (Author: ' + data[i].author + ')</a><hr>');
                 }
             }
@@ -931,7 +931,7 @@ $(document).ready(function() {
                 $("#recent").html('<h2>Recent</h2><hr>');
                 for (var i = 0; i < data.length; i++) {
                 $("#recent").append(
-                '<a  href="#" class="">' + data[i].book +
+                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book +
                 ' (Author: ' + data[i].author + ')</a><hr>');
                 }
             }

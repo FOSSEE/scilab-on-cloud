@@ -2,6 +2,10 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script> {% if err_msg %}
+    alert("{{ err_msg }}");
+    {% endif %} 
+</script>
 </head>
 {% include 'website/templates/head.html' %}
 <body>
