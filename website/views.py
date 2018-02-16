@@ -203,6 +203,7 @@ def index(request):
         request.session['maincat_id'] = maincat_id
         request.session['subcategory_id'] = subcat_id
         request.session['book_id'] = book_id
+        chapters = get_chapters(book_id)
         subcateg_all = TextbookCompanionSubCategoryList.objects\
             .using('scilab').filter(maincategory_id=maincat_id)\
             .order_by('subcategory_id')
@@ -212,6 +213,7 @@ def index(request):
             'catg': categ_all,
             'subcatg': subcateg_all,
             'maincat_id': maincat_id,
+            'chapters': chapters,
             'subcategory_id': books[0].sub_category,
             'books': books,
             'book_id': int(book_id),
