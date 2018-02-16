@@ -170,7 +170,7 @@ def index(request):
         return render(request, 'website/templates/index.html', context)
     elif book_id:
         books = TextbookCompanionPreference.objects\
-                    .db_manager('scilab').raw("""
+            .db_manager('scilab').raw("""
                         SELECT DISTINCT (loc.category_id),pe.id,
                         tcbm.sub_category,loc.maincategory, pe.book as
                         book,loc.category_id,tcbm.sub_category,
@@ -341,14 +341,16 @@ def review(request):
     }
     return render(request, 'website/templates/review-interface.html', context)
 
+
 def update_pref_hits(pref_id):
     updatecount = TextbookCompanionPreferenceHits.objects.using('scilab')\
         .filter(pref_id=pref_id)\
         .update(hitcount=F('hitcount') + 1)
     if not updatecount:
         insertcount = TextbookCompanionPreferenceHits.objects.using('scilab')\
-        .get_or_create(pref_id=pref_id, hitcount=1)
+            .get_or_create(pref_id=pref_id, hitcount=1)
     return
+
 
 def search_book(request):
     result = {}
@@ -363,11 +365,15 @@ def search_book(request):
                             pe.id as pe_id, po.approval_date as approval_date
                             FROM textbook_companion_preference pe
                             LEFT JOIN textbook_companion_proposal po ON
-                            pe.proposal_id = po.id WHERE po.proposal_status = 3
-                            AND pe.approval_status = 1 AND pe.book like %s
-                            ORDER BY (pe.book = %s) DESC,
+                            pe.proposal_id = po.id WHERE
+                            (pe.book like %s OR pe.author like %s)
+                            AND po.proposal_status = 3
+                            AND pe.approval_status = 1
+                            ORDER BY (pe.book = %s OR pe.author = %s) DESC,
                             length(pe.book) """,
-                                      [search_string, str(exact_search_string)])
+                                      [search_string, search_string,
+                                       str(exact_search_string),
+                                       str(exact_search_string)])
         if len(list(result)) == 0:
             response = {
                 'book': "Not found",
@@ -389,6 +395,7 @@ def search_book(request):
         response_dict.append(response)
     return HttpResponse(simplejson.dumps(response_dict),
                         content_type='application/json')
+
 
 def popular(request):
     result = {}
@@ -428,6 +435,8 @@ def popular(request):
         response_dict.append(response)
     return HttpResponse(simplejson.dumps(response_dict),
                         content_type='application/json')
+
+
 def recent(request):
     result = {}
     response_dict = []
