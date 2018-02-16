@@ -1,0 +1,28 @@
+<div id="revisions-one">
+    <label>Revision: </label>
+    <select id="revisions">
+        <option value="">Select a revision</option>
+        {% for revision in revisions %}
+            {% if revision.sha == commit_sha %}
+                <option value="{{ revision.sha }}" 
+                selected>{{ forloop.counter }} - {{ revision.commit.message }}</option>
+            {% else %}
+                <option value="{{ revision.sha }}">
+                {{ forloop.counter }} - {{ revision.commit.message }}
+                </option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+
+<div id="revisions-two">
+    <label>Diff with: </label>
+    <select id="revisions-diff">
+        <option value="">Select a revision</option>
+        {% for revision in revisions %}
+            <option value="{{ revision.sha }}">
+            {{ forloop.counter }} - {{ revision.commit.message }}
+            </option>
+        {% endfor %}
+    </select>
+</div>

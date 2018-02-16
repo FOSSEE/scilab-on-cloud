@@ -1,10 +1,11 @@
-{% if chapters %}
-<label>Chapter: </label>
-<select id="chapters">
-    <option value="">Select Chapter</option>
-{% for chapter in chapters %}
-    <option value="{{ chapter.id }}">{{ chapter.number }} - {{ chapter.name }}</option>
-{% endfor %}
-</select>
-{% endif %}
+
+                        <label>Chapter: </label>
+                        <select id="chapters">
+                            <option value="">Select Chapter</option>
+                            {% for chapter in chapters %} {% if chapter_id == chapter.id %}
+                            <option value="{{ chapter.id }}" selected>{{ chapter.number }} - {{ chapter.name }}</option>
+                            {% else %}
+                            <option value="{{ chapter.id }}">{{ chapter.number }} - {{ chapter.name }}</option>
+                            {% endif %} {% endfor %}
+                        </select>
 <a href="#" class="extra-link" id="download-chapter">Download Chapter</a>

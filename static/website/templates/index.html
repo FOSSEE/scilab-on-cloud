@@ -1,130 +1,197 @@
-{% load static %}
-{% load dajaxice_templatetags %}
+{% load static %} {% load dajaxice_templatetags %}
 <html>
-    <head>
-        <title>Scilab on Cloud</title>
-        <link href="{% static 'website/css/base.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet"/>
-        <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet"/>
-        <link href="{% static 'website/css/main.css' %}" rel="stylesheet"/>
-        <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}"/>
-        {% dajaxice_js_import %}
-    </head>
-    <body>
-        <div id="header-wrapper">
-            <div id="header-inner">
-                <div id="topbar">
-                    <img id="home-logo" src="{% static 'website/images/home-logo.png' %}">
-                    <span id="title">
-                        Scilab on Cloud
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script> {% if err_msg %}
+    alert("{{ err_msg }}");
+    {% endif %} 
+</script>
+</head>
+{% include 'website/templates/head.html' %}
+<body>
+    <div id="header-wrapper">
+        <div id="header-inner">
+            <div id="topbar">
+                <img id="home-logo" src="{% static 'website/images/home-logo.png' %}">
+                <span id="title">
+                    Scilab on Cloud
                     </span>
-                    <div id="navlinks">
-                        <ul>
-                            <li><a class="node" data-key="about" href="#">About</a></li>
-                            <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                            <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                            <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
-                        </ul>
-                        <div class="clearfix"></div>
-                    </div> <!-- /#navlinks -->
-                </div> <!-- /#topbar -->
-            </div> <!-- /#header-inner -->
-        </div> <!-- /#header-wrapper -->
-        <div id="content-wrapper">
-            <div id="content-inner">
-                <div id="selectors">
-                    <div id="category-wrapper">
-                        <label>Category: </label>
-                        <select id="categories">
-                            <option value="">Select Category</option>
-                            <option value="10">Analog Electronics</option>
-                            <option value="3">Chemical Engineering</option>
-                            <option value="12">Computer Programming</option>
-                            <option value="2">Control Theory &amp; Control Systems</option>
-                            <option value="7">Digital Communications</option>
-                            <option value="11">Digital Electronics</option>
-                            <option value="8">Electrical Technology</option>
-                            <option value="1">Fluid Mechanics</option>
-                            <option value="9">Mathematics &amp; Pure Science</option>
-                            <option value="5">Mechanical Engineering</option>
-                            <option value="6">Signal Processing</option>
-                            <option value="4">Thermodynamics</option>
-                            <option value="13">Others</option>
-                        </select>
-                        <a href="#" class="extra-link" id="contributor">+Contributor</a>
-                    </div>
-                    <div id="books-wrapper"></div>
-                    <div id="chapters-wrapper"></div>
-                    <div id="examples-wrapper"></div>
+                <div id="navlinks">
+                    <ul>
+                        {% if user and not user.is_anonymous %} {% if not user.is_staff %}
+                        <li><a id = "search_book" data-toggle="modal" data-target="#search_wrapper" href="">Search Book</a></li>
+                        <li><a class="node" data-key="about" href="#">About</a></li>
+                        <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
+                        <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
+                        {% else %}
+                        <li><a data-key="review-interface" href="/review">Review Interface</a></li>
+                        {% endif %}
+                        <li><a data-key="logout" href="/logout">Log out</a></li>
+                        <li> <a style="color:red">Hello, {{ user.get_full_name }}!</a></li>
+                        {% else %}
+                        <li><a id = "search_book" data-toggle="modal" data-target="#search_wrapper" href="">Search Book</a></li>
+                        <li><a class="node" data-key="about" href="#">About</a></li>
+                        <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
+                        <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
+                         <li><a class="node" data-key="login" href="#">Log In</a></li>
+                        {% endif %}
+                        <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
+                    </ul>
+                    <div class="clearfix"></div>
                 </div>
-                <div id="content">
-                    <div id="input">
-                        <label>
-                            Scilab Code 
+                <!-- /#navlinks -->
+            </div>
+            <!-- /#topbar -->
+        </div>
+        <!-- /#header-inner -->
+    </div>
+    <!-- /#header-wrapper -->
+    <div id="content-wrapper">
+        <div id="content-inner">
+            <div id="selectors">
+                <div id="main-category-wrapper">
+                {% include 'website/templates/ajax-maincategories.html' %}
+                </div>
+                <div id="category-wrapper">
+                {% include 'website/templates/ajax-subcategories.html' %}
+                </div>
+                <div id="books-wrapper">
+                    {% include 'website/templates/ajax-books.html' %}
+                    <a href="#" class="extra-link" id="download-book">Download Book</a>
+                </div>
+                <div id="chapters-wrapper">
+                    {% include 'website/templates/ajax-chapters.html' %}
+                    <a href="#" class="extra-link" id="download-chapter">Download Chapter</a>
+                </div>
+                <div id="examples-wrapper">
+                    {% include 'website/templates/ajax-examples.html' %}
+                    <a href="#" class="extra-link" id="download-example">Download Example</a>
+                </div>
+                <div id="revisions-wrapper">
+                    {% include 'website/templates/ajax-revisions.html' %}
+                </div>
+            </div>
+            <div id="content">
+                <div id="input">
+                    <label>
+                            Scilab Code
+                            <span id="review-link">
+                            {% if review %}
+                            <a href="{{ review_url}}" id="review" target="_blank">{{ review }} Review
+                            </a>
+                            {% else %}
+                            <a href="#" id="review" target="_blank"></a>
+                            {% endif %}
+                            </span>
                             <span id="controls">
-                                <a href="#" id="toggle-code">
-                                    <img src="{% static 'website/images/icon-toggle.png'%}">
-                                </a>
-                                <a href="#" id="fullscreen-code">
-                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                                </a>
+                            <a href="#" id="toggle-code">
+                            <img src="{% static 'website/images/icon-toggle.png'%}">
+                            </a>
+                            <a href="#" id="fullscreen-code">
+                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                            </a>
                             </span> <!-- /#controls -->
                         </label>
-                        <form>
-                            <textarea id="code" placeholder="Write a new code or select existing from above category..."></textarea>
-                        </form>
-                    </div><!-- /#input -->
-                    <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
-
-                    <div id="output">
-                        <label>
+                    <form>
+                        <textarea id="code" placeholder="Write a new code or select existing from above category...">{{ code }}</textarea>
+                    </form>
+                </div>
+                <!-- /#input -->
+                <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
+                <a id="submit-revision" class="button">Submit a revision</a>
+                <div id="output">
+                    <label>
                             Result
                             <span id="controls">
-                                <a href="#" id="toggle-result">
-                                    <img src="{% static 'website/images/icon-toggle.png'%}">
-                                </a>
-                                <a href="#" id="fullscreen-result">
-                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                                </a>
-                            </span> <!-- /#controls -->
+                            <a href="#" id="toggle-result">
+                            <img src="{% static 'website/images/icon-toggle.png'%}">
+                            </a>
+                            <a href="#" id="fullscreen-result">
+                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                            </a>
+                            </span><!-- /#controls -->
                         </label>
-                        <textarea id="result"></textarea>
-                    </div> <!-- /#output -->
-                    <a id="bug" class="button">Report bug / Give Feedback</a>
-
-                    <div id="credits">
-                        <small>
-                            Disclaimer: Scilab is a trademark of Inria 
-                            (registered at the INPI for France and the rest of the World) 
-                            and Scilab Enterprises is granted exclusive rights for 
-                            Scilab Trademark.
-                        </small>
-                        Copyright IIT Bombay
-                    </div> <!-- /#credits -->
-                </div> <!-- /#content -->
-            </div> <!-- /#content-inner -->
-        </div> <!-- /#content-wrapper -->
-
+                    <textarea id="result"></textarea>
+                </div>
+                <!-- /#output -->
+                <a id="bug" class="button">Report bug / Give Feedback</a>
+                <div id="credits">
+                    <small>
+                        Disclaimer: Scilab is a trademark of Inria 
+                        (registered at the INPI for France and the rest of the World) 
+                        and Scilab Enterprises is granted exclusive rights for 
+                        Scilab Trademark.
+                        </small> Copyright IIT Bombay
+                </div>
+                <!-- /#credits -->
+            </div>
+            <!-- /#content -->
+        </div>
+        <!-- /#content-inner -->
+    </div>
+    <!-- /#content-wrapper -->
     <div id="plotbox-wrapper">
         <div id="plotbox"></div>
-    </div> <!-- /#plotbox-wrapper -->
-
+        <span><a href="#" id="plot_download" download="Plot">Download</a></span>
+    </div>
+    <!-- /#plotbox-wrapper -->
     <div id="databox-wrapper">
+        {% include 'website/templates/ajax-contributor.html' %}
         <div id="databox"></div>
-    </div> <!-- /#databox-wrapper -->
-
+    </div>
+    <!-- /#databox-wrapper -->
+        <div id="node-wrapper">
+    </div>
     <div id="bug-form-wrapper">
-    </div> <!-- /#databox-wrapper -->
-
-    <script src="{% static 'website/js/jquery-1.10.2.min.js' %}"></script>
-    <script src="{% static '/static/dajax/jquery.dajax.core.js' %}"></script>
-    <script src="{% static 'website/js/codemirror.js'%}"></script>
-    <script src="{% static 'website/js/javascript.js'%}"></script>
-    <script src="{% static 'website/js/fullscreen.js'%}"></script>
-    <script src="{% static 'website/js/placeholder.js'%}"></script>
-    <script src="{% static 'website/js/lightbox_me.js'%}"></script>
+    </div>
+    <!-- /#databox-wrapper -->
+    <div id="submit-revision-wrapper">
+    </div>
+    <div id="submit-revision-error-wrapper">
+    <p>{{ error_message }}</p>
+    </div>
+    <div id="diff-wrapper">
+        {% include 'website/templates/diff.html' %}
+    </div>
+    {% include 'website/templates/footer.html' %}
     <script src="{% static 'website/js/cloud.js'%}"></script>
     {% csrf_token %}
-    </body>
+
+<!-- Modal -->
+<div id="search_wrapper" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Search book</h4>
+        <div class="input-group">
+            <input id="search-input" type="text" class="form-control">
+                <span class="input-group-btn">
+                    <button id="search" class="btn btn-default" type="button">Search!</button>
+                </span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="col-xs-12">
+            <div id="relevant" class="col-xs-12 col-sm-6 col-md-3 col-lg-4" >
+            </div>
+            <div id="popular" class="col-xs-12 col-sm-6 col-md-3 col-lg-4" style="background-color:#bbb;word-wrap: break-word;overflow:auto;">
+            </div>
+            <div id="recent" class="col-xs-12 col-sm-6 col-md-3 col-lg-4"  style="background-color:#aaa;word-wrap: break-word;overflow:auto;">
+            </div>
+        <br>
+        </div>
+      <div>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+</body>
+
 </html>

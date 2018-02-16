@@ -1,0 +1,11 @@
+<form id="revision-form" action="" method="POST" accept-charset="utf-8"> 
+	{% csrf_token %}
+    <div id="non-field-errors">
+    </div>
+    <div id="id_commit_message_wrapper" class="wrapper">
+        <label>Commit message:</label>
+        {{ form.commit_message }}
+    </div>
+	
+	<input type="submit" id="revision-form-submit">
+</form>

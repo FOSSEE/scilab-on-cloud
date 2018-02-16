@@ -6,7 +6,7 @@ select {
     display: inline;
     margin-bottom: 15px;
     min-width: 220px;
-    max-width: 40%;
+    max-width: 100%;
     width: auto;
 }
 .CodeMirror {
@@ -64,14 +64,14 @@ body, html {
 }
 #selectors label {
     display: inline-block;
-    min-width: 75px;
+    min-width: 100px;
 }
 #content {
     position: absolute;
-    top: 200px;
+    top: 280px;
     bottom: 20px;
     width: 100%;
-    min-height: 400px;
+    min-height: 300px;
     bottom: 50px;
     background: #eeeeee;
 }
@@ -95,6 +95,10 @@ body, html {
     position: absolute;
     right: 0px;
 }
+#review-link {
+    position: absolute;
+    right: 40px;
+}
 #controls a {
     text-decoration: none;
 }
@@ -109,9 +113,19 @@ body, html {
     font-size: 100%; 
     font-family: inherit;
 }
-#execute {
+#execute, #execute-revision {
     position: absolute;
     left: 15px;
+    bottom: -15px;
+}
+#submit-revision, #push {
+    position: absolute;
+    left: 95px;
+    bottom: -15px;
+}
+#remove {
+    position: absolute;
+    left: 200px;
     bottom: -15px;
 }
 #bug {
@@ -135,7 +149,11 @@ body, html {
 }
 #plotbox-wrapper,
 #databox-wrapper,
-#bug-form-wrapper {
+#node-wrapper,
+#bug-form-wrapper, 
+#submit-revision-wrapper,
+#submit-revision-error-wrapper,
+#diff-wrapper {
     padding: 35px;
     background: #ffffff;
     -webkit-box-shadow: 0 0 10px #ffffff;
@@ -143,11 +161,14 @@ body, html {
          -o-box-shadow: 0 0 10px #ffffff;
             box-shadow: 0 0 10px #ffffff;
 }
-#databox-wrapper {
+#databox-wrapper,#node-wrapper, {
     max-width: 400px;
 }
-#databox-wrapper p {
+#databox-wrapper,#node-wrapper, p {
     text-align: justify;
+}
+#submit-revision-wrapper, #submit-revision-error-wrapper{
+    display: none;
 }
 a.extra-link {
     float: right;
@@ -188,10 +209,22 @@ table td {
     margin-bottom: 0;
 }
 #bug-form #id_email_wrapper {
-    display: none;
+   /* display: none;*/
 }
 #bug-form #non-field-errors .error-message{
     border: 1px solid tomato;
     width: 80%;
     padding: 5px;
+}
+
+#revisions-one, #revisions-two {
+    float: left;
+}
+
+#revisions-two {
+    position: absolute;
+    left: 400px;
+
+.req {
+    color: red;
 }

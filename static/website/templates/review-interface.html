@@ -1,0 +1,111 @@
+{% load static %}
+{% load dajaxice_templatetags %}
+<html>
+    {% include 'website/templates/head.html' %}
+    <body>
+        <div id="header-wrapper">
+            <div id="header-inner">
+                <div id="topbar">
+                    <img id="home-logo" src="{% static 'website/images/home-logo.png' %}">
+                    <span id="title">
+                        Scilab on Cloud
+                    </span>
+                    <div id="navlinks">
+                        <ul>
+                            {% if user and not user.is_anonymous %}
+                                {% if user.is_staff %}
+                                    <li><a data-key="index" href="/">Go Back</a></li>
+                                    <li><a data-key="logout" href="/logout">Log out</a></li>
+                                {% endif %}
+                            {% endif %}
+                            <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div> <!-- /#navlinks -->
+                </div> <!-- /#topbar -->
+            </div> <!-- /#header-inner -->
+        </div> <!-- /#header-wrapper -->
+
+        <div id="content-wrapper">
+            <div id="content-inner">
+                
+                <div id="review-revisions-wrapper">
+                    {% if revisions %}
+                        <label>Revisions pending review: </label>
+                        <select id="review-revisions">
+                            <option value="">Select a revision</option>
+                        {% for revision in revisions %}
+                            <option value="{{ revision.id }}">{{ revision.example_file.filepath }} - {{ revision.timestamp }}</option>
+                        {% endfor %}
+                        </select>
+                    {% endif %}
+
+                    <div id="revision-details-wrapper">
+                        <!-- <p>random</p> -->
+                        <div id="category"></div>
+                        <div id="book"></div>
+                        <div id="chapter"></div>
+                        <div id="example"></div>
+                        <div id="commit-message"></div>
+
+                    </div>
+                </div>
+
+                <div id="content">
+                    <div id="input">
+                        <label>
+                            Scilab Code 
+                            <span id="controls">
+                                <a href="#" id="review-toggle-code">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                                <a href="#" id="review-fullscreen-code">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </span> <!-- /#controls -->
+                        </label>
+                        <form>
+                            <textarea id="review-code"></textarea>
+                        </form>
+                    </div><!-- /#input -->
+
+                    <div id="review-control-buttons">
+                        <a id="execute-revision" class="button"><span id="execute-inner">Execute</span></a>
+                        <a id="push" class="button"><span id="push-inner">Push revision</span></a>
+                        <a id="remove" class="button"><span id="remove-inner">Remove revision</span></a>
+                    </div>
+
+                    <div id="output">
+                        <label>
+                            Result
+                            <span id="controls">
+                                <a href="#" id="review-toggle-result">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                                <a href="#" id="review-fullscreen-result">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </span> <!-- /#controls -->
+                        </label>
+                        <textarea id="review-result"></textarea>
+                    </div> <!-- /#output -->
+
+                    <div id="credits">
+                        <small>
+                            Disclaimer: Scilab is a trademark of Inria 
+                            (registered at the INPI for France and the rest of the World) 
+                            and Scilab Enterprises is granted exclusive rights for 
+                            Scilab Trademark.
+                        </small>
+                        Copyright IIT Bombay
+                    </div> <!-- /#credits -->
+                </div> <!-- /#content -->
+            </div> <!-- /#content-inner -->
+        </div> <!-- /#content-wrapper -->
+
+    {% include 'website/templates/footer.html' %}
+    <script src="{% static 'website/js/review.js'%}"></script>
+
+    {% csrf_token %}
+    </body>
+</html>

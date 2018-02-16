@@ -1,9 +1,9 @@
-#Custom Settings
+# Custom Settings
 
-from os.path import *
-from config import *
+import os
+from .config import *
 
-PROJECT_DIR = abspath(dirname(__file__) + '/../')
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__) + '/../')
 
 # Django settings for soc project.
 
@@ -18,20 +18,28 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': DB_NAME_DEFAULT,                      # Or path to database file if using sqlite3.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.mysql',
+        # Or path to database file if using sqlite3.
+        'NAME': DB_NAME_DEFAULT,
         'USER': DB_USER_DEFAULT,
         'PASSWORD': DB_PASS_DEFAULT,
-        'HOST': DB_HOST_DEFAULT,                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': DB_PORT_DEFAULT,                      # Set to empty string for default.
+        # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': DB_HOST_DEFAULT,
+        # Set to empty string for default.
+        'PORT': DB_PORT_DEFAULT,
     },
     'scilab': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': DB_NAME_SCILAB,                      # Or path to database file if using sqlite3.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.mysql',
+        # Or path to database file if using sqlite3.
+        'NAME': DB_NAME_SCILAB,
         'USER': DB_USER_SCILAB,
         'PASSWORD': DB_PASS_SCILAB,
-        'HOST': DB_HOST_SCILAB,                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': DB_PORT_SCILAB,                      # Set to empty string for default.
+        # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': DB_HOST_SCILAB,
+        # Set to empty string for default.
+        'PORT': DB_PORT_SCILAB,
     }
 }
 
@@ -94,7 +102,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'dajaxice.finders.DajaxiceFinder',
 )
 
@@ -120,6 +128,9 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'soc.urls'
 
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'soc.wsgi.application'
 
@@ -138,12 +149,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'dajaxice',
     'dajax',
     'website',
+    'social.apps.django_app.default',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -174,3 +186,47 @@ LOGGING = {
         },
     }
 }
+
+# For social auth
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.google.GooglePlusAuth',
+    'social.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_USE_DEPRECATED_API = True
+SOCIAL_AUTH_GOOGLE_PLUS_USE_DEPRECATED_API = True
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = EMAIL_HOST_SERVER
+
+# Port for sending e-mail.
+EMAIL_PORT = EMAIL_PORT_SERVER
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = EMAIL_HOST_USER_SERVER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD_SERVER
+EMAIL_USE_TLS = EMAIL_USE_TLS_SERVER

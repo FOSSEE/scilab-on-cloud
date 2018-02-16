@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
-## This program is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-## You should have received a copy of the GNU General Public License
-## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Usage: ./timeout.py TIMEOUT COMMAND...
@@ -39,12 +39,17 @@ it easier to clean up the child process along with any other processes it may
 have spawned.
 """
 
-import errno,os,signal,subprocess,sys
+import errno
+import os
+import signal
+import subprocess
+import sys
+
 
 class TimerTask:
-    def __init__( self, command, timeout=None, 
-                  timeoutSignal=signal.SIGKILL, raisePrevSigalrmError=True,
-                  childProcessGroup=0 ):
+    def __init__(self, command, timeout=None,
+                 timeoutSignal=signal.SIGKILL, raisePrevSigalrmError=True,
+                 childProcessGroup=0):
         """Create a new TimerTask
 command : string : the command to run
 timeout : int : timeout (in seconds), or None for no timeout (default: None)
@@ -55,15 +60,15 @@ childProcessGroup : int : if 0 (default), put child process into its own process
   if non-zero, put child process into the specified process group
   if None, inherit the parent's process group
 """
-        assert isinstance( command, str ) or isinstance( command, list )
+        assert isinstance(command, str) or isinstance(command, list)
         self.command = command
 
         if timeout is not None:
-            assert isinstance( timeout, int )
+            assert isinstance(timeout, int)
             assert timeout > 0
         self.timeout = timeout
-        
-        assert isinstance( timeoutSignal, int )
+
+        assert isinstance(timeoutSignal, int)
         self.timeoutSignal = timeoutSignal
 
         self.prevAlarmHandler = None
@@ -72,13 +77,12 @@ childProcessGroup : int : if 0 (default), put child process into its own process
         if None == childProcessGroup:
             self.preExecFun = None
         else:
-            assert isinstance( childProcessGroup, int )
-            self.preExecFun = (lambda : os.setpgid(0,childProcessGroup))
-                
+            assert isinstance(childProcessGroup, int)
+            self.preExecFun = (lambda: os.setpgid(0, childProcessGroup))
 
-    def run( self, 
-             stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
-             shell=True, cwd=None, env=None ):
+    def run(self,
+            stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            shell=True, cwd=None, env=None):
         """Takes the same arguments as Python's subprocess.Popen(), with the
 following exceptions:
 
@@ -89,39 +93,39 @@ This function returns the result from subprocess.Popen() (a subprocess
 object), so you can read from pipes, poll, etc.
 """
 
-        self.subprocess = subprocess.Popen( self.command,
-                                            stdin=stdin, 
-                                            stdout=stdout,
-                                            stderr=stderr,
+        self.subprocess = subprocess.Popen(self.command,
+                                           stdin=stdin,
+                                           stdout=stdout,
+                                           stderr=stderr,
 
-                                            # runs in the child
-                                            # process before
-                                            # the exec(), putting
-                                            # the child process into
-                                            # its own process group
-                                            preexec_fn=self.preExecFun,
+                                           # runs in the child
+                                           # process before
+                                           # the exec(), putting
+                                           # the child process into
+                                           # its own process group
+                                           preexec_fn=self.preExecFun,
 
-                                            shell=shell,
-                                            cwd=cwd,
-                                            env=env )
-        self.pgid = os.getpgid( self.subprocess.pid )
+                                           shell=shell,
+                                           cwd=cwd,
+                                           env=env)
+        self.pgid = os.getpgid(self.subprocess.pid)
 
         # Setup the SIGALRM handler: we use a lambda as a "curried"
         # function to bind some values
         if self.timeout is not None:
 
-            if signal.getsignal( signal.SIGALRM ) not in (None, signal.SIG_IGN, signal.SIG_DFL):
+            if signal.getsignal(signal.SIGALRM) not in (None, signal.SIG_IGN, signal.SIG_DFL):
                 # someone is using a SIGALRM handler!
                 if self.raisePrevSigalrmError:
-                    ValueError( "SIGALRM handler already in use!" )
+                    ValueError("SIGALRM handler already in use!")
 
-            self.prevAlarmHandler = signal.getsignal( signal.SIGALRM )
+            self.prevAlarmHandler = signal.getsignal(signal.SIGALRM)
 
-            signal.signal( signal.SIGALRM, 
-                           lambda sig,frame : os.killpg(self.pgid,self.timeoutSignal) )
+            signal.signal(signal.SIGALRM,
+                          lambda sig, frame: os.killpg(self.pgid, self.timeoutSignal))
 
             # setup handler before scheduling signal, to eliminate a race
-            signal.alarm( self.timeout )
+            signal.alarm(self.timeout)
 
         return self.subprocess
 
@@ -129,8 +133,8 @@ object), so you can read from pipes, poll, etc.
         """If we're using a timeout, cancel the SIGALRM timeout when
            the child is finished, and restore the previous SIGALRM handler"""
         if self.timeout is not None:
-            signal.alarm( 0 )
-            signal.signal( signal.SIGALRM, self.prevAlarmHandler )
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, self.prevAlarmHandler)
             pass
         return
 
@@ -146,11 +150,11 @@ child was killed by signal N. """
         try:
             self.subprocess.wait()
         except OSError, e:
-            
+
             # If the child times out, the wait() syscall can get
             # interrupted by the SIGALRM. We should then only need to
             # wait() once more for the child to actually exit.
-            
+
             if e.errno == errno.EINTR:
                 self.subprocess.wait()
             else:
@@ -162,12 +166,11 @@ child was killed by signal N. """
         assert self.subprocess.poll() is not None
         return self.subprocess.poll()
 
-
     def kill(self, deathsig=signal.SIGKILL):
         """Kill the child process. Optionally specify the signal to be used
 (default: SIGKILL)"""
         try:
-            os.killpg( self.pgid, deathsig )
+            os.killpg(self.pgid, deathsig)
         except OSError, e:
             if e.errno == errno.ESRCH:
                 # We end up here if the process group has already exited, so it's safe to
@@ -193,12 +196,11 @@ All of COMMAND's children run in a new process group, and the entire group is
 SIGKILL'ed when the timeout expires. """
         print descrip
 
-        sys.exit( 0 )
+        sys.exit(0)
         pass
 
-    t = TimerTask( " ".join(sys.argv[2:]),
-                   timeout=int(sys.argv[1]) )
+    t = TimerTask(" ".join(sys.argv[2:]),
+                  timeout=int(sys.argv[1]))
     t.run()
     e = t.wait()
-    sys.exit( e )
-
+    sys.exit(e)
