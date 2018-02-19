@@ -168,6 +168,7 @@ $(document).ready(function() {
                 $("#books").html("");
                 editor.setValue("");
                 result.setValue("");
+                $("#example_views_count").text("");
                 $("#chapters-wrapper").hide();
                 $("#examples-wrapper").hide();
                 $("#books-wrapper").hide();
@@ -204,6 +205,8 @@ $(document).ready(function() {
                     }
                 });
             } else {
+                ajax_loader("clear");
+                $("#example_views_count").text("");
                 editor.setValue("");
                 result.setValue("");
                 $("#categories").html("");
@@ -233,6 +236,7 @@ $(document).ready(function() {
             $("#books").html("");
             editor.setValue("");
             result.setValue("");
+            $("#example_views_count").text("");
             $("#chapters-wrapper").hide();
             $("#examples-wrapper").hide();
             $("#revisions-wrapper").hide();
@@ -269,6 +273,8 @@ $(document).ready(function() {
                 }
             });
         } else {
+            ajax_loader("clear");
+            $("#example_views_count").text("");
             editor.setValue("");
             result.setValue("");
             $("#review-link").hide();
@@ -297,6 +303,7 @@ $(document).ready(function() {
             $("#chapters-wrapper").show();
             editor.setValue("");
             result.setValue("");
+            $("#example_views_count").text("");
             $("#examples-wrapper").hide();
             $("#revisions-wrapper").hide();
             $("#download-chapter").hide();
@@ -331,6 +338,8 @@ $(document).ready(function() {
                 }
             });
         } else {
+            ajax_loader("clear");
+            $("#example_views_count").text("");
             $("#chapters-wrapper").hide();
             $("#download-book").hide();
             $("#examples-wrapper").hide();
@@ -358,6 +367,7 @@ $(document).ready(function() {
             $("#download-chapter").show();
             editor.setValue("");
             result.setValue("");
+            $("#example_views_count").text("");
             $("#revisions-wrapper").hide();
             $("#download-example").hide();
             $("#review-link").hide();
@@ -388,6 +398,8 @@ $(document).ready(function() {
                 }
             });
         } else {
+            ajax_loader("clear");
+            $("#example_views_count").text("");
             $("#download-chapter").hide();
             $("#examples-wrapper").hide();
             $("#revisions-wrapper").hide();
@@ -400,7 +412,7 @@ $(document).ready(function() {
     });
     /*******************************************/
     /*******************************************/
-    /************ revision change **************/
+    /************ Example change **************/
     /*******************************************/
     $(document.body).on("change", "#examples", function() {
         ajax_loader(this);
@@ -409,6 +421,7 @@ $(document).ready(function() {
         //$("#revisions-wrapper").html("");
         $("#download-example").show();
         if (example_id != 0) {
+            $("#example_views_count").text("");
             $("#revisions-wrapper").show();
             $("#download-example").show();
             $("#submit-revision").show();
@@ -424,7 +437,18 @@ $(document).ready(function() {
                     example_id: example_id,
                 },
                 success: function(data) {
-                    ajax_loader("clear");
+                         var ex_id = example_id;
+                         $.ajax({
+                            url: 'update_view_count/',
+                            dataType: 'JSON',
+                            type : 'GET',
+                            data: {
+                                    ex_id: ex_id,
+                            },
+                            success: function(data){
+                            $("#example_views_count").text(data);
+                            }
+                         });
                     $("#revisions").html(
                         ' <option value="">Select a revision</option>'
                     );
@@ -468,21 +492,24 @@ $(document).ready(function() {
                             example_id: example_id,
                         },
                         success: function(data) {
-                                                    ajax_loader("clear");
-                            if (data.review != 0) {
-                                   $("#review").show();
-                    $("#review").attr("href",data.review_url);
-                    $("#review").text(data.review + " " + "Review");
-                            } else {
-                                $("#review").hide();
-                            }
+                        if (data.review != 0) {
+                            $("#review").show();
+                            $("#review").attr("href",data.review_url);
+                            $("#review").text(data.review + " " + "Review");
+                        } else {
+                            $("#review").hide();
+                        }
+                            $("#example_views_count").text(data.exmple);
                             editor.setValue(data.code);
                             initial_code = editor .getValue();
+                            ajax_loader("clear");
                         }
                     });
                 }
             });
         } else {
+            ajax_loader("clear");
+            $("#example_count").text("");
             $("#revisions-wrapper").hide();
             $("#download-example").hide();
             $("#submit-revision").hide();

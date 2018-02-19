@@ -75,6 +75,14 @@
                 <div id="input">
                     <label>
                             Scilab Code
+                            {% if ex_views_count == NULL %}
+                                        <i class="views-count fa fa-eye" id="example_views_count" aria-hidden="true">
+                                        </i>
+                                    {% else %}
+                                    <i class="views-count fa fa-eye" id="example_views_count"  aria-hidden="true">
+                                        {{ ex_views_count }}
+                                    </i>
+                                    {% endif %}
                             <span id="review-link">
                             {% if review %}
                             <a href="{{ review_url}}" id="review" target="_blank">{{ review }} Review

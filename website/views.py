@@ -192,9 +192,10 @@ def index(request):
             catg_all = catg(None, all_cat=True)
             context = {
                 'catg': catg_all,
-                'err_msg': 'This book is not supported by Scilab on Cloud. You are redirected to home page'
+                'err_msg': 'This book is not supported by Scilab on Cloud.\
+                 You are redirected to home page.'
             }
-            #context['err_msg'] = 'This book is not supported by scilab on cloud'
+
             return render(request, 'website/templates/index.html', context)
 
         books = get_books(books[0].sub_category)
@@ -224,7 +225,12 @@ def index(request):
         try:
             eid = int(request.GET['eid'])
         except ValueError:
-            return redirect("/")
+            context = {
+                'catg': catg_all,
+                'err_msg': 'This example is currently not available on scilab\
+                on cloud.'
+            }
+            return render(request, 'website/templates/index.html', context)
 
         if eid:
             try:
@@ -276,6 +282,12 @@ def index(request):
                 example_file = TextbookCompanionExampleFiles.objects\
                     .using('scilab').get(example_id=eid, filetype='S')
 
+                ex_views_count = TextbookCompanionExampleViews.objects\
+                    .db_manager('scilab').raw(dedent("""\
+                    SELECT id, views_count FROM\
+                    textbook_companion_example_views\
+                    WHERE example_id=%s """), [eid])
+
                 request.session['maincat_id'] = maincat_id
                 request.session['subcategory_id'] = subcat_id
                 request.session['book_id'] = preference_id
@@ -289,7 +301,15 @@ def index(request):
                 request.session['commit_sha'] = revisions[0]['sha']
 
             except IndexError:
-                return redirect("/")
+                categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
+                    .filter(~Q(category_id=0)).order_by('maincategory')
+                context = {
+                    'catg': categ_all,
+                    'err_msg': 'This example is currently not available on scilab\
+                    on cloud.'
+                }
+                return render(request, 'website/templates/index.html', context)
+
             subcateg_all = TextbookCompanionSubCategoryList.objects\
                 .using('scilab').filter(maincategory_id=maincat_id)\
                 .order_by('subcategory_id')
@@ -310,6 +330,7 @@ def index(request):
                 'revisions': revisions,
                 'commit_sha': revisions[0]['sha'],
                 'code': code,
+                'ex_views_count': ex_views_count[0].views_count,
                 'review': review,
                 'review_url': review_url,
             }
@@ -477,4 +498,23 @@ def recent(request):
         response = {'book': "Please try again later!"}
         response_dict.append(response)
     return HttpResponse(simplejson.dumps(response_dict),
+                        content_type='application/json')
+
+
+def update_view_count(request):
+    ex_id = request.GET.get('ex_id')
+    Example_chapter_id = TextbookCompanionExample.objects.using('scilab')\
+        .filter(id=ex_id)
+
+    TextbookCompanionExampleViews.objects.using('scilab')\
+        .get_or_create(example_id=ex_id, chapter_id=Example_chapter_id[0]
+                       .chapter_id)
+    TextbookCompanionExampleViews.objects.using('scilab')\
+        .filter(example_id=ex_id)\
+        .update(views_count=F('views_count') + 1)
+
+    Example_views_count = TextbookCompanionExampleViews.objects.using('scilab')\
+        .filter(example_id=ex_id)
+    data = Example_views_count[0].views_count
+    return HttpResponse(simplejson.dumps(data),
                         content_type='application/json')
