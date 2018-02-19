@@ -315,7 +315,10 @@ def index(request):
                 .order_by('subcategory_id')
             categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
                 .filter(~Q(category_id=0)).order_by('maincategory')
-
+            if len(list(ex_views_count)) == 0:
+                ex_views_count = 0
+            else:
+                ex_views_count = ex_views_count[0].views_count
             context = {
                 'catg': categ_all,
                 'subcatg': subcateg_all,
@@ -330,7 +333,7 @@ def index(request):
                 'revisions': revisions,
                 'commit_sha': revisions[0]['sha'],
                 'code': code,
-                'ex_views_count': ex_views_count[0].views_count,
+                'ex_views_count': ex_views_count,
                 'review': review,
                 'review_url': review_url,
             }

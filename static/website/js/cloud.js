@@ -103,6 +103,7 @@ $(document).ready(function() {
 
     $("#plot_download").hide();
     $("#diff-wrapper").hide();
+    $("#databox-wrapper").hide();
     if ($("#main_categories").val() == 0) {
         $("#category-wrapper").hide();
         $("#books-wrapper").hide();
@@ -631,12 +632,13 @@ $(document).ready(function() {
                     $plot = $("<img>");
                     $plot.attr({
                         src: data.plot_path,
-                        width: '90%'
+                        width: '100%'
                     });
                     $plotbox.html($plot);
-                    $plotbox_wrapper.lightbox_me({
+                   /* $plotbox_wrapper.lightbox_me({
                         centered: true
-                    });
+                    });*/
+                     $plotbox_wrapper.modal('show');
                     var dt = $(
                             "#examples option:selected"
                         )
