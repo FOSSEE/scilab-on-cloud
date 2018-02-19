@@ -210,7 +210,7 @@ def revisions(request):
         commits = utils.get_commits(file_path=example_file.filepath)
         print commits
         response = {
-            'commits': commits
+            'commits': commits,
         }
         response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
@@ -226,7 +226,6 @@ def code(request):
         remove_from_session(request, [
             'code',
         ])
-
         code = ''
         review = ''
         review_url = ''
@@ -236,9 +235,10 @@ def code(request):
         file_path = request.session['filepath']
         review = ScilabCloudComment.objects.using('scilab')\
             .filter(example=example_id).count()
-        print example_id
-        print review
-        review_url = "http://scilab.in/cloud_comments/" + str(example_id)
+        exmple = TextbookCompanionExampleViews.objects.db_manager('scilab')\
+            .raw(dedent("""\
+                    SELECT id, views_count FROM textbook_companion_example_views WHERE example_id=%s """), [example_id])
+        review_url = "https://scilab.in/cloud_comments/" + str(example_id)
         # example_path = UPLOADS_PATH + '/' + file_path
 
         file = utils.get_file(file_path, commit_sha, main_repo=True)
@@ -247,6 +247,7 @@ def code(request):
             'code': code,
             'review': review,
             'review_url': review_url,
+            'exmple': exmple[0].views_count,
         }
         # response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
