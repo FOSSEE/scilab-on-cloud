@@ -867,7 +867,7 @@ $(document).ready(function() {
     /********************************************/
  $(document).on("click", "#search", function() {
         $("#relevant").html('');
-        var search_string = $("#search-input").val();
+        var search_string = jQuery.trim($("#search-input").val());
         if (search_string == ''){
         search_string = 'Null';
         }
