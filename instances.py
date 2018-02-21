@@ -119,7 +119,7 @@ class ScilabInstance(object):
         # Finding the plot and appending xs2jpg function
         #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
         p = re.compile(
-            r'.*plot.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)|plzr\(.*\)|\
+            r'plot\(.*\).*\n|plot2d.*\(.*\).*\n|plot3d.*\(.*\).*\n|bode\(.*\)|stem\(.*\)|evans\(.*\)|plzr\(.*\)|\
             hallchart\(.*\)|gainplot\(.*\)')
 
         plot_path = ''
