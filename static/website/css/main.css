@@ -68,7 +68,7 @@ body, html {
 }
 #content {
     position: absolute;
-    top: 280px;
+    top: 300px;
     bottom: 20px;
     width: 100%;
     min-height: 300px;
