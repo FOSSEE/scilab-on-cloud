@@ -119,7 +119,7 @@ class ScilabInstance(object):
         # Finding the plot and appending xs2jpg function
         #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
         p = re.compile(
-            r'plot\(.*\)|plot2d.*\(.*\)|plot3d.*\(.*\)|bode\(.*\)|\bstem\(.*\)(\n|;)\b|evans\(.*\)|sgrid\(.*\)|plzr\(.*\)|hallchart\(.*\)|gainplot\(.*\)')
+            r'plot\(.*\)|plot2d.*\(.*\)|plot3d.*\(.*\)|bode\(.*\)|\bstem\(.*\)(\n|;)\b|evans\(.*\)|sgrid\(.*\)|plzr\(.*\)|hallchart\(.*\)|gainplot\(.*\)|nyquist\(.*\)|black\(.*\)|phaseplot\(.*\)|zgrid\(.*\)|show_margins\(.*\)|m_circle\(.*\)')
 
         plot_path = ''
         if p.search(code):
