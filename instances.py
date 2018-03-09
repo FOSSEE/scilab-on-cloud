@@ -122,14 +122,15 @@ class ScilabInstance(object):
             r'plot\(.*\)|plot2d.*\(.*\)|plot3d.*\(.*\)|bode\(.*\)|\bstem\(.*\)(\n|;)\b|evans\(.*\)|sgrid\(.*\)|plzr\(.*\)|hallchart\(.*\)|gainplot\(.*\)|nyquist\(.*\)|black\(.*\)|phaseplot\(.*\)|zgrid\(.*\)|show_margins\(.*\)|m_circle\(.*\)')
 
         plot_path = ''
-        if p.search(code):
-            plot_exists = True
-            code = code + '\n'
-            current_time = time.time()
-            plot_path = PROJECT_DIR + \
+        ################################
+        #if p.search(code):
+        plot_exists = True
+        code = code + '\n'
+        current_time = time.time()
+        plot_path = PROJECT_DIR + \
                 '/static/tmp/{0}.png'.format(str(current_time))
             #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
-
+        ################################
         # Check whether to load scimax / maxima
         if 'syms' in code or 'Syms' in code:
             code = code.replace('syms', 'Syms')
@@ -173,7 +174,7 @@ class ScilabInstance(object):
             self.count -= 1
             if(self.count == 0):
                 self.spawn_instance()
-
+        print plot_path.replace(PROJECT_DIR, '')
         data = {
             'output': output,
             'plot_path': plot_path.replace(PROJECT_DIR, '')

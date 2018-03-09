@@ -627,14 +627,20 @@ $(document).ready(function() {
                 $("#execute-inner").html(
                     "Execute");
                 result.setValue(data.output);
-
+                pp = data.plot_path;
                 if (data.plot_path) {
+                    $.ajax({
+                        type: "HEAD",
+                        async: true,
+                        url: pp,
+                    }).done(function(){
                     $plot = $("<img>");
                     $plot.attr({
                         src: data.plot_path,
                         width: '100%'
                     });
                     $plotbox.html($plot);
+                   
                    /* $plotbox_wrapper.lightbox_me({
                         centered: true
                     });*/
@@ -650,6 +656,7 @@ $(document).ready(function() {
                     $("#plot_download").attr(
                         "href", data.plot_path
                     );
+                     });
                 }
             });
     });
