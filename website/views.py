@@ -192,8 +192,8 @@ def index(request):
             catg_all = catg(None, all_cat=True)
             context = {
                 'catg': catg_all,
-                'err_msg': 'This book is not supported by Scilab on Cloud.\
-                 You are redirected to home page.'
+                'err_msg': """This book is not supported by Scilab on Cloud."""\
+                           """ You are redirected to home page."""
             }
 
             return render(request, 'website/templates/index.html', context)
@@ -227,8 +227,8 @@ def index(request):
         except ValueError:
             context = {
                 'catg': catg_all,
-                'err_msg': 'This example is currently not available on scilab\
-                on cloud.'
+                'err_msg': """This example is currently not available on """\
+                           """scilab on cloud."""
             }
             return render(request, 'website/templates/index.html', context)
 
@@ -301,12 +301,13 @@ def index(request):
                 request.session['commit_sha'] = revisions[0]['sha']
 
             except IndexError:
-                categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
-                    .filter(~Q(category_id=0)).order_by('maincategory')
+                categ_all = TextbookCompanionCategoryList.objects\
+                .using('scilab').filter(~Q(category_id=0))\
+                .order_by('maincategory')
                 context = {
                     'catg': categ_all,
-                    'err_msg': 'This example is currently not available on scilab\
-                    on cloud.'
+                    'err_msg': """This example is currently not available """\
+                               """on scilab on cloud."""
                 }
                 return render(request, 'website/templates/index.html', context)
 
