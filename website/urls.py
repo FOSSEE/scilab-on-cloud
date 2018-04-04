@@ -13,7 +13,7 @@ urlpatterns = patterns(
         name='revision_form'),
     url(r'^update_view_count/$', 'website.views.update_view_count',
         name='update_view_count'),
-    url(r'^search_book/$', 'website.views.search_book', name='search_book'),
+    url(r'^search_book$', 'website.views.search_book', name='search_book'),
     url(r'^search_book/popular/$', 'website.views.popular', name='popular'),
     url(r'^search_book/recent/$', 'website.views.recent', name='recent'),
     url(r'^get_subcategories/$', 'website.ajax.subcategories',
