@@ -879,7 +879,7 @@ $(document).ready(function() {
         search_string = 'Null';
         }
          $.ajax({
-            url: 'search_book/',
+            url: 'search_book',
             dataType: 'JSON',
             type : 'GET',
             data: {
