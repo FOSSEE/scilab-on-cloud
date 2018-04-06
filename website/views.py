@@ -192,8 +192,9 @@ def index(request):
             catg_all = catg(None, all_cat=True)
             context = {
                 'catg': catg_all,
-                'err_msg': """This book is not supported by Scilab on Cloud."""\
-                           """ You are redirected to home page."""
+                'err_msg': """This TBC is not supported by Scilab on Cloud."""\
+                           """You can download TBC from www.scilab.in. You """\
+                           """ are redirected to scilab on cloud home page."""
             }
 
             return render(request, 'website/templates/index.html', context)
@@ -227,8 +228,9 @@ def index(request):
         except ValueError:
             context = {
                 'catg': catg_all,
-                'err_msg': """This example is currently not available on """\
-                           """scilab on cloud."""
+                'err_msg': """This TBC example is not available """\
+                           """on Scilab on Cloud. You can download """\
+                           """TBC example from www.scilab.in."""
             }
             return render(request, 'website/templates/index.html', context)
 
@@ -306,8 +308,9 @@ def index(request):
                 .order_by('maincategory')
                 context = {
                     'catg': categ_all,
-                    'err_msg': """This example is currently not available """\
-                               """on scilab on cloud."""
+                    'err_msg': """This TBC example is not available """\
+                               """on Scilab on Cloud. You can download """\
+                               """TBC example from www.scilab.in."""
                 }
                 return render(request, 'website/templates/index.html', context)
 
