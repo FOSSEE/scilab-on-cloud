@@ -84,10 +84,10 @@ $(document).ready(function() {
     });
 
     $toggle_result.click(function(e) {
-        if (result.getOption("theme") == "defaul") {
-            result.setOption("theme", "monokai");
-        } else {
+        if (result.getOption("theme") == "monokai") {
             result.setOption("theme", "default");
+        } else {
+            result.setOption("theme", "monokai");
         }
         e.preventDefault();
     });
