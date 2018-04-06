@@ -1,0 +1,18 @@
+<html>
+<body>
+A error has been occured in scilab code. <br><br>
+{% if example_id != 0 %}
+<strong>Category:</strong> {{ maincategory_name }} <br>
+<strong>Subcategory:</strong> {{ subcategory_name }} <br>
+<strong>Book:</strong> {{ book_name }} (Author: {{ author_name }}, Publisher: {{ publisher_name }}) <br>
+<strong>Chapter:</strong> ({{ chapter_number }}) {{ chapter_name }} <br>
+<strong>Example:</strong> <a href= "http://cloud.scilab.in/index?eid={{example_id}}" target="_blank" >({{ example_number }}) {{ example_name }}</a>  <br><br>
+{% else %}
+<strong>Code:</strong><br><br> {{ code |linebreaks }} <br><br>
+{% endif %}
+<strong>Output:</strong><br><br> {{ output |linebreaks }} <br><br>
+
+<hr>
+<h4>This is auto generated mail from {{ site_name }}</h4>
+</body>
+</html>
