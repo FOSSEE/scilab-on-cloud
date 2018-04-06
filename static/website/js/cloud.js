@@ -13,7 +13,7 @@ $(document).ready(function() {
         "code"), {
         lineNumbers: true,
         lineWrapping: true,
-        theme: "monokai",
+        theme: "default",
         extraKeys: {
             "F11": function(cm) {
                 cm.setOption("fullScreen", !cm.getOption(
@@ -30,7 +30,7 @@ $(document).ready(function() {
     var result = CodeMirror.fromTextArea(document.getElementById(
         "result"), {
         lineWrapping: true,
-        theme: "monokai",
+        theme: "default",
         readOnly: true,
         extraKeys: {
             "F11": function(cm) {
@@ -84,10 +84,10 @@ $(document).ready(function() {
     });
 
     $toggle_result.click(function(e) {
-        if (result.getOption("theme") == "monokai") {
-            result.setOption("theme", "default");
-        } else {
+        if (result.getOption("theme") == "defaul") {
             result.setOption("theme", "monokai");
+        } else {
+            result.setOption("theme", "default");
         }
         e.preventDefault();
     });
