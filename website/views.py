@@ -525,3 +525,57 @@ def update_view_count(request):
     data = Example_views_count[0].views_count
     return HttpResponse(simplejson.dumps(data),
                         content_type='application/json')
+
+def get_example_detail(eid):
+    examples = TextbookCompanionExample.objects\
+                    .db_manager('scilab').raw("""
+                        SELECT id, id as example_id,
+                            caption, number, chapter_id
+                        FROM textbook_companion_example
+                        WHERE cloud_err_status=0 AND
+                              chapter_id = (SELECT chapter_id
+                                            FROM textbook_companion_example
+                                            WHERE id =%s)""", [eid])
+    chapter_id = examples[0].chapter_id
+    chapters = TextbookCompanionChapter.objects\
+        .db_manager('scilab').raw("""
+            SELECT id, name, number, preference_id
+            FROM textbook_companion_chapter
+            WHERE cloud_chapter_err_status = 0 AND
+            preference_id = (SELECT preference_id
+            FROM textbook_companion_chapter WHERE id = %s)
+            ORDER BY number ASC""", [chapter_id])
+    preference_id = chapters[0].preference_id
+
+    books = TextbookCompanionPreference.objects\
+        .db_manager('scilab').raw("""
+            SELECT DISTINCT (loc.category_id),pe.id,
+            los.subcategory,loc.maincategory, pe.book as
+            book,loc.category_id,tcbm.sub_category,
+            pe.author as author, pe.publisher as publisher,
+            pe.year as year, pe.id as pe_id, pe.edition,
+            po.approval_date as approval_date
+            FROM textbook_companion_preference pe
+            LEFT JOIN textbook_companion_proposal po ON
+            pe.proposal_id = po.id
+            LEFT JOIN textbook_companion_book_main_subcategories
+            tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
+            loc ON tcbm.main_category = loc.category_id
+            LEFT JOIN list_of_subcategory los ON
+            tcbm.sub_category = los.subcategory_id WHERE
+            po.proposal_status = 3 AND pe.approval_status = 1
+            AND pe.category>0 AND pe.id = tcbm.pref_id AND
+            pe.cloud_pref_err_status = 0 AND
+            pe.id=%s""", [preference_id])
+    details = {
+        'book_name' : books[0].book,
+        'maincategory_name' : books[0].maincategory,
+        'subcategory_name' : books[0].subcategory,
+        'author_name' : books[0].author,
+        'publisher_name' : books[0].publisher,
+        'chapter_number' : chapters[0].number,
+        'chapter_name' : chapters[0].name,
+        'example_number' : examples[0].number,
+        'example_name' : examples[0].caption,
+    }
+    return (details)

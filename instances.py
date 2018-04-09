@@ -6,10 +6,13 @@ import time
 import sys
 
 from datetime import datetime
+from django.template.loader import render_to_string, get_template
+from django.core.mail import EmailMultiAlternatives
 # importing the local variables
 from soc.settings import PROJECT_DIR
 from soc.config import (BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,
-                        SCILAB_3, SCILAB_4, SCILAB_5)
+                        SCILAB_3, SCILAB_4, SCILAB_5, FROM_EMAIL, TO_EMAIL,
+                        CC_EMAIL, BCC_EMAIL, SITE)
 from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionSubCategoryList,
                             TextbookCompanionProposal,
@@ -20,7 +23,7 @@ from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionExampleFiles,
                             TextbookCompanionExampleDependency,
                             TextbookCompanionDependencyFiles)
-
+from website.views import get_example_detail
 ''' An object of class ScilabInstance handles spawning and maintaining of
  multiple scilab instances.
 
@@ -92,7 +95,6 @@ class ScilabInstance(object):
     def execute_code(
             self, code, token, book_id, dependency_exists, chapter_id,
             example_id):
-
         # Check for system commands
         # print code, token, book_id, dependency_exists
         system_commands = re.compile(
@@ -203,6 +205,33 @@ class ScilabInstance(object):
             f.write("------------------------------------" + "\n")
             f.write(output + "\n")
             f.write("************************************" + "\n")
+
+        if '!--error' in output:
+            context = {}
+            if int(example_id) !=0:
+                context = get_example_detail(example_id)
+            context['example_id'] = int(example_id)
+            context['code'] = code
+            context['site_name'] = SITE
+            context['output'] = output
+            subject = "[Scilab On Cloud] Error in scilab code"
+            message = render_to_string('website/templates/error_email.html',
+                      context)
+            from_email = FROM_EMAIL
+            to_email = TO_EMAIL
+            cc_email = CC_EMAIL
+            bcc_email = BCC_EMAIL
+            # Send Emails to, cc, bcc
+            msg = EmailMultiAlternatives(
+                subject,
+                message,
+                FROM_EMAIL,
+                [TO_EMAIL],
+                bcc=[BCC_EMAIL],
+                cc=[CC_EMAIL]
+                )
+            msg.content_subtype = "html"
+            msg.send()
         return data
 
     def trim(self, output):
