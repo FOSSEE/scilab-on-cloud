@@ -231,7 +231,7 @@ class ScilabInstance(object):
                 cc=[CC_EMAIL]
                 )
             msg.content_subtype = "html"
-            msg.send()
+            #msg.send()
         return data
 
     def trim(self, output):
