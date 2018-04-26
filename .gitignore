@@ -10,5 +10,6 @@
 *.pyc
 
 tmp/
-local.py
-soc/local.py
+static/log/
+static/tmp/
+soc/config.py
