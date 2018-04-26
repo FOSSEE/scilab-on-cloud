@@ -379,7 +379,7 @@ def bug_form_submit(request):
             scilab_comment.example = ex_id
             scilab_comment.save(using='scilab')
             subject = "New Cloud Comment"
-            message = render_to_string('website/templates/email.html', context)
+            message = render_to_string('email.html', context)
             from_email = FROM_EMAIL
             to_email = TO_EMAIL
             cc_email = CC_EMAIL
@@ -426,12 +426,12 @@ def revision_form(request):
             context = {'form': form}
             context.update(csrf(request))
             response = render_to_string(
-                'website/templates/submit-revision.html', context)
+                'submit-revision.html', context)
             return HttpResponse(simplejson.dumps(response),
                                 content_type='application/json')
         else:
             response = render_to_string(
-                'website/templates/revision-login.html', {})
+                'revision-login.html', {})
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
 

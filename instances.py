@@ -215,7 +215,7 @@ class ScilabInstance(object):
             context['site_name'] = SITE
             context['output'] = output
             subject = "[Scilab On Cloud] Error in scilab code"
-            message = render_to_string('website/templates/error_email.html',
+            message = render_to_string('error_email.html',
                       context)
             from_email = FROM_EMAIL
             to_email = TO_EMAIL
