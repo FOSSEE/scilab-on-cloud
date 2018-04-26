@@ -1,4 +1,4 @@
-{% load static %} {% load dajaxice_templatetags %}
+{% load static %} 
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
     {% endif %} 
 </script>
 </head>
-{% include 'website/templates/head.html' %}
+{% include 'head.html' %}
 <body>
     <div id="header-wrapper">
         <div id="header-inner">
@@ -23,7 +23,6 @@
                         <li><a class="node" data-key="about" href="#">About</a></li>
                         <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
                         <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                         <li><a href="https://old.cloud.scilab.in" target="_blank"> Old Scilab on Cloud</a></li>
                         {% else %}
                         <li><a data-key="review-interface" href="/review">Review Interface</a></li>
                         {% endif %}
@@ -34,7 +33,6 @@
                         <li><a class="node" data-key="about" href="#">About</a></li>
                         <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
                         <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                         <li><a href="https://old.cloud.scilab.in" target="_blank"> Old Scilab on Cloud</a></li>
                          <!-- <li><a class="node" data-key="login" href="#">Log In</a></li> -->
                         {% endif %}
                         <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
@@ -52,25 +50,25 @@
         <div id="content-inner">
             <div id="selectors">
                 <div id="main-category-wrapper">
-                {% include 'website/templates/ajax-maincategories.html' %}
+                {% include 'ajax-maincategories.html' %}
                 </div>
                 <div id="category-wrapper">
-                {% include 'website/templates/ajax-subcategories.html' %}
+                {% include 'ajax-subcategories.html' %}
                 </div>
                 <div id="books-wrapper">
-                    {% include 'website/templates/ajax-books.html' %}
+                    {% include 'ajax-books.html' %}
                     <a href="#" class="extra-link" id="download-book">Download Book</a>
                 </div>
                 <div id="chapters-wrapper">
-                    {% include 'website/templates/ajax-chapters.html' %}
+                    {% include 'ajax-chapters.html' %}
                     <a href="#" class="extra-link" id="download-chapter">Download Chapter</a>
                 </div>
                 <div id="examples-wrapper">
-                    {% include 'website/templates/ajax-examples.html' %}
+                    {% include 'ajax-examples.html' %}
                     <a href="#" class="extra-link" id="download-example">Download Example</a>
                 </div>
                 <div id="revisions-wrapper">
-                    {% include 'website/templates/ajax-revisions.html' %}
+                    {% include 'ajax-revisions.html' %}
                 </div>
             </div>
             <div id="content">
@@ -126,26 +124,18 @@
                 <!-- /#output -->
                 <a id="bug" class="button">Report bug / Give Feedback</a>
                 <div id="credits">
-                <table style="background: #4E3419;">
-                <tr>
-                <td colspan="2" class="footer white-text">
-                    <p class="test-footer" style="font-size: 10px;color: lightgoldenrodyellow;text-align: center;margin: 0px 0px 0px 0px;">Disclaimer</p>
-                </td>
-            </tr>
-            <tr>
-                <td style="width:50%" class="footer white-text">
-                    <p class="test-footer" style="font-size: 10px;color: lightgoldenrodyellow;text-align: center;margin: 0px 0px 0px 0px;">Every effort is made to make all the codes to run smoothly. However, Scilab Cloud takes no responsibility for, and will not be liable for, the website being temporarily unavailable due to technical issues and code not producing accurate outputs due to any toolboxes.</p>
-                </td>
-                <td class="footer white-text">
-                    <p class="test-footer" style="font-size: 10px;color: lightgoldenrodyellow;text-align: center;margin: 0px 0px 0px 0px;">Scilab is a trademark of <a href="http://www.inria.fr/en/" target="_blank" class="ext" style="color:#FFFFFF;">Inria</a><span class="ext"></span> (registered at the INPI for France and the rest of the World) and <a href="http://www.scilab-enterprises.com/" target="_blank" class="ext" style="color:#FFFFFF;">Scilab Enterprises</a><span class="ext"></span> is granted exclusive rights for Scilab Trademark.</p>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" class="footer white-text">
-                    <p class="test-footer" style="font-size: 12px; color: white; text-align:center;margin: 0px 0px 0px 0px;"><a href="https://www.fossee.in" target="_blank" style="color:white">FOSSEE, IIT Bombay</a></p>
-                </td>
-            </tr>
-		</table>
+                    <small>
+                        Disclaimer: 
+                        Every effort is made to make all the codes to run 
+                        smoothly. However, Scilab Cloud takes no responsibility 
+                        for, and will not be liable for, the website being 
+                        temporarily unavailable due to technical issues and 
+                        code not producing accurate outputs due to any toolboxes.
+                        Scilab is a trademark of Inria (registered at the INPI 
+                        for France and the rest of the World) 
+                        and Scilab Enterprises is granted exclusive rights for 
+                        Scilab Trademark.
+                        </small> Copyright IIT Bombay
                 </div>
                 <!-- /#credits -->
             </div>
@@ -180,7 +170,7 @@
 
     <!-- #plotbox-wrapper -->
     <div id="databox-wrapper">
-        {% include 'website/templates/ajax-contributor.html' %}
+        {% include 'ajax-contributor.html' %}
         <div id="databox"></div>
     </div>
     <!-- /#databox-wrapper -->
@@ -195,9 +185,9 @@
     <p>{{ error_message }}</p>
     </div>
     <div id="diff-wrapper">
-        {% include 'website/templates/diff.html' %}
+        {% include 'diff.html' %}
     </div>
-    {% include 'website/templates/footer.html' %}
+    {% include 'footer.html' %}
     <script src="{% static 'website/js/cloud.js'%}"></script>
     {% csrf_token %}
 

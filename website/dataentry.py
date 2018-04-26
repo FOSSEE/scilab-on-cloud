@@ -34,13 +34,13 @@ def entry(code, example_id, dependency_exists, book_id):
             print("unknown exec format")
             dependency_exists = False
             return dependency_exists
-        print "file name: " + value
+        print ("file name: " + value)
         data_df = TextbookCompanionDependencyFiles.objects.using('scilab')\
             .filter(filename=value)  # get the dependency id
 
         if not data_df.count():
             filepath = UPLOADS_PATH
-            print "file path: " + UPLOADS_PATH + "/" + str(book_id)
+            print ("file path: " + UPLOADS_PATH + "/" + str(book_id))
 
             def find_all(name, path):
                 result = []
@@ -49,7 +49,7 @@ def entry(code, example_id, dependency_exists, book_id):
                         result.append(os.path.join(root, name))
                 return result
             result_files = find_all(value, UPLOADS_PATH + "/" + str(book_id))
-            print result_files[0]
+            print (result_files[0])
             check_file_exist = os.path.exists(
                 UPLOADS_PATH + "/" + str(book_id) + "/DEPENDENCIES/" + value)
             if check_file_exist == False:
@@ -72,7 +72,7 @@ def entry(code, example_id, dependency_exists, book_id):
                 TED_insert.save(using='scilab')
                 dep_file_id = TextbookCompanionDependencyFiles.objects.using('scilab')\
                     .get(filename=value)
-                print dep_file_id.id
+                print (dep_file_id.id)
                 TED_insert = TextbookCompanionExampleDependency()
                 TED_insert.example_id = d
                 TED_insert.dependency_id = dep_file_id.id

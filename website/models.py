@@ -95,11 +95,11 @@ class TextbookCompanionPreference(models.Model):
     proposal = models.ForeignKey(
         TextbookCompanionProposal, on_delete=models.CASCADE)
     pref_number = models.IntegerField()
-    book = models.CharField(max_length=100L)
-    author = models.CharField(max_length=100L)
-    isbn = models.CharField(max_length=25L)
-    publisher = models.CharField(max_length=50L)
-    edition = models.CharField(max_length=2L)
+    book = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=25)
+    publisher = models.CharField(max_length=50)
+    edition = models.CharField(max_length=2)
     year = models.IntegerField()
     category = models.IntegerField()
     approval_status = models.IntegerField()
@@ -114,8 +114,8 @@ class TextbookCompanionChapter(models.Model):
     preference = models.ForeignKey(
         TextbookCompanionPreference, on_delete=models.CASCADE)
     number = models.IntegerField()
-    name = models.CharField(max_length=255L)
-    cloud_chapter_err_status = models.CharField(max_length=255L)
+    name = models.CharField(max_length=255)
+    cloud_chapter_err_status = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'textbook_companion_chapter'
@@ -144,9 +144,9 @@ class TextbookCompanionExampleFiles(models.Model):
     # =======
     # example_id = models.IntegerField()
     # >>>>>>> upstream/devel
-    filename = models.CharField(max_length=255L)
-    filepath = models.CharField(max_length=500L)
-    filemime = models.CharField(max_length=255L)
+    filename = models.CharField(max_length=255)
+    filepath = models.CharField(max_length=500)
+    filemime = models.CharField(max_length=255)
     filesize = models.IntegerField()
     filetype = models.CharField(max_length=1)
     caption = models.CharField(max_length=100)
@@ -160,8 +160,8 @@ class TextbookCompanionRevision(models.Model):
     example_file = models.ForeignKey(
         TextbookCompanionExampleFiles, on_delete=models.CASCADE)
     # sha checksum of commit in github
-    commit_sha = models.CharField(max_length=100L)
-    committer_name = models.CharField(max_length=100L)
+    commit_sha = models.CharField(max_length=100)
+    committer_name = models.CharField(max_length=100)
     committer_email = models.EmailField()
     commit_message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

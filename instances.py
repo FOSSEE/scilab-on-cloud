@@ -165,7 +165,7 @@ class ScilabInstance(object):
         try:
             active_instance.expect('\[0m ', timeout=30)
             active_instance.expect('', timeout=30)
-            output = self.trim(active_instance.before)
+            output = self.trim(active_instance.before.decode('UTF-8'))
             self.instances.append(active_instance)
 
         except:
@@ -176,7 +176,7 @@ class ScilabInstance(object):
             self.count -= 1
             if(self.count == 0):
                 self.spawn_instance()
-        print plot_path.replace(PROJECT_DIR, '')
+        print (plot_path.replace(PROJECT_DIR, ''))
         data = {
             'output': output,
             'plot_path': plot_path.replace(PROJECT_DIR, '')

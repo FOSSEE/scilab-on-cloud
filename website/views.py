@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.contrib.auth import logout
-from django.utils import simplejson
+from django.template import loader
+import json as simplejson
 from django.http import HttpResponse
+
 from django.core import serializers
 from django.db.models import F
 from textwrap import dedent
@@ -21,11 +23,10 @@ from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionPreferenceHits,
                             TextbookCompanionExampleViews)
 from soc.config import UPLOADS_PATH
-import utils
+from . import utils
 import base64
 from collections import OrderedDict
 from django.db.models import Q
-
 
 def catg(cat_id, all_cat):
     if all_cat is False:
@@ -162,12 +163,15 @@ def index(request):
             context['commit_sha'] = commit_sha
 
             if 'code' in request.session:
-                context['code'] = request.session['code']
+                session_code = request.session['code']
+                context['code'] = session_code.decode('UTF-8')
             elif 'filepath' in request.session:
-                context['code'] = get_code(
+                session_code = get_code(
                     request.session['filepath'], commit_sha)
+                context['code'] = session_code.decode('UTF-8')
 
-        return render(request, 'website/templates/index.html', context)
+        template = loader.get_template('index.html')
+        return HttpResponse(template.render(context, request))
     elif book_id:
         books = TextbookCompanionPreference.objects\
             .db_manager('scilab').raw("""
@@ -197,7 +201,8 @@ def index(request):
                            """ are redirected to scilab on cloud home page."""
             }
 
-            return render(request, 'website/templates/index.html', context)
+            template = loader.get_template('index.html')
+            return HttpResponse(template.render(context, request))
 
         books = get_books(books[0].sub_category)
         maincat_id = books[0].category_id
@@ -221,7 +226,8 @@ def index(request):
             'book_id': int(book_id),
 
         }
-        return render(request, 'website/templates/index.html', context)
+        template = loader.get_template('index.html')
+        return HttpResponse(template.render(context, request))
     else:
         try:
             eid = int(request.GET['eid'])
@@ -312,7 +318,8 @@ def index(request):
                                """on Scilab on Cloud. You can download """\
                                """TBC example from www.scilab.in."""
                 }
-                return render(request, 'website/templates/index.html', context)
+                template = loader.get_template('index.html')
+                return HttpResponse(template.render(context, request))
 
             subcateg_all = TextbookCompanionSubCategoryList.objects\
                 .using('scilab').filter(maincategory_id=maincat_id)\
@@ -336,7 +343,7 @@ def index(request):
                 'eid': eid,
                 'revisions': revisions,
                 'commit_sha': revisions[0]['sha'],
-                'code': code,
+                'code': code.decode('UTF-8'),
                 'ex_views_count': ex_views_count,
                 'review': review,
                 'review_url': review_url,
@@ -345,7 +352,8 @@ def index(request):
             if not user.is_anonymous():
                 context['user'] = user
 
-            return render(request, 'website/templates/index.html', context)
+            template = loader.get_template('index.html')
+            return HttpResponse(template.render(context, request))
 
 
 def login(request):

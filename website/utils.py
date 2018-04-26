@@ -1,5 +1,5 @@
 import requests
-from urlparse import urljoin
+from urllib.parse import urljoin
 import json
 
 from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT,\

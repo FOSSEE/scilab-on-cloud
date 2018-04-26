@@ -11,7 +11,9 @@ import tornado.ioloop
 import tornado.web
 import tornado.wsgi
 import os
-from django.utils import simplejson
+import json as simplejson
+import django
+django.setup()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
 
 from concurrent.futures import ThreadPoolExecutor
@@ -85,18 +87,18 @@ class ExecutionHandler(tornado.web.RequestHandler):
         global request_count
         request_count += 1
 
-        token = buffer(self.request.arguments['token'][0])
-        token = str(token)
-        code = buffer(self.request.arguments['code'][0])
-        code = str(code)
+        token = self.request.arguments['token'][0]
+        token = token.decode('UTF-8')
+        code = self.request.arguments['code'][0]
+        code = code.decode('UTF-8')
         book_id = int(self.request.arguments['book_id'][0])
         chapter_id = int(self.request.arguments['chapter_id'][0])
         example_id = int(self.request.arguments['example_id'][0])
 
         dependency_exists = TextbookCompanionExampleDependency.objects\
             .using('scilab').filter(example_id=example_id).exists()
-        print example_id
-        print dependency_exists
+        print (example_id)
+        print (dependency_exists)
         dependency_exists = entry(code, example_id, dependency_exists, book_id)
         data = yield executor.submit(scilab_executor.execute_code, code, token,
                                      book_id, dependency_exists, chapter_id,

@@ -1,55 +1,43 @@
-from django.conf.urls import patterns, include, url
-# from django.contrib.auth import views as auth_views
-from website import views
-from website import ajax
+from django.urls import path
 
-urlpatterns = patterns(
-    '',
-    #url(r'^$', 'website.views.landing', name='landing'),
-    url(r'^$', 'website.views.index', name='index'),
-    url(r'^index$', 'website.views.index', name='index'),
-    url('', include('django.contrib.auth.urls', namespace='auth')),
-    url(r'^submit-revision/$', 'website.ajax.revision_form',
+from . import views
+from . import ajax
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('index', views.index, name='index'),
+    path(r'submit-revision/', ajax.revision_form,
         name='revision_form'),
-    url(r'^update_view_count/$', 'website.views.update_view_count',
+path('update_view_count/', views.update_view_count,
         name='update_view_count'),
-    url(r'^search_book$', 'website.views.search_book', name='search_book'),
-    url(r'^search_book/popular/$', 'website.views.popular', name='popular'),
-    url(r'^search_book/recent/$', 'website.views.recent', name='recent'),
-    url(r'^get_subcategories/$', 'website.ajax.subcategories',
+    path('search_book/', views.search_book, name='search_book'),
+    path('search_book/popular/', views.popular, name='popular'),
+    path('search_book/recent/', views.recent, name='recent'),
+    path('get_subcategories/', ajax.subcategories,
         name='subcategories'),
-    url(r'^get_books/$', 'website.ajax.books', name='books'),
-    url(r'^get_chapters/$', 'website.ajax.chapters', name='chapters'),
-    url(r'^get_examples/$', 'website.ajax.examples', name='examples'),
-    url(r'^get_revisions/$', 'website.ajax.revisions', name='revisions'),
-    url(r'^get_code/$', 'website.ajax.code', name='code'),
-    url(r'^get_diff/$', 'website.ajax.diff', name='diff'),
-    url(r'^get_contributor/$', 'website.ajax.contributor', name='contributor'),
-    url(r'^get_bug_form/$', 'website.ajax.bug_form', name='bug_form'),
-    url(r'^get_bug_form_submit/$',
-        'website.ajax.bug_form_submit', name='bug_form_submit'),
-    url(r'^get_node/$', 'website.ajax.node', name='node'),
-    url(r'^get_submit_revision_form/$',
-        'website.ajax.revision_form', name='revision_form'),
-    url(r'^get_submit_revision_form_submit/$',
-        'website.ajax.revision_form_submit', name='revision_form_submit'),
-    url(r'^review/get_review_revision/$',
-        'website.ajax.review_revision', name='review_revision'),
-    url(r'^review/get_push_revision/$',
-        'website.ajax.push_revision', name='push_revision'),
-    url(r'^review/get_remove_revision/$',
-        'website.ajax.remove_revision', name='remove_revision'),
-
-    # Uncomment the next line to enable the admin:
-    #url(r'^admin/', include(admin.site.urls)),
-
-    # google auth
-    url('', include('social.apps.django_app.urls', namespace='social')),
+    path('get_books/', ajax.books, name='books'),
+    path('get_chapters/', ajax.chapters, name='chapters'),
+    path('get_examples/', ajax.examples, name='examples'),
+    path('get_revisions/', ajax.revisions, name='revisions'),
+    path('get_code/', ajax.code, name='code'),
+    path('get_diff/', ajax.diff, name='diff'),
+    path('get_contributor/', ajax.contributor, name='contributor'),
+    path('get_bug_form/', ajax.bug_form, name='bug_form'),
+    path('get_bug_form_submit/',
+        ajax.bug_form_submit, name='bug_form_submit'),
+    path('get_node/', ajax.node, name='node'),
+    path('get_submit_revision_form/',
+        ajax.revision_form, name='revision_form'),
+    path('get_submit_revision_form_submit/',
+        ajax.revision_form_submit, name='revision_form_submit'),
+    path('review/get_review_revision/',
+        ajax.review_revision, name='review_revision'),
+    path('review/get_push_revision/',
+        ajax.push_revision, name='push_revision'),
+    path('review/get_remove_revision/',
+        ajax.remove_revision, name='remove_revision'),
+    #path('', include('social.apps.django_app.urls', namespace='social')),
 
     # for review interface
-    url(r'^review/$', 'website.views.review', name='review'),
-
-    url(r'^reviewer-login/$', 'django.contrib.auth.views.login',\
-        {'template_name': 'admin/login.html'}),
-    #url(r'^logout/$', 'website.views.logout', name='logout'),
-)
+    path('review/', views.review, name='review'),
+]

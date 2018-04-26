@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import validate_email
-from dajax.core import Dajax
+#from dajax.core import Dajax
 
 issues = (
     (0, '-- Select Type of issue --'),

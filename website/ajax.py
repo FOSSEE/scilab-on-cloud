@@ -1,8 +1,8 @@
-from dajax.core import Dajax
-from dajaxice.decorators import dajaxice_register
-from dajaxice.utils import deserialize_form
+#from dajax.core import Dajax
+#from dajaxice.decorators import dajaxice_register
+#from dajaxice.utils import deserialize_form
 from django.forms.models import model_to_dict
-from django.utils import simplejson
+import json as simplejson
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.core import serializers
@@ -10,18 +10,18 @@ from django.core import serializers
 # from django.http import HttpResponse, HttpResponseRedirect
 # from django.shortcuts import render, redirect
 from django.core.mail import EmailMultiAlternatives
-from django.core.context_processors import csrf
-from django.utils import simplejson
+from django.template.context_processors import csrf
 # from django.utils.html import strip_tags
 from django.template.loader import render_to_string, get_template
-# from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+
 # from django.db.models import Q
 from textwrap import dedent
 from soc.config import FROM_EMAIL, TO_EMAIL, CC_EMAIL, BCC_EMAIL
 from soc.config import UPLOADS_PATH
-from website.helpers import scilab_run
+#from website.helpers import scilab_run
 # modified code
-from website.helpers import scilab_run_user
+#from website.helpers import scilab_run_user
 from website.views import catg
 from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionSubCategoryList,
@@ -38,8 +38,7 @@ from website.dataentry import entry
 from website.forms import issues
 
 import base64
-import utils
-import json
+from . import utils
 
 
 def remove_from_session(request, keys):
@@ -152,7 +151,7 @@ def chapters(request):
                     'chapter': obj.name,
 
                 }
-                print obj.name
+                print (obj.name)
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
@@ -182,7 +181,7 @@ def examples(request):
                     'number': obj.number,
                     'caption': obj.caption,
                 }
-                print obj.caption
+                print (obj.caption)
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
@@ -208,7 +207,7 @@ def revisions(request):
         request.session['filepath'] = example_file.filepath
 
         commits = utils.get_commits(file_path=example_file.filepath)
-        print commits
+        print (commits)
         response = {
             'commits': commits,
         }
@@ -244,7 +243,7 @@ def code(request):
         file = utils.get_file(file_path, commit_sha, main_repo=True)
         code = base64.b64decode(file['content'])
         response = {
-            'code': code,
+            'code': code.decode('UTF-8'),
             'review': review,
             'review_url': review_url,
             'exmple': exmple[0].views_count,
@@ -310,7 +309,7 @@ def bug_form(request):
         form = BugForm()
         context['form'] = BugForm()
         context.update(csrf(request))
-        response = render_to_string('website/templates/bug-form.html', context)
+        response = render_to_string('bug-form.html', context)
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
 
@@ -325,7 +324,7 @@ def bug_form_submit(request):
         chapter_id = request.GET.get('chapter_id')
         ex_id = request.GET.get('ex_id')
         form = BugForm(deserialize_form(form))
-        print form
+        print (form)
         if form.is_valid():
             comment = form.cleaned_data['description']
             error = form.cleaned_data['issue']
@@ -408,8 +407,9 @@ def revision_form(request):
     response_dict = []
     if request.is_ajax():
         code = request.GET.get('code')
+        code = code.decode('UTF-8')
         initial_code = request.GET.get('initial_code')
-        request.session['code'] = code
+        request.session['code'] = code.decode('UTF-8')
 
         if code == initial_code:
             response = "You have not made any changes"
@@ -436,7 +436,7 @@ def revision_form(request):
                             content_type='application/json')
 
 
-@dajaxice_register
+#@dajaxice_register
 def revision_error(request):
     context = {
         'error_message': 'You have not made any changes',
@@ -451,6 +451,7 @@ def revision_form_submit(request):
     if request.is_ajax():
         form = request.GET.get('form')
         code = request.GET.get('code')
+        code = code.decode('UTF-8')
 
         form = RevisionForm(deserialize_form(form))
 
@@ -501,7 +502,7 @@ def diff(request):
     file = utils.get_file(file_path, diff_commit_sha, main_repo=True)
     code = base64.b64decode(file['content'])
     response = {
-        'code2': code,
+        'code2': code.decode('UTF-8'),
     }
     return HttpResponse(simplejson.dumps(response),
                         content_type='application/json')
@@ -513,7 +514,7 @@ def diff(request):
 def review_revision(request):
     if request.is_ajax():
         revision_id = request.GET.get('revision_id')
-        print revision_id
+        print (revision_id)
         revision = TextbookCompanionRevision.objects.using(
             'scilab').get(id=revision_id)
         file = utils.get_file(revision.example_file.filepath,
@@ -528,7 +529,7 @@ def review_revision(request):
         category = utils.get_category(book.category)
 
         response = {
-            'code': code,
+            'code': code.decode('UTF-8'),
             'revision': model_to_dict(revision),
             'example': model_to_dict(example),
             'chapter': model_to_dict(chapter),
@@ -553,7 +554,7 @@ def push_revision(request):
         utils.update_file(
             revision.example_file.filepath,
             revision.commit_message,
-            base64.b64encode(code),
+            base64.b64encode(code.decode('UTF-8')),
             [revision.committer_name, revision.committer_email],
             branch='master',
             main_repo=True)
