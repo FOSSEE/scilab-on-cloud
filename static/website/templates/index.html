@@ -1,7 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Scilab on cloud</title>
     <meta charset="utf-8">
@@ -12,10 +11,9 @@
     <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet" />
     <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet" />
     <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="{% static 'website/bootstrap-4.1.0/js/jquery.min.js' %}"></script>
+    <script src="{% static 'website/bootstrap-4.1.0/js/popper.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/bootstrap.min.js' %}"></script>
-
     <style type="text/css">
         body {
             background: gray !important;
@@ -23,9 +21,7 @@
         /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
     </style>
 </head>
-
 <body>
-
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
         <a class="navbar-brand" href="#">Scilab on cloud</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -54,10 +50,7 @@
     <br>
     <div class="container small">
         <form class="col-12">
-
             <div id="main-category-wrapper" class="form-row form-group">
-
-                <!-- <div class="col-sm-10"> -->
                 <label class="col-sm-2 col-form-label">Main Category :</label>
                 <select id="main_categories" class="form-control-sm col-sm-10">
                     <option value="0">Select Main Category</option>
@@ -80,11 +73,8 @@
                     <option value="{{ category.subcategory_id }}">{{ category.subcategory }}</option>
                     {% endif %} {% endfor %}
                 </select>
-
                 <a href="#" class="extra-link col-sm-2" id="contributor">+Contributor</a>
-
             </div>
-
             <div id="books-wrapper" class="form-row form-group">
                 <label for="disabledInput" class="col-sm-2 col-form-label">Book :</label>
                 <select id="books" class="form-control-sm col-sm-8">
@@ -96,9 +86,7 @@
                     {% endif %} {% endfor %}
                 </select>
                 <a href="#" class="extra-link col-sm-2" id="download-book">Download Book</a>
-
             </div>
-
             <div id="chapters-wrapper" class="form-row form-group">
                 <label for="disabledInput" class="col-sm-2 col-form-label">Chapter :</label>
                 <select id="chapters" class="form-control-sm col-sm-8">
@@ -110,9 +98,7 @@
                     {% endif %} {% endfor %}
                 </select>
                 <a href="#" class="extra-link col-sm-2" id="download-chapter">Download Chapter</a>
-
             </div>
-
             <div id="examples-wrapper" class="form-row form-group">
 
                 <label for="disabledInput" class="col-sm-2 col-form-label">Example :</label>
@@ -124,10 +110,8 @@
                     <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
                     {% endif %} {% endfor %}
                 </select>
-
                 <a href="#" class="extra-link col-sm-2" id="download-example">Download Example</a>
             </div>
-
             <div id="revisions-wrapper" class="form-row form-group">
                 <label for="disabledInput" class="col-sm-2 col-form-label">Revision: </label>
                 <select id="revisions" class="form-control-sm col-sm-3">
@@ -140,7 +124,6 @@
                     </option>
                     {% endif %} {% endfor %}
                 </select>
-
                 <label for="disabledInput" class="col-sm-1 col-form-label">Diff with: </label>
                 <select id="revisions-diff" class="form-control-sm col-sm-3">
                     <option value="">Select a revision</option>
@@ -150,39 +133,32 @@
                     </option>
                     {% endfor %}
                 </select>
-
             </div>
-
         </form>
         <!-- -------------------------------------------------------------------------------------- -->
-
     </div>
     <!---------- container----------------- -->
-
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col">
+            <div class="col-sm-6">
                 <div class="form-group">
                     <label for="code">Scilab code:</label>
                     <textarea id="code" class="form-control" rows="5" placeholder="Write a new code or select existing from above category..." wrap="hard">{{ code }}</textarea>
                     <a id="execute" class="btn btn-outline-danger"><span id="execute-inner">Execute</span></a>
-
                 </div>
             </div>
-            <div class="col">
-                <div class="form-group">
+            <div class="col-sm-6">
+                <div class="form-group" >
                     <label for="result">Result:</label>
                     <textarea id="result" class="form-control" rows="5"></textarea>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
     <script src="{% static 'website/js/placeholder.js'%}"></script>
     <script src="{% static 'website/js/cloud.js' %}"></script>
 </body>
-
 </html>
