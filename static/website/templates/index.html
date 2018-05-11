@@ -1,231 +1,188 @@
-{% load static %} 
-<html>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script> {% if err_msg %}
-    alert("{{ err_msg }}");
-    {% endif %} 
-</script>
+    <title>Scilab on cloud</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'website/bootstrap-4.1.0/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'website/bootstrap-css/custom.css' %}">
+    <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet" />
+    <link href="{% static 'website/css/fullscreen.css'%}" rel="stylesheet" />
+    <link href="{% static 'website/css/monokai.css' %}" rel="stylesheet" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'website/images/favicon.ico' %}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="{% static 'website/bootstrap-4.1.0/js/bootstrap.min.js' %}"></script>
+
+    <style type="text/css">
+        body {
+            background: gray !important;
+        }
+        /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+    </style>
 </head>
-{% include 'head.html' %}
+
 <body>
-    <div id="header-wrapper">
-        <div id="header-inner">
-            <div id="topbar">
-                <img id="home-logo" src="{% static 'website/images/home-logo.png' %}">
-                <span id="title">
-                    Scilab on Cloud
-                    </span>
-                <div id="navlinks">
-                    <ul>
-                        {% if user and not user.is_anonymous %} {% if not user.is_staff %}
-                        <li><a id = "search_book" data-toggle="modal" data-target="#search_wrapper" href="">Search Book</a></li>
-                        <li><a class="node" data-key="about" href="#">About</a></li>
-                        <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                        <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                        {% else %}
-                        <li><a data-key="review-interface" href="/review">Review Interface</a></li>
-                        {% endif %}
-                        <li><a data-key="logout" href="/logout">Log out</a></li>
-                        <li> <a style="color:red">Hello, {{ user.get_full_name }}!</a></li>
-                        {% else %}
-                        <li><a id = "search_book" data-toggle="modal" data-target="#search_wrapper" href="">Search Book</a></li>
-                        <li><a class="node" data-key="about" href="#">About</a></li>
-                        <li><a class="node" data-key="invitation" href="#">Invitation</a></li>
-                        <li><a class="node" data-key="contact" href="#">Contact Us</a></li>
-                         <!-- <li><a class="node" data-key="login" href="#">Log In</a></li> -->
-                        {% endif %}
-                        <img id="scilab-logo" src="{% static 'website/images/scilab-logo.png'%}" width="100px">
-                    </ul>
-                    <div class="clearfix"></div>
-                </div>
-                <!-- /#navlinks -->
-            </div>
-            <!-- /#topbar -->
+
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Scilab on cloud</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Search Book</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Invitation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"> Old Scilab on Cloud</a>
+                </li>
+            </ul>
         </div>
-        <!-- /#header-inner -->
+    </nav>
+    <br>
+    <div class="container small">
+        <form class="col-12">
+
+            <div id="main-category-wrapper" class="form-row form-group">
+
+                <!-- <div class="col-sm-10"> -->
+                <label class="col-sm-2 col-form-label">Main Category :</label>
+                <select id="main_categories" class="form-control-sm col-sm-10">
+                    <option value="0">Select Main Category</option>
+                    {% for category in catg %} {% if maincat_id == category.category_id %}
+                    <option value="{{ category.category_id }}" selected>{{ category.maincategory }}</option>
+                    {% else %}
+                    <option value="{{ category.category_id }}">{{ category.maincategory }}</option>
+                    {% endif %} {% endfor %}
+                </select>
+                <!--  </div> -->
+            </div>
+
+            <div id="category-wrapper" class="form-row form-group">
+                <label for="disabledInput" class="col-sm-2 col-form-label">Sub Category :</label>
+                <select id="categories" class="form-control-sm col-sm-8">
+                    <option value="0">Select Subcategory</option>
+                    {% for category in subcatg %} {% if subcategory_id == category.subcategory_id %}
+                    <option value="{{ category.subcategory_id }}" selected>{{ category.subcategory }}</option>
+                    {% else %}
+                    <option value="{{ category.subcategory_id }}">{{ category.subcategory }}</option>
+                    {% endif %} {% endfor %}
+                </select>
+
+                <a href="#" class="extra-link col-sm-2" id="contributor">+Contributor</a>
+
+            </div>
+
+            <div id="books-wrapper" class="form-row form-group">
+                <label for="disabledInput" class="col-sm-2 col-form-label">Book :</label>
+                <select id="books" class="form-control-sm col-sm-8">
+                    <option value="">Select Book </option>
+                    {% for book in books %} {% if book_id == book.id %}
+                    <option value="{{ book.id }}" selected>{{ book.book }} (by {{ book.author }})</option>
+                    {% else %}
+                    <option value="{{ book.id }}">{{ book.book }} (by {{ book.author }})</option>
+                    {% endif %} {% endfor %}
+                </select>
+                <a href="#" class="extra-link col-sm-2" id="download-book">Download Book</a>
+
+            </div>
+
+            <div id="chapters-wrapper" class="form-row form-group">
+                <label for="disabledInput" class="col-sm-2 col-form-label">Chapter :</label>
+                <select id="chapters" class="form-control-sm col-sm-8">
+                    <option value="">Select Chapter</option>
+                    {% for chapter in chapters %} {% if chapter_id == chapter.id %}
+                    <option value="{{ chapter.id }}" selected>{{ chapter.number }} - {{ chapter.name }}</option>
+                    {% else %}
+                    <option value="{{ chapter.id }}">{{ chapter.number }} - {{ chapter.name }}</option>
+                    {% endif %} {% endfor %}
+                </select>
+                <a href="#" class="extra-link col-sm-2" id="download-chapter">Download Chapter</a>
+
+            </div>
+
+            <div id="examples-wrapper" class="form-row form-group">
+
+                <label for="disabledInput" class="col-sm-2 col-form-label">Example :</label>
+                <select id="examples" class="form-control-sm col-sm-8">
+                    <option value="0">Select Example</option>
+                    {% for example in examples %} {% if eid == example.id %}
+                    <option value="{{ example.id }}" selected>{{ example.number }} - {{ example.caption }}</option>
+                    {% else %}
+                    <option value="{{ example.id }}">{{ example.number }} - {{ example.caption }}</option>
+                    {% endif %} {% endfor %}
+                </select>
+
+                <a href="#" class="extra-link col-sm-2" id="download-example">Download Example</a>
+            </div>
+
+            <div id="revisions-wrapper" class="form-row form-group">
+                <label for="disabledInput" class="col-sm-2 col-form-label">Revision: </label>
+                <select id="revisions" class="form-control-sm col-sm-3">
+                    <option value="">Select a revision</option>
+                    {% for revision in revisions %} {% if revision.sha == commit_sha %}
+                    <option value="{{ revision.sha }}" selected>{{ forloop.counter }} - {{ revision.commit.message }}</option>
+                    {% else %}
+                    <option value="{{ revision.sha }}">
+                        {{ forloop.counter }} - {{ revision.commit.message }}
+                    </option>
+                    {% endif %} {% endfor %}
+                </select>
+
+                <label for="disabledInput" class="col-sm-1 col-form-label">Diff with: </label>
+                <select id="revisions-diff" class="form-control-sm col-sm-3">
+                    <option value="">Select a revision</option>
+                    {% for revision in revisions %}
+                    <option value="{{ revision.sha }}">
+                        {{ forloop.counter }} - {{ revision.commit.message }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+        </form>
+        <!-- -------------------------------------------------------------------------------------- -->
+
     </div>
-    <!-- /#header-wrapper -->
-    <div id="content-wrapper">
-        <div id="content-inner">
-            <div id="selectors">
-                <div id="main-category-wrapper">
-                {% include 'ajax-maincategories.html' %}
-                </div>
-                <div id="category-wrapper">
-                {% include 'ajax-subcategories.html' %}
-                </div>
-                <div id="books-wrapper">
-                    {% include 'ajax-books.html' %}
-                    <a href="#" class="extra-link" id="download-book">Download Book</a>
-                </div>
-                <div id="chapters-wrapper">
-                    {% include 'ajax-chapters.html' %}
-                    <a href="#" class="extra-link" id="download-chapter">Download Chapter</a>
-                </div>
-                <div id="examples-wrapper">
-                    {% include 'ajax-examples.html' %}
-                    <a href="#" class="extra-link" id="download-example">Download Example</a>
-                </div>
-                <div id="revisions-wrapper">
-                    {% include 'ajax-revisions.html' %}
+    <!---------- container----------------- -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="code">Scilab code:</label>
+                    <textarea id="code" class="form-control" rows="5" placeholder="Write a new code or select existing from above category..." wrap="hard">{{ code }}</textarea>
+                    <a id="execute" class="btn btn-outline-danger"><span id="execute-inner">Execute</span></a>
+
                 </div>
             </div>
-            <div id="content">
-                <div id="input">
-                    <label>
-                            Scilab Code
-                            {% if ex_views_count == NULL %}
-                                        <i class="views-count fa fa-eye" id="example_views_count" aria-hidden="true">
-                                        </i>
-                                    {% else %}
-                                    <i class="views-count fa fa-eye" id="example_views_count"  aria-hidden="true">
-                                        {{ ex_views_count }}
-                                    </i>
-                                    {% endif %}
-                            <span id="review-link">
-                            {% if review %}
-                            <a href="{{ review_url}}" id="review" target="_blank">{{ review }} Review
-                            </a>
-                            {% else %}
-                            <a href="#" id="review" target="_blank"></a>
-                            {% endif %}
-                            </span>
-                            <span id="controls">
-                            <a href="#" id="toggle-code">
-                            <img src="{% static 'website/images/icon-toggle.png'%}">
-                            </a>
-                            <a href="#" id="fullscreen-code">
-                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                            </a>
-                            </span> <!-- /#controls -->
-                        </label>
-                    <form>
-                        <textarea id="code" placeholder="Write a new code or select existing from above category...">{{ code }}</textarea>
-                    </form>
+            <div class="col">
+                <div class="form-group">
+                    <label for="result">Result:</label>
+                    <textarea id="result" class="form-control" rows="5"></textarea>
                 </div>
-                <!-- /#input -->
-                <a id="execute" class="button"><span id="execute-inner">Execute</span></a>
-                <!-- <a id="submit-revision" class="button">Submit a revision</a> -->
-                <div id="output">
-                    <label>
-                            Result
-                            <span id="controls">
-                            <a href="#" id="toggle-result">
-                            <img src="{% static 'website/images/icon-toggle.png'%}">
-                            </a>
-                            <a href="#" id="fullscreen-result">
-                            <img src="{% static 'website/images/icon-fullscreen.png'%}">
-                            </a>
-                            </span><!-- /#controls -->
-                        </label>
-                    <textarea id="result"></textarea>
-                </div>
-                <!-- /#output -->
-                <a id="bug" class="button">Report bug / Give Feedback</a>
-                <div id="credits">
-                    <small>
-                        Disclaimer: 
-                        Every effort is made to make all the codes to run 
-                        smoothly. However, Scilab Cloud takes no responsibility 
-                        for, and will not be liable for, the website being 
-                        temporarily unavailable due to technical issues and 
-                        code not producing accurate outputs due to any toolboxes.
-                        Scilab is a trademark of Inria (registered at the INPI 
-                        for France and the rest of the World) 
-                        and Scilab Enterprises is granted exclusive rights for 
-                        Scilab Trademark.
-                        </small> Copyright IIT Bombay
-                </div>
-                <!-- /#credits -->
             </div>
-            <!-- /#content -->
         </div>
-        <!-- /#content-inner -->
-    </div>
-    <!-- /#content-wrapper -->
-    <!-- <div id="plotbox-wrapper">
-        <div id="plotbox"></div>
-        <span><a href="#" id="plot_download" download="Plot">Download</a></span>
-    </div> -->
-    <!-- Modal -->
-<div id="plotbox-wrapper" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div id="plotbox" class="modal-body">
-      </div>
-      <div class="modal-footer">
-        <span><a href="#" id="plot_download" download="Plot" class="btn btn-primary btn-sm pull-left">Download</a></span>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
     </div>
 
-  </div>
-</div>
-
-    <!-- #plotbox-wrapper -->
-    <div id="databox-wrapper">
-        {% include 'ajax-contributor.html' %}
-        <div id="databox"></div>
-    </div>
-    <!-- /#databox-wrapper -->
-        <div id="node-wrapper">
-    </div>
-    <div id="bug-form-wrapper">
-    </div>
-    <!-- /#databox-wrapper -->
-    <div id="submit-revision-wrapper">
-    </div>
-    <div id="submit-revision-error-wrapper">
-    <p>{{ error_message }}</p>
-    </div>
-    <div id="diff-wrapper">
-        {% include 'diff.html' %}
-    </div>
-    {% include 'footer.html' %}
-    <script src="{% static 'website/js/cloud.js'%}"></script>
-    {% csrf_token %}
-
-<!-- Modal -->
-<div id="search_wrapper" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Search book</h4>
-        <div class="input-group">
-            <input id="search-input" type="text" class="form-control" placeholder="Enter book or author name">
-                <span class="input-group-btn">
-                    <button id="search" class="btn btn-default" type="button">Search!</button>
-                </span>
-        </div>
-      </div>
-      <div class="modal-body">
-        <div class="col-xs-12">
-            <div id="relevant" class="col-xs-12 col-sm-6 col-md-3 col-lg-4" >
-            </div>
-            <div id="popular" class="col-xs-12 col-sm-6 col-md-3 col-lg-4" style="background-color:#bbb;word-wrap: break-word;overflow:auto;">
-            </div>
-            <div id="recent" class="col-xs-12 col-sm-6 col-md-3 col-lg-4"  style="background-color:#aaa;word-wrap: break-word;overflow:auto;">
-            </div>
-        <br>
-        </div>
-      <div>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
+    <script src="{% static 'website/js/codemirror.js'%}"></script>
+    <script src="{% static 'website/js/javascript.js'%}"></script>
+    <script src="{% static 'website/js/fullscreen.js'%}"></script>
+    <script src="{% static 'website/js/placeholder.js'%}"></script>
+    <script src="{% static 'website/js/cloud.js' %}"></script>
 </body>
 
 </html>
