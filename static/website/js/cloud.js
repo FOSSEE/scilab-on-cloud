@@ -976,5 +976,13 @@ $(document).ready(function() {
 e.preventDefault();
 
  });
+//on hover pop the disclaimer
+/*
+ $("#disclaimer").hover(function() {
+           $('#disclaimer-text').modal({
+        show: true
+    });
+  });
+ */
  
 }); //document.readOnly()

@@ -14,12 +14,6 @@
     <script src="{% static 'website/bootstrap-4.1.0/js/jquery.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/popper.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/bootstrap.min.js' %}"></script>
-    <style type="text/css">
-        body {
-            background: gray !important;
-        }
-        /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
-    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
@@ -138,13 +132,14 @@
         <!-- -------------------------------------------------------------------------------------- -->
     </div>
     <!---------- container----------------- -->
-    <div class="container-fluid">
+    <div class="container-fluid bg-dark text-light">
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="code">Scilab code:</label>
                     <textarea id="code" class="form-control" rows="5" placeholder="Write a new code or select existing from above category..." wrap="hard">{{ code }}</textarea>
-                    <a id="execute" class="btn btn-outline-danger"><span id="execute-inner">Execute</span></a>
+                    <br>
+                    <a id="execute" class="btn btn-primary"><span id="execute-inner">Execute</span></a>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -155,6 +150,50 @@
             </div>
         </div>
     </div>
+    <!---------- container----------------- -->
+    <div class="container-fluid bg-light text-dark">
+        <div class="row">
+                <div class="col">
+                <center><a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a></center>
+                </div>
+        </div>
+    </div>
+<!-- -------------------------------- -->
+    <!---------- container----------------- -->
+    <div class="container-fluid bg-dark text-light">
+        <div class="row">
+                <div class="col">
+                <center><p class="text-justify">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p></center>
+                </div>
+        </div>
+    </div>
+<!-- -------------------------------- -->
+<!-- The Modal -->
+  <div class="modal" id="disclaimer-text">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Disclaimer</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+         <p class="text-justify">Every effort is made to make all the codes to run smoothly. However, Scilab Cloud takes no responsibility for, and will not be liable for, the website being temporarily unavailable due to technical issues and code not producing accurate outputs due to any toolboxes.
+         </p>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+<!-- -------------------------------- -->
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
