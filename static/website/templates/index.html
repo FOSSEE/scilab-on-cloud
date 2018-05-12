@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Scilab on cloud</title>
     <meta charset="utf-8">
@@ -14,9 +15,16 @@
     <script src="{% static 'website/bootstrap-4.1.0/js/jquery.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/popper.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/bootstrap.min.js' %}"></script>
+    <style>
+        .bg-dark {
+            background-color: #4E3419!important;
+        }
+    </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <img class="navbar-brand" src="{% static 'website/images/home-logo.png' %}" alt="logo" style="height:6vh;width:5vh">
         <a class="navbar-brand" href="#">Scilab on cloud</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
@@ -24,19 +32,24 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Search Book</a>
+                    <a class="nav-link" href="" id="search_book" data-toggle="modal" data-target="#search_wrapper">Search Book</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="" id="about-us" data-toggle="modal" data-target="#about_wrapper">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Invitation</a>
+                    <a class="nav-link" href="" id="invitation" data-toggle="modal" data-target="#invitation_wrapper">Invitation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Contact Us</a>
+                    <a class="nav-link" href="" id="conatc" data-toggle="modal" data-target="#contact_wrapper">Contact Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"> Old Scilab on Cloud</a>
+                    <a class="nav-link" href="https://old.cloud.scilab.in/" target="_blank"> Old Scilab on Cloud</a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://scilab.in" target="_blank">
+                        <img class="navbar-brand" src="{% static 'website/images/scilab-logo.png' %}" alt="logo" style="height:7vh;width:15vh">
+                    </a>
                 </li>
             </ul>
         </div>
@@ -54,7 +67,6 @@
                     <option value="{{ category.category_id }}">{{ category.maincategory }}</option>
                     {% endif %} {% endfor %}
                 </select>
-                <!--  </div> -->
             </div>
 
             <div id="category-wrapper" class="form-row form-group">
@@ -132,18 +144,19 @@
         <!-- -------------------------------------------------------------------------------------- -->
     </div>
     <!---------- container----------------- -->
-    <div class="container-fluid bg-dark text-light">
+    <div class="container-fluid text-dark" style="background: #eeeeee;">
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="code">Scilab code:</label>
                     <textarea id="code" class="form-control" rows="5" placeholder="Write a new code or select existing from above category..." wrap="hard">{{ code }}</textarea>
                     <br>
-                    <a id="execute" class="btn btn-primary"><span id="execute-inner">Execute</span></a>
+                    <a id="execute" class="btn btn-dark text-white"><span id="execute-inner">Execute</span></a>
+
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="form-group" >
+                <div class="form-group">
                     <label for="result">Result:</label>
                     <textarea id="result" class="form-control" rows="5"></textarea>
                 </div>
@@ -153,51 +166,182 @@
     <!---------- container----------------- -->
     <div class="container-fluid bg-light text-dark">
         <div class="row">
-                <div class="col">
+            <div class="col">
                 <center><a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a></center>
-                </div>
+            </div>
         </div>
     </div>
-<!-- -------------------------------- -->
+    <!-- -------------------------------- -->
     <!---------- container----------------- -->
     <div class="container-fluid bg-dark text-light">
         <div class="row">
-                <div class="col">
-                <center><p class="text-justify">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p></center>
+            <div class="col">
+                <center>
+                    <p class="text-justify">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p>
+                </center>
+            </div>
+        </div>
+    </div>
+    <!-- -------------------------------- -->
+    <!-- disclaimer modal -->
+    <div class="modal" id="disclaimer-text">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Disclaimer</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p class="text-justify">Every effort is made to make all the codes to run smoothly. However, Scilab Cloud takes no responsibility for, and will not be liable for, the website being temporarily unavailable due to technical issues and code not producing accurate outputs due to any toolboxes.
+                    </p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
         </div>
     </div>
-<!-- -------------------------------- -->
-<!-- The Modal -->
-  <div class="modal" id="disclaimer-text">
-    <div class="modal-dialog">
-      <div class="modal-content">
-      
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Disclaimer</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <!-- -------------disclaimer modal end------------------- -->
+    <!-- about us -->
+    <div class="modal" id="about_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title text-danger">About Scilab on GARUDA Cloud.</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p class="text-justify">
+                        Scilab on Cloud facilitates execution of the codes for particular example(s) online. The results can then be verified with the solved example(s) from the textbook. It is also possible to change the values of the variables and in fact, the code itself, and execute it. In addition to the given examples, one can also copy and paste (or) write a new code in the input box provided and execute the same. <a href="http://scilab.in/scilab-on-cloud" target="_blank">Read more..</a>
+                    </p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
         </div>
-        
-        <!-- Modal body -->
-        <div class="modal-body">
-         <p class="text-justify">Every effort is made to make all the codes to run smoothly. However, Scilab Cloud takes no responsibility for, and will not be liable for, the website being temporarily unavailable due to technical issues and code not producing accurate outputs due to any toolboxes.
-         </p>
-        </div>
-        
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-        
-      </div>
     </div>
-  </div>
-<!-- -------------------------------- -->
+    <!-- --------------------about us modal ends------------------ -->
+    <!-- invitation -->
+    <div class="modal" id="invitation_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Contribute to Scilab Textbook Companion Project / Scilab on GARUDA Cloud.</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p class="text-justify">
+                        The FOSSEE team has created a submission portal that allows the code for each example to be uploaded
+                        individually. The Textbook Companion Project aims to port solved examples from standard 
+                        textbooks using an open source software system, such as Scilab.
+                        <a href="http://scilab.in/Textbook_Companion_Project" target="_blank">Read more..</a>
+                    </p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- --------------------contact usmodal ends------------------ -->
+    <!-- invitation -->
+    <div class="modal" id="contact_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Send us your valuable suggestions and feedback that shall enable us to enhance our work.</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p class="text-justify">
+                        If you wish to contribute to our activities such as <b>Lab Migration, Textbook 
+                        Companion, SciLinks, Scilab on Cloud, Scilab on Aakash,</b> please write to
+                        <a href="mailto: contact@scilab.in">contact@scilab.in</a>. For feedback on 
+                        Lab Migration (or) Textbook Companion,
+                        <a href="http://scilab.in/feedbacks">click here</a>.
+                    </p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- --------------------contact modal ends------------------ -->
+    <!-- Search Modal -->
+
+    <div class="modal" id="search_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Search book</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input id="search-input" type="text" class="form-control" placeholder="Enter book or author name">
+                        <span class="input-group-btn">
+                    <button id="search" class="btn btn-info" type="button">Search</button>
+                </span>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div id="relevant" class="col-4 small">
+                        </div>
+                        <div id="popular" class="col-4 small bg-light text-danger" style="word-wrap: break-word;overflow:auto;">
+                        </div>
+                        <div id="recent" class="col-4 small bg-light text-danger" style="word-wrap: break-word;overflow:auto;">
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ---------- search modal end ----------------- -->
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
     <script src="{% static 'website/js/placeholder.js'%}"></script>
     <script src="{% static 'website/js/cloud.js' %}"></script>
 </body>
+
 </html>
