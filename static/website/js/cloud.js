@@ -609,7 +609,7 @@ $(document).ready(function() {
     /********************************************/
     /******** Execute the code ******************/
     /********************************************/
-    $plotbox_wrapper = $("#plotbox-wrapper");
+    $plotbox_wrapper = $("#plotbox_wrapper");
     $plotbox = $("#plotbox");
 
     $(document).on("click", "#execute", function() {

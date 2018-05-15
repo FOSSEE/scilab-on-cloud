@@ -6,6 +6,7 @@
     <title>Scilab on cloud</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'website/bootstrap-4.1.0/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'website/bootstrap-css/custom.css' %}">
     <link href="{% static 'website/css/codemirror.css' %}" rel="stylesheet" />
@@ -148,7 +149,44 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="code">Scilab code:</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="code">Scilab code:</label>
+                        </div>
+                        <div class="col-1 float-left">
+                            {% if ex_views_count == NULL %}
+                            <i class="views-count fa fa-eye" id="example_views_count" aria-hidden="true">
+                                        </i> {% else %}
+                            <i class="views-count fa fa-eye" id="example_views_count" aria-hidden="true">
+                                        {{ ex_views_count }}
+                                    </i> {% endif %}
+                        </div>
+                        <div class="col-3"></div>
+                        <div class="col-2 text-primary">
+                            <span id="review-link">
+                            {% if review %}
+                            <a href="{{ review_url}}" id="review" target="_blank">{{ review }} Review
+                            </a>
+                            {% else %}
+                            <a href="#" id="review" target="_blank"></a>
+                            {% endif %}
+                            </span>
+                        </div>
+                        <div class="col-1">
+                            <div class="float-right">
+                                <a href="#" id="toggle-code">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <div class="float-right">
+                                <a href="#" id="fullscreen-code">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <textarea id="code" class="form-control" rows="5" placeholder="Write a new code or select existing from above category..." wrap="hard">{{ code }}</textarea>
                     <br>
                     <a id="execute" class="btn btn-dark text-white"><span id="execute-inner">Execute</span></a>
@@ -157,8 +195,28 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label for="result">Result:</label>
+                    <div class="row">
+                        <div class="col-10">
+                            <label for="result">Result:</label>
+                        </div>
+                        <div class="col-1">
+                            <div class="float-right">
+                                <a href="#" id="toggle-code">
+                                    <img src="{% static 'website/images/icon-toggle.png'%}">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <div class="float-right">
+                                <a href="#" id="fullscreen-code">
+                                    <img src="{% static 'website/images/icon-fullscreen.png'%}">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <textarea id="result" class="form-control" rows="5"></textarea>
+                    <br>
+                    <a id="bug" href="" class="btn btn-dark text-white float-right" data-toggle="modal" data-target="#bug_form_wrapper">Report bug / Give Feedback</a>
                 </div>
             </div>
         </div>
@@ -190,7 +248,7 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Disclaimer</h4>
+                    <h4 class="modal-title text-primary">Disclaimer</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
@@ -202,7 +260,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
@@ -216,7 +274,7 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title text-danger">About Scilab on GARUDA Cloud.</h4>
+                    <h4 class="modal-title text-primary">About Scilab on GARUDA Cloud.</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
@@ -229,7 +287,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
@@ -243,29 +301,27 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title text-danger">Contribute to Scilab Textbook Companion Project / Scilab on GARUDA Cloud.</h5>
+                    <h5 class="modal-title text-primary">Contribute to Scilab Textbook Companion Project / Scilab on GARUDA Cloud.</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
                 <!-- Modal body -->
                 <div class="modal-body">
                     <p class="text-justify">
-                        The FOSSEE team has created a submission portal that allows the code for each example to be uploaded
-                        individually. The Textbook Companion Project aims to port solved examples from standard 
-                        textbooks using an open source software system, such as Scilab.
+                        The FOSSEE team has created a submission portal that allows the code for each example to be uploaded individually. The Textbook Companion Project aims to port solved examples from standard textbooks using an open source software system, such as Scilab.
                         <a href="http://scilab.in/Textbook_Companion_Project" target="_blank">Read more..</a>
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
         </div>
     </div>
-    <!-- --------------------contact usmodal ends------------------ -->
+    <!-- --------------------contact us modal ends------------------ -->
     <!-- invitation -->
     <div class="modal" id="contact_wrapper">
         <div class="modal-dialog">
@@ -273,7 +329,7 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title text-danger">Send us your valuable suggestions and feedback that shall enable us to enhance our work.</h5>
+                    <h5 class="modal-title text-primary">Send us your valuable suggestions and feedback that shall enable us to enhance our work.</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
@@ -282,21 +338,20 @@
                     <p class="text-justify">
                         If you wish to contribute to our activities such as <b>Lab Migration, Textbook 
                         Companion, SciLinks, Scilab on Cloud, Scilab on Aakash,</b> please write to
-                        <a href="mailto: contact@scilab.in">contact@scilab.in</a>. For feedback on 
-                        Lab Migration (or) Textbook Companion,
+                        <a href="mailto: contact@scilab.in">contact@scilab.in</a>. For feedback on Lab Migration (or) Textbook Companion,
                         <a href="http://scilab.in/feedbacks">click here</a>.
                     </p>
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
         </div>
     </div>
-    <!-- --------------------contact modal ends------------------ -->
+    <!-- --------------------invitation modal ends------------------ -->
     <!-- Search Modal -->
 
     <div class="modal" id="search_wrapper">
@@ -322,12 +377,58 @@
                     <div class="row">
                         <div id="relevant" class="col-4 small">
                         </div>
-                        <div id="popular" class="col-4 small bg-light text-danger" style="word-wrap: break-word;overflow:auto;">
+                        <div id="popular" class="col-4 small bg-light text-primary" style="word-wrap: break-word;overflow:auto;">
                         </div>
-                        <div id="recent" class="col-4 small bg-light text-danger" style="word-wrap: break-word;overflow:auto;">
+                        <div id="recent" class="col-4 small bg-light text-primary" style="word-wrap: break-word;overflow:auto;">
                         </div>
                     </div>
                 </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- ---------- search modal end ----------------- -->
+    <!-- bug form-->
+    <div class="modal" id="bug_form_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary">Report bug/ feedback</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form id="bug-form" action="" method="POST" accept-charset="utf-8"> {% csrf_token %} {{ form.example }}
+                        <div id="non-field-errors">
+                        </div>
+                        <div id="id_issue_wrapper" class="wrapper">
+                            <label>Type of issue <span class="req">*</span>:</label>
+                            {{ form.issue }}
+                        </div>
+
+                        <div id="id_description_wrapper" class="wrapper">
+                            <label>Description<span class="req">*</span>:</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div id="id_email_wrapper" class="wrapper">
+                            <span id="email-wrapper">
+            {{ form.email.errors }}
+            <label>Enter Your Email<span class="req">*</span>:</label>
+                            {{ form.email }}
+                            </span>
+                        </div>
+                        <input type="submit" id="bug-form-submit" class="btn btn-primary">
+                    </form>
+                </div>
+
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -336,12 +437,38 @@
             </div>
         </div>
     </div>
-    <!-- ---------- search modal end ----------------- -->
+    <!-- --------------------bug form modal ends------------------ -->
+    <!-- -plotbox wrapper ---------------------------------- -->
+    <div class="modal" id="plotbox_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary"></h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div id="plotbox" class="modal-body">
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- -- plotbox wrapper ---------------------------------- -->
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
     <script src="{% static 'website/js/placeholder.js'%}"></script>
     <script src="{% static 'website/js/cloud.js' %}"></script>
+    {% csrf_token %}
 </body>
 
 </html>

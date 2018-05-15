@@ -11,7 +11,7 @@ from django.core.mail import EmailMultiAlternatives
 # importing the local variables
 from soc.settings import PROJECT_DIR
 from soc.config import (BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,
-                        SCILAB_3, SCILAB_4, SCILAB_5, FROM_EMAIL, TO_EMAIL,
+                        SCILAB_3, SCILAB_4, SCILAB_5, SCILAB_6, FROM_EMAIL, TO_EMAIL,
                         CC_EMAIL, BCC_EMAIL, SITE)
 from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionSubCategoryList,
@@ -65,7 +65,7 @@ class ScilabInstance(object):
     def spawn_instance(self):
         if (self.count < self.maxsize):
             SCILAB_BIN = BIN + '/'
-            SCILAB_BIN += SCILAB_5
+            SCILAB_BIN += SCILAB_6
             SCILAB_BIN += '/bin/scilab-adv-cli'
             new_instance = pexpect.spawn(SCILAB_BIN)
             self.count += 1
@@ -165,13 +165,13 @@ class ScilabInstance(object):
         try:
             active_instance.expect('\[0m ', timeout=30)
             active_instance.expect('', timeout=30)
-            output = self.trim(active_instance.before.decode('UTF-8'))
-            self.instances.append(active_instance)
+            output = self.trim(active_instance.before.decode('utf-8'))
+            self.instances.append(active_instance.decode('utf-8'))
 
         except:
-            active_instance.before += "Exception Occured: It seems that you are\
-            running an infinite code"
-            output = self.trim(active_instance.before)
+            active_instance.before += b'Exception Occured: It seems that you \
+            are running an infinite code'
+            output = self.trim(active_instance.before.decode('utf-8'))
             active_instance.close()
             self.count -= 1
             if(self.count == 0):
@@ -232,6 +232,7 @@ class ScilabInstance(object):
                 )
             msg.content_subtype = "html"
             #msg.send()
+            print (data)
         return data
 
     def trim(self, output):

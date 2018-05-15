@@ -6,6 +6,7 @@ import json as simplejson
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.core import serializers
+from django.template import loader
 
 # from django.http import HttpResponse, HttpResponseRedirect
 # from django.shortcuts import render, redirect
@@ -309,9 +310,9 @@ def bug_form(request):
         form = BugForm()
         context['form'] = BugForm()
         context.update(csrf(request))
-        response = render_to_string('bug-form.html', context)
-        return HttpResponse(simplejson.dumps(response),
-                            content_type='application/json')
+        template = loader.get_template('index.html')
+        print (context)
+        return HttpResponse(template.render(context, request))
 
 
 def bug_form_submit(request):
