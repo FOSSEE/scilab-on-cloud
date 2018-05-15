@@ -166,11 +166,11 @@ class ScilabInstance(object):
             active_instance.expect('\[0m ', timeout=30)
             active_instance.expect('', timeout=30)
             output = self.trim(active_instance.before.decode('utf-8'))
-            self.instances.append(active_instance.decode('utf-8'))
+            self.instances.append(active_instance)
 
         except:
-            active_instance.before += b'Exception Occured: It seems that you \
-            are running an infinite code'
+            active_instance.before += 'Exception Occured: It seems that you \
+            are running an infinite code'.encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
             active_instance.close()
             self.count -= 1
