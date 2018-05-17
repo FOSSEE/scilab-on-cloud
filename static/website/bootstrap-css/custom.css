@@ -12,7 +12,7 @@ div.form-inline label.col-md-4{
      text-decoration: none;
      background-color: #dc3545!important 
 }
- body, #diff_wrapper .modal-dialog {
+ #diff_wrapper .modal-dialog {
     /* Width */
      max-width: 100%;
      width: auto !important;
