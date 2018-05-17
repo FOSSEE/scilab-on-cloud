@@ -16,11 +16,6 @@
     <script src="{% static 'website/bootstrap-4.1.0/js/jquery.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/popper.min.js' %}"></script>
     <script src="{% static 'website/bootstrap-4.1.0/js/bootstrap.min.js' %}"></script>
-    <style>
-        .bg-dark {
-            background-color: #4E3419!important;
-        }
-    </style>
 </head>
 
 <body>
@@ -201,14 +196,14 @@
                         </div>
                         <div class="col-1">
                             <div class="float-right">
-                                <a href="#" id="toggle-code">
+                                <a href="#" id="toggle-result">
                                     <img src="{% static 'website/images/icon-toggle.png'%}">
                                 </a>
                             </div>
                         </div>
                         <div class="col-1">
                             <div class="float-right">
-                                <a href="#" id="fullscreen-code">
+                                <a href="#" id="fullscreen-result">
                                     <img src="{% static 'website/images/icon-fullscreen.png'%}">
                                 </a>
                             </div>
@@ -221,22 +216,18 @@
             </div>
         </div>
     </div>
-    <!---------- container----------------- -->
-    <div class="container-fluid bg-light text-dark">
-        <div class="row">
-            <div class="col">
-                <center><a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a></center>
-            </div>
-        </div>
-    </div>
     <!-- -------------------------------- -->
     <!---------- container----------------- -->
     <div class="container-fluid bg-dark text-light">
         <div class="row">
-            <div class="col">
-                <center>
-                    <p class="text-justify">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p>
-                </center>
+            <div class="col text-center">
+                <a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a>
+                <p class="text-center">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p>
+                <p class="text-center">
+                    <a href="https://fossee.in" target="blank">FOSSEE,
+                </a>
+                    <a href="https://iitb.ac.in" target="blank"> IIT Bombay
+                </a>
             </div>
         </div>
     </div>
@@ -294,6 +285,51 @@
         </div>
     </div>
     <!-- --------------------about us modal ends------------------ -->
+    <!-- contributor -->
+    <div class="modal" id="contributor_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h6 class="modal-title text-primary"><u>Contributor details</u></h6>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Contributor name</td>
+                                <td><span id="full_name"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Mentor</td>
+                                <td><span id="faculty"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Book Reviewer</td>
+                                <td><span id="reviewer"></span></td>
+                            </tr>
+                            <tr>
+                                <td>College</td>
+                                <td><span id="university"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- --------------------contributor modal ends------------------ -->
+
     <!-- invitation -->
     <div class="modal" id="invitation_wrapper">
         <div class="modal-dialog">
@@ -462,12 +498,60 @@
             </div>
         </div>
     </div>
-    <!-- -- plotbox wrapper ---------------------------------- -->
+    <!-- -- plotbox wrapper ends---------------------------------- -->
+    <!-- diff modal -->
+    <div class="modal" id="diff_wrapper">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">    Diff between [1]
+                        <strong>
+                            <span id="diff-first">
+                            </span>
+                        </strong>
+                        and [2]
+                        <strong>
+                            <span id="diff-second">
+                            </span>
+                        </strong>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <hr>
+
+                    <div>
+                        <span class="bg-success text-white">Green text</span> -> exist in [2] but not in [1]
+                        <br>
+                        <span class="bg-danger text-white">Red text</span> -> exist in [1] but not in [2]
+                    </div>
+
+                    <hr>
+
+                    <div id="diff-area" style="word-wrap: break-word;">
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- -- diff wrapper ends---------------------------------- -->
     <script src="{% static 'website/js/codemirror.js'%}"></script>
     <script src="{% static 'website/js/javascript.js'%}"></script>
     <script src="{% static 'website/js/fullscreen.js'%}"></script>
     <script src="{% static 'website/js/placeholder.js'%}"></script>
     <script src="{% static 'website/js/cloud.js' %}"></script>
+    <script src="{% static 'website/js/jsdiff.js'%}"></script>
     {% csrf_token %}
 </body>
 
