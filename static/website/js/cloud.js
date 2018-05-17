@@ -582,11 +582,8 @@ $(document).ready(function() {
                     example_id: example_id,
                 },
                 success: function(data) {
-                    console.log(data);
                     ajax_loader("clear");
-                    $("#diff-wrapper").lightbox_me({
-                        centered: false
-                    });
+                    $("#diff_wrapper").modal('show');
                     $("#diff-area").html(
                         diffString(
                             editor.getValue(),
@@ -594,11 +591,10 @@ $(document).ready(function() {
                         ));
                     $("#diff-first").html(
                         'editor code'
-                    )
-                    console.log(revName)
+                    );
                     $("#diff-second").html(
-                        revName)
-                    editor.setValue(data.code);
+                        revName);
+                    editor.setValue(data.code2);
                     initial_code = editor
                         .getValue()
                 }
@@ -707,32 +703,7 @@ $(document).ready(function() {
                 $('#university').html(
                     data.proposal_university
                 );
-                $("#databox-wrapper").lightbox_me({
-                    centered: true
-                });
-            }
-        });
-        e.preventDefault();
-    });
-    /********************************************/
-    /********************************************/
-    /****** Node popup handling *******************/
-    /********************************************/
-    $(document).on("click", ".node", function(e) {
-        $.ajax({
-            url: 'get_node/',
-            dataType: 'JSON',
-            type: 'GET',
-            data: {
-                key: $(this).data("key")
-            },
-            success: function(data) {
-                console.log(data);
-                $('#node-wrapper').html(
-                    data);
-                $("#node-wrapper").lightbox_me({
-                    centered: true
-                });
+                $("#contributor_wrapper").modal('show');
             }
         });
         e.preventDefault();
@@ -752,11 +723,9 @@ $(document).ready(function() {
             },
             success: function(data) {
                 console.log(data);
-                $('#bug-form-wrapper').html(
+                $('#bug_form_wrapper').html(
                     data);
-                $("#bug-form-wrapper").lightbox_me({
-                    centered: false
-                });
+                $("#bug_form_wrapper").modal('show');
             }
         });
         e.preventDefault();
