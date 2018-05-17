@@ -1,6 +1,4 @@
-----
-
-> #Scilab on Cloud
+#Scilab on Cloud
 
 Scilab on Cloud facilitates execution of the codes for particular example(s)
     online. The results can then be verified with the solved example(s) from the
