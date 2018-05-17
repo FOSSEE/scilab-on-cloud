@@ -52,12 +52,12 @@ function diffString( o, n ) {
 
     for ( var i = 0; i < out.n.length; i++ ) {
       if (out.n[i].text == null) {
-        str += '<ins>' + escape(out.n[i]) + nSpace[i] + "</ins>";
+        str += '<ins class="text-white">' + escape(out.n[i]) + nSpace[i] + "</ins>";
       } else {
         var pre = "";
 
         for (n = out.n[i].row + 1; n < out.o.length && out.o[n].text == null; n++ ) {
-          pre += '<del>' + escape(out.o[n]) + oSpace[n] + "</del>";
+          pre += '<del class="text-white">' + escape(out.o[n]) + oSpace[n] + "</del>";
         }
         str += " " + out.n[i].text + nSpace[i] + pre;
       }
