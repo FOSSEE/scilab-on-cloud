@@ -1,4 +1,5 @@
-#Scilab on Cloud
+Scilab on Cloud
+=============
 
 Scilab on Cloud facilitates execution of the codes for particular example(s)
     online. The results can then be verified with the solved example(s) from the
@@ -13,4 +14,4 @@ Click [here](https://cloud.scilab.in) to try scilab-on-cloud.
 ----
 >Developer
 
->FOSSEE Team, IIT Bombay
+FOSSEE Team, IIT Bombay
