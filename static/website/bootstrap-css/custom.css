@@ -1,0 +1,27 @@
+div.form-inline label.col-md-4{
+     justify-content: flex-end;
+}
+ #diff-area {
+     white-space: pre;
+}
+ ins {
+     text-decoration: none;
+     background-color: #28a745!important 
+}
+ del {
+     text-decoration: none;
+     background-color: #dc3545!important 
+}
+ body, #diff_wrapper .modal-dialog {
+    /* Width */
+     max-width: 100%;
+     width: auto !important;
+     display: inline-block;
+}
+ .modal.in{
+     text-align: center;
+}
+ .bg-dark {
+     background-color: #4E3419!important;
+}
+
