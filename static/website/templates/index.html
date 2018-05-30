@@ -221,16 +221,20 @@
     <div class="container-fluid bg-dark text-light">
         <div class="row">
             <div class="col text-center">
-                <a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a>
+
                 <p class="text-center">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p>
                 <p class="float-left">
                     <a href="https://fossee.in" target="blank">FOSSEE,
                 </a>
                     <a href="https://iitb.ac.in" target="blank"> IIT Bombay
                 </a>
+                </p>
+                <span class="float-center">
+                <a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a>
+                </span>
                 <p class="float-right">
-                <a href="https://stats.fossee.in/awstats/awstats.pl?config=cloud.scilab.in" target="_blank">View Stats <i class="fa fa-bar-chart text-danger"></i></a>
-                <p>
+                <a href="https://stats.fossee.in/awstats/awstats.pl?config=cloud.scilab.in" target="_blank">View Stats <i class="fa fa-bar-chart text-danger"></i></a></span>
+                </p>
             </div>
         </div>
     </div>
@@ -437,7 +441,7 @@
     <!-- -plotbox wrapper ---------------------------------- -->
     <div class="modal" id="plotbox_wrapper">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" style="width: auto;">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
@@ -452,6 +456,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
+                    <a href="" class="btn btn-info float-left" role="button" id="plot_download">Download</a>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                 </div>
 
