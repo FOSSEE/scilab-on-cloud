@@ -27,6 +27,7 @@
         </button>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav ml-auto">
+                {% if user and not user.is_anonymous %} {% if not user.is_staff %}
                 <li class="nav-item">
                     <a class="nav-link" href="" id="search_book" data-toggle="modal" data-target="#search_wrapper">Search Book</a>
                 </li>
@@ -37,8 +38,33 @@
                     <a class="nav-link" href="" id="invitation" data-toggle="modal" data-target="#invitation_wrapper">Invitation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="" id="conatc" data-toggle="modal" data-target="#contact_wrapper">Contact Us</a>
+                    <a class="nav-link" href="" id="contact" data-toggle="modal" data-target="#contact_wrapper">Contact Us</a>
                 </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/review" id="contact" data-toggle="modal" data-target="#review-interface">Review Interface</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a data-key="logout" href="/logout">Log out</a>
+                </li>
+                <li class="nav-item">
+                    <a style="color:red">Hello, {{ user.get_full_name }}!</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="" id="search_book" data-toggle="modal" data-target="#search_wrapper">Search Book</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="" id="about-us" data-toggle="modal" data-target="#about_wrapper">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="" id="invitation" data-toggle="modal" data-target="#invitation_wrapper">Invitation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="" id="contact" data-toggle="modal" data-target="#contact_wrapper">Contact Us</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="https://old.cloud.scilab.in/" target="_blank"> Old Scilab on Cloud</a>
                 </li>
