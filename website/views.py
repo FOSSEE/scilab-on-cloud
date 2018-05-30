@@ -349,7 +349,7 @@ def index(request):
                 'review_url': review_url,
             }
 
-            if not user.is_anonymous():
+            if not user.is_anonymous:
                 context['user'] = user
 
             template = loader.get_template('index.html')
