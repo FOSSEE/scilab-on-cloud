@@ -24,4 +24,13 @@ div.form-inline label.col-md-4{
  .bg-dark {
      background-color: #4E3419!important;
 }
-
+ .ajax-loader {
+     position: relative;
+     display: inline-block;
+     top: 1px;
+     left: 5px;
+     width: 16px;
+     height: 11px;
+     background: url("../images/ajax-loader.gif");
+     background-size: cover;
+}
