@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.core import serializers
 from django.template import loader
 
+
 # from django.http import HttpResponse, HttpResponseRedirect
 # from django.shortcuts import render, redirect
 from django.core.mail import EmailMultiAlternatives
@@ -152,7 +153,6 @@ def chapters(request):
                     'chapter': obj.name,
 
                 }
-                print (obj.name)
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
@@ -182,7 +182,6 @@ def examples(request):
                     'number': obj.number,
                     'caption': obj.caption,
                 }
-                print (obj.caption)
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
@@ -208,7 +207,6 @@ def revisions(request):
         request.session['filepath'] = example_file.filepath
 
         commits = utils.get_commits(file_path=example_file.filepath)
-        print (commits)
         response = {
             'commits': commits,
         }
@@ -302,6 +300,7 @@ def node(request):
                             content_type='application/json')
 
 
+@csrf_exempt
 def bug_form(request):
     context = {}
     response_dict = []
@@ -310,98 +309,95 @@ def bug_form(request):
         form = BugForm()
         context['form'] = BugForm()
         context.update(csrf(request))
-        template = loader.get_template('index.html')
-        print (context)
-        return HttpResponse(template.render(context, request))
-
+        response = render_to_string('bug-form.html', context)
+        return HttpResponse(simplejson.dumps(response),
+                            content_type='application/json')
+        #return render(request, 'bug-form.html', response)
 
 def bug_form_submit(request):
     context = {}
     response_dict = []
-    if request.is_ajax():
-        form = request.GET.get('form')
-        cat_id = request.GET.get('cat_id')
-        book_id = request.GET.get('book_id')
-        chapter_id = request.GET.get('chapter_id')
-        ex_id = request.GET.get('ex_id')
-        form = BugForm(deserialize_form(form))
-        print (form)
-        if form.is_valid():
-            comment = form.cleaned_data['description']
-            error = form.cleaned_data['issue']
-            email = form.cleaned_data['email']
-            print(comment)
-            comment_data = TextbookCompanionPreference.objects\
-                .db_manager('scilab').raw(dedent("""\
-                    SELECT 1 as id, tcp.book as book, tcp.author as author,
-                    tcp.publisher as publisher, tcp.year as year,
-                    tcp.category as category, tce.chapter_id,
-                    tcc.number AS chapter_no, tcc.name AS chapter_name,
-                    tce.number AS example_no, tce.caption AS example_caption
-                    FROM textbook_companion_preference tcp
-                    LEFT JOIN textbook_companion_chapter tcc ON
-                    tcp.id = tcc.preference_id 
-                    LEFT JOIN textbook_companion_example
-                    tce ON tce.chapter_id = tcc.id WHERE tce.id = %s"""),
-                                          [ex_id])
-            book_name = comment_data[0].book
-            book_author = comment_data[0].author
-            book_publisher = comment_data[0].publisher
-            chapter_number = comment_data[0].chapter_no
-            chapter_name = comment_data[0].chapter_name
-            example_number = comment_data[0].example_no
-            example_caption = comment_data[0].example_caption
-            all_cat = False
-            category = catg(comment_data[0].category, all_cat)
-            subcategory = 0
-            error_int = int(error)
-            error = issues[error_int][1]
-            context = {
-                'category': category,
-                'subcategory': subcategory,
-                'error': error,
-                'book': book_name,
-                'author':  book_author,
-                'publisher': book_publisher,
-                'chapter_name': chapter_name,
-                'chapter_no': chapter_number,
-                'example_id': ex_id,
-                'example_caption': example_caption,
-                'example_no': example_number,
-                'comment': comment,
-            }
-            scilab_comment = ScilabCloudComment()
-            scilab_comment.type = error_int
-            scilab_comment.comment = comment
-            scilab_comment.email = email
-            scilab_comment.category = comment_data[0].category
-            scilab_comment.books = book_id
-            scilab_comment.chapter = chapter_id
-            scilab_comment.example = ex_id
-            scilab_comment.save(using='scilab')
-            subject = "New Cloud Comment"
-            message = render_to_string('email.html', context)
-            from_email = FROM_EMAIL
-            to_email = TO_EMAIL
-            cc_email = CC_EMAIL
-            bcc_email = BCC_EMAIL
-            # Send Emails to, cc, bcc
-            msg = EmailMultiAlternatives(
-                subject,
-                message,
-                from_email,
-                [to_email],
-                bcc=[bcc_email],
-                cc=[cc_email]
-            )
-            msg.content_subtype = "html"
-            msg.send()
-            response = "Thank you for your feedback"
-            return HttpResponse(simplejson.dumps(response),
+    if request.method == 'POST':
+        #form = request.POST.get('form')
+        form = BugForm(data= request.POST)
+        cat_id = request.POST.get('cat_id')
+        book_id = request.POST.get('book_id')
+        chapter_id = request.POST.get('chapter_id')
+        ex_id = request.POST.get('ex_id')
+        comment = request.POST.get('description')
+        error = request.POST.get('issue')
+        email = request.POST.get('email')
+        comment_data = TextbookCompanionPreference.objects\
+            .db_manager('scilab').raw(dedent("""\
+                SELECT 1 as id, tcp.book as book, tcp.author as author,
+                tcp.publisher as publisher, tcp.year as year,
+                tcp.category as category, tce.chapter_id,
+                tcc.number AS chapter_no, tcc.name AS chapter_name,
+                tce.number AS example_no, tce.caption AS example_caption
+                FROM textbook_companion_preference tcp
+                LEFT JOIN textbook_companion_chapter tcc ON
+                tcp.id = tcc.preference_id
+                LEFT JOIN textbook_companion_example
+                tce ON tce.chapter_id = tcc.id WHERE tce.id = %s"""),
+                                      [ex_id])
+        book_name = comment_data[0].book
+        book_author = comment_data[0].author
+        book_publisher = comment_data[0].publisher
+        chapter_number = comment_data[0].chapter_no
+        chapter_name = comment_data[0].chapter_name
+        example_number = comment_data[0].example_no
+        example_caption = comment_data[0].example_caption
+        all_cat = False
+        category = catg(comment_data[0].category, all_cat)
+        subcategory = 0
+        error_int = int(error)
+        error = issues[error_int][1]
+
+        context = {
+            'category': category,
+            'subcategory': subcategory,
+            'error': error,
+            'book': book_name,
+            'author':  book_author,
+            'publisher': book_publisher,
+            'chapter_name': chapter_name,
+            'chapter_no': chapter_number,
+            'example_id': ex_id,
+            'example_caption': example_caption,
+            'example_no': example_number,
+            'comment': comment,
+        }
+        scilab_comment = ScilabCloudComment()
+        scilab_comment.type = error_int
+        scilab_comment.comment = comment
+        scilab_comment.email = email
+        scilab_comment.category = comment_data[0].category
+        scilab_comment.books = book_id
+        scilab_comment.chapter = chapter_id
+        scilab_comment.example = ex_id
+        scilab_comment.save(using='scilab')
+        subject = "New Cloud Comment"
+        message = render_to_string('email.html', context)
+        from_email = FROM_EMAIL
+        to_email = TO_EMAIL
+        cc_email = CC_EMAIL
+        bcc_email = BCC_EMAIL
+        # Send Emails to, cc, bcc
+        msg = EmailMultiAlternatives(
+            subject,
+            message,
+            from_email,
+            [to_email],
+            bcc=[bcc_email],
+            cc=[cc_email]
+        )
+        msg.content_subtype = "html"
+        msg.send()
+        response = "Thank you for your feedback"
+        return HttpResponse(simplejson.dumps(response),
                                 content_type='application/json')
+
 # submit revision
-
-
 def revision_form(request):
 
     context = {}
@@ -515,7 +511,6 @@ def diff(request):
 def review_revision(request):
     if request.is_ajax():
         revision_id = request.GET.get('revision_id')
-        print (revision_id)
         revision = TextbookCompanionRevision.objects.using(
             'scilab').get(id=revision_id)
         file = utils.get_file(revision.example_file.filepath,
@@ -550,8 +545,6 @@ def push_revision(request):
         code = request.GET.get('code')
         revision = TextbookCompanionRevision.objects.using(
             'scilab').get(id=request.session['revision_id'])
-
-        print('pushing to repo')
         utils.update_file(
             revision.example_file.filepath,
             revision.commit_message,
@@ -560,7 +553,6 @@ def push_revision(request):
             branch='master',
             main_repo=True)
 
-        print('update push_status')
         revision.push_status = True
         revision.save()
 

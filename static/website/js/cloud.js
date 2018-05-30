@@ -187,7 +187,7 @@ $(document).ready(function() {
                         maincat_id: maincat_id,
                     },
                     success: function(data) {
-                    ajax_loader("clear");
+                        ajax_loader("clear");
                         $("#categories").html(
                             '');
                         $("#categories").html(
@@ -318,7 +318,7 @@ $(document).ready(function() {
                     book_id: book_id,
                 },
                 success: function(data) {
-                ajax_loader("clear");
+                    ajax_loader("clear");
                     $("#chapters").html(
                         '');
                     $("#chapters").html(
@@ -438,18 +438,18 @@ $(document).ready(function() {
                     example_id: example_id,
                 },
                 success: function(data) {
-                         var ex_id = example_id;
-                         $.ajax({
-                            url: 'update_view_count/',
-                            dataType: 'JSON',
-                            type : 'GET',
-                            data: {
-                                    ex_id: ex_id,
-                            },
-                            success: function(data){
+                    var ex_id = example_id;
+                    $.ajax({
+                        url: 'update_view_count/',
+                        dataType: 'JSON',
+                        type: 'GET',
+                        data: {
+                            ex_id: ex_id,
+                        },
+                        success: function(data) {
                             $("#example_views_count").text(data);
-                            }
-                         });
+                        }
+                    });
                     $("#revisions").html(
                         ' <option value="">Select a revision</option>'
                     );
@@ -493,17 +493,17 @@ $(document).ready(function() {
                             example_id: example_id,
                         },
                         success: function(data) {
-                        if (data.review != 0) {
-                            $("#review").show();
-                            $("#review").attr("href",data.review_url);
-                            $("#review").text(data.review + " " + "Review");
-                        } else {
-                            $("#review").hide();
-                        }
+                            if (data.review != 0) {
+                                $("#review").show();
+                                $("#review").attr("href", data.review_url);
+                                $("#review").text(data.review + " " + "Review");
+                            } else {
+                                $("#review").hide();
+                            }
                             $("#example_views_count").text(data.exmple);
-                            editor.setValue("clear; // Remove clear, clc from code if you want to access existing stored variable from the memory"
-                            + "\n"+"\n" + data.code);
-                            initial_code = editor .getValue();
+                            editor.setValue("clear; // Remove clear, clc from code if you want to access existing stored variable from the memory" +
+                                "\n" + "\n" + data.code);
+                            initial_code = editor.getValue();
                             ajax_loader("clear");
                         }
                     });
@@ -528,37 +528,37 @@ $(document).ready(function() {
     $(document.body).on("change", "#revisions", function(e) {
         ajax_loader(this);
         $("#revisions-two").hide()
-                var example_id = $('#examples').find(
+        var example_id = $('#examples').find(
             ":selected").val();
         if ($(this).val()) {
 
             $.ajax({
-                        url: 'get_code/',
-                        dataType: 'JSON',
-                        type: 'GET',
-                        data: {
-                            commit_sha: $('#revisions').val(),
-                            example_id: example_id,
-                        },
-                        success: function(data) {
-                        ajax_loader("clear");
-                            if (data.review != 0) {
-                                   $("#review").show();
-                        $("#review").attr("href",data.review_url);
+                url: 'get_code/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
+                    commit_sha: $('#revisions').val(),
+                    example_id: example_id,
+                },
+                success: function(data) {
+                    ajax_loader("clear");
+                    if (data.review != 0) {
+                        $("#review").show();
+                        $("#review").attr("href", data.review_url);
                         $("#review").text(data.review + " " + "Review");
-                            } else {
-                                $("#review").hide();
-                            }
-                            editor.setValue(data.code);
-                            initial_code = editor .getValue();
-                        }
-                    });
+                    } else {
+                        $("#review").hide();
+                    }
+                    editor.setValue(data.code);
+                    initial_code = editor.getValue();
+                }
+            });
 
 
 
-                // show revision submit button when a revision is loaded
-                $("#submit-revision").show();
-                $("#revisions-two").show();
+            // show revision submit button when a revision is loaded
+            $("#submit-revision").show();
+            $("#revisions-two").show();
         }
     });
     /********************************************/
@@ -608,6 +608,7 @@ $(document).ready(function() {
     $plotbox_wrapper = $("#plotbox_wrapper");
     $plotbox = $("#plotbox");
 
+    var baseurl = window.location.origin + window.location.pathname;
     $(document).on("click", "#execute", function() {
         $("#execute-inner").html("Executing...");
         var send_data = {
@@ -621,39 +622,44 @@ $(document).ready(function() {
         };
         $.post("/execute-code", send_data,
             function(data) {
+                var exists;
                 $("#execute-inner").html(
                     "Execute");
                 result.setValue(data.output);
-                pp = data.plot_path;
+                pp = baseurl + data.plot_path.slice(1);
+                url = pp;
+
+                console.log(exists);
                 if (data.plot_path) {
                     $.ajax({
+                        crossDomain: false,
                         type: "HEAD",
                         async: true,
                         url: pp,
-                    }).done(function(){
-                    $plot = $("<img>");
-                    $plot.attr({
-                        src: data.plot_path,
-                        width: '100%'
+                    }).done(function() {
+                        $plot = $("<img>");
+                        $plot.attr({
+                            src: data.plot_path,
+                            width: '100%'
+                        });
+                        $plotbox.html($plot);
+
+                        /* $plotbox_wrapper.lightbox_me({
+                             centered: true
+                         });*/
+                        $plotbox_wrapper.modal('show');
+                        var dt = $(
+                                "#examples option:selected"
+                            )
+                            .text();
+                        $("#plot_download").show();
+                        $("#plot_download").attr(
+                            "download", dt +
+                            '.png');
+                        $("#plot_download").attr(
+                            "href", data.plot_path
+                        );
                     });
-                    $plotbox.html($plot);
-                   
-                   /* $plotbox_wrapper.lightbox_me({
-                        centered: true
-                    });*/
-                     $plotbox_wrapper.modal('show');
-                    var dt = $(
-                            "#examples option:selected"
-                        )
-                        .text();
-                    $("#plot_download").show();
-                    $("#plot_download").attr(
-                        "download", dt +
-                        '.png');
-                    $("#plot_download").attr(
-                        "href", data.plot_path
-                    );
-                     });
                 }
             });
     });
@@ -722,7 +728,6 @@ $(document).ready(function() {
                 bug_form: 'bug_form_pop'
             },
             success: function(data) {
-                console.log(data);
                 $('#bug_form_wrapper').html(
                     data);
                 $("#bug_form_wrapper").modal('show');
@@ -732,57 +737,63 @@ $(document).ready(function() {
     });
     /********************************************/
 
-    $(document).on("click", "#bug-form-submit", function(e) {
+    $(document.body).on("click", "#bug-form-submit", function(e) {
         ajax_loader(this);
+        var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
         ex_id = $("#examples").val();
         cat_id = $("#categories").val();
         book_id = $("#books").val();
         chapter_id = $("#chapters").val();
         issue_id = $("#id_issue").val();
-        id_description_wrapper = $(
-            "id_description_wrapper").val().trim();
-        id_email = $("id_email").val().trim();
-        if (issue_id == 0) {
-            $('#id_issue').css({
-                "border": '#FF0000 1px solid'
-            });
-            alert("Please select any issues");
-        } else if (id_description_wrapper.length == 0) {
-            $('#id_issue').css({
-                "border": '#FF0000 1px solid'
-            });
-            alert("Please insert issue description");
-        } else if (id_email.length == 0) {
-            $('#id_email').css({
-                "border": '#FF0000 1px solid'
-            });
-            alert("Please insert email id");
-        } else {
-            if (!ex_id) {
-                ex_id = "NULL";
+        id_description_wrapper = $.trim($("#id_description").val());
+        id_email = $.trim($("#id_email").val());
+        console.log(id_description_wrapper.length);
+        if (issue_id == 0 || id_description_wrapper.length == 0 || id_email.length == 0) {
+            if (issue_id == 0) {
+                $('#id_issue').css({
+                    "border": '#FF0000 1px solid'
+                });
+                alert("Please select any issues");
+            } else if (id_description_wrapper.length == 0) {
+                $('#id_issue').css({
+                    "border": '#FF0000 1px solid'
+                });
+                alert("Please insert issue description");
+            } else if (id_email.length == 0) {
+                $('#id_email').css({
+                    "border": '#FF0000 1px solid'
+                });
+                alert("Please insert email id");
+            } else {
+                if (!ex_id) {
+                    ex_id = "NULL";
+                }
             }
-            console.log(ex_id);
+        } else {
+
+
             $.ajax({
                 url: 'get_bug_form_submit/',
                 dataType: 'JSON',
-                type: 'GET',
+                type: 'POST',
                 data: {
-                    form: $("#bug-form").serialize(
-                        true),
+                    'csrfmiddlewaretoken': token,
+                    form: $("#bug-form").serialize(true),
                     cat_id: cat_id,
                     book_id: book_id,
                     chapter_id: chapter_id,
                     ex_id: ex_id,
+                    description: id_description_wrapper,
+                    issue: issue_id,
+                    email: id_email,
                 },
                 success: function(data) {
                     console.log(data);
                     alert(data);
                     ajax_loader("clear");
-                    $("#bug-form-wrapper")
-                        .trigger("close");
+                    $("#bug_form_wrapper").modal('toggle');
                 }
             });
-
         }
 
         e.preventDefault();
@@ -842,116 +853,116 @@ $(document).ready(function() {
         });
     });
     /********************************************/
- $(document).on("click", "#search", function() {
+    $(document).on("click", "#search", function() {
         $("#relevant").html('');
         var search_string = jQuery.trim($("#search-input").val());
-        if (search_string == ''){
-        search_string = 'Null';
+        if (search_string == '') {
+            search_string = 'Null';
         }
-         $.ajax({
-            url: 'search_book',
-            dataType: 'JSON',
-            type : 'GET',
-            data: {
+        $.ajax({
+                url: 'search_book',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
                     search_string: search_string,
-            },
-            success: function(data){
-                $("#relevant").html('<h2>Relevant</h2><hr>');
-                for (var i = 0; i < data.length; i++) {
-                $("#relevant").append(
-                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book +
-                ' (Author: ' + data[i].author + ')</a><hr>');
+                },
+                success: function(data) {
+                    $("#relevant").html('<h2>Relevant</h2><hr>');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#relevant").append(
+                            '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
+                            ' (Author: ' + data[i].author + ')</a><hr>');
+                    }
                 }
-            }
-         }),
-         $.ajax({
-            url: 'search_book/popular/',
-            dataType: 'JSON',
-            type : 'GET',
-            data: {
+            }),
+            $.ajax({
+                url: 'search_book/popular/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
                     search_string: search_string,
-            },
-            success: function(data){
+                },
+                success: function(data) {
 
-                $("#popular").html('<h2>Popular</h2><hr>');
-                for (var i = 0; i < data.length; i++) {
-                $("#popular").append(
-                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book
-                + ' (Author: ' + data[i].author + ')</a><hr>');
+                    $("#popular").html('<h2>Popular</h2><hr>');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#popular").append(
+                            '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
+                            ' (Author: ' + data[i].author + ')</a><hr>');
+                    }
                 }
-            }
-         }),
+            }),
             $.ajax({
                 url: 'search_book/recent/',
                 dataType: 'JSON',
-                type : 'GET',
+                type: 'GET',
                 data: {
-                        search_string: search_string,
+                    search_string: search_string,
                 },
-            success: function(data){
-                $("#recent").html('<h2>Recent</h2><hr>');
-                for (var i = 0; i < data.length; i++) {
-                $("#recent").append(
-                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book +
-                ' (Author: ' + data[i].author + ')</a><hr>');
+                success: function(data) {
+                    $("#recent").html('<h2>Recent</h2><hr>');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#recent").append(
+                            '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
+                            ' (Author: ' + data[i].author + ')</a><hr>');
+                    }
                 }
-            }
-         });
+            });
 
 
- });
+    });
 
- $(document).on("click", "#search_book", function(e) {
+    $(document).on("click", "#search_book", function(e) {
         $("#popular").html('');
         $("#recent").html('');
         var search_string = 'popular';
-        if (search_string == ''){
-        search_string = 'Null';
+        if (search_string == '') {
+            search_string = 'Null';
         }
-         $.ajax({
-            url: 'search_book/popular/',
-            dataType: 'JSON',
-            type : 'GET',
-            data: {
+        $.ajax({
+                url: 'search_book/popular/',
+                dataType: 'JSON',
+                type: 'GET',
+                data: {
                     search_string: search_string,
-            },
-            success: function(data){
-               console.log(data);
-                $("#popular").html('<h2>Popular</h2><hr>');
-                for (var i = 0; i < data.length; i++) {
-                    $("#popular").append(
-                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book
-                + ' (Author: ' + data[i].author + ')</a><hr>');
+                },
+                success: function(data) {
+                    console.log(data);
+                    $("#popular").html('<h2>Popular</h2><hr>');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#popular").append(
+                            '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
+                            ' (Author: ' + data[i].author + ')</a><hr>');
+                    }
                 }
-            }
-         }),
+            }),
             $.ajax({
                 url: 'search_book/recent/',
                 dataType: 'JSON',
-                type : 'GET',
+                type: 'GET',
                 data: {
-                        search_string: search_string,
+                    search_string: search_string,
                 },
-            success: function(data){
-               console.log(data);
-                $("#recent").html('<h2>Recent</h2><hr>');
-                for (var i = 0; i < data.length; i++) {
-                $("#recent").append(
-                '<a  href="?book_id='+ data[i].ids +'" class="">' + data[i].book +
-                ' (Author: ' + data[i].author + ')</a><hr>');
+                success: function(data) {
+                    console.log(data);
+                    $("#recent").html('<h2>Recent</h2><hr>');
+                    for (var i = 0; i < data.length; i++) {
+                        $("#recent").append(
+                            '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
+                            ' (Author: ' + data[i].author + ')</a><hr>');
+                    }
                 }
-            }
-         });
-e.preventDefault();
+            });
+        e.preventDefault();
 
- });
-//on hover pop the disclaimer
-/*
- $("#disclaimer").hover(function() {
-           $('#disclaimer-text').modal({
-        show: true
     });
-  });
- */
- 
+    //on hover pop the disclaimer
+    /*
+     $("#disclaimer").hover(function() {
+               $('#disclaimer-text').modal({
+            show: true
+        });
+      });
+     */
+
 }); //document.readOnly()
