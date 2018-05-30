@@ -1,23 +1,47 @@
-<form id="bug-form" action="" method="POST" accept-charset="utf-8"> {% csrf_token %}
-    {{ form.example }}
-    <div id="non-field-errors">
-    </div>
-    <div id="id_issue_wrapper" class="wrapper">
-        <label>Type of issue <span class="req">*</span>:</label>
-        {{ form.issue }}
-    </div>
+ <!-- bug form-->
 
-    <div id="id_description_wrapper" class="wrapper">
-        <label>Description<span class="req">*</span>:</label>
-        {{ form.description }}
-    </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-    <div id="id_email_wrapper" class="wrapper">
-        <span id="email-wrapper">
-            {{ form.email.errors }}
-            <label>Enter Your Email<span class="req">*</span>:</label>
-            {{ form.email }}
-        </span>
-    </div>
-    <input type="submit" id="bug-form-submit">
-</form>
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary">Report bug/ feedback</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                <form id="bug-form" action="" method="POST" accept-charset="utf-8">  {% csrf_token %}
+                    {{ form.example }}
+                    <div id="non-field-errors">
+                    </div>
+                    <div id="id_issue_wrapper" class="wrapper">
+                        <label>Type of issue <span class="req">*</span>:</label>
+                        {{ form.issue }}
+                    </div>
+
+                    <div id="id_description_wrapper" class="wrapper">
+                        <label>Description<span class="req">*</span>:</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div id="id_email_wrapper" class="wrapper">
+                        <span id="email-wrapper">
+                            {{ form.email.errors }}
+                            <label>Enter Your Email<span class="req">*</span>:</label>
+                            {{ form.email }}
+                        </span>
+                    </div>
+                        <input type="submit" id="bug-form-submit" class="btn btn-primary">
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+ 
+    <!-- --------------------bug form modal ends------------------ -->
