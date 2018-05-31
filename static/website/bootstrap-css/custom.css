@@ -34,3 +34,7 @@ div.form-inline label.col-md-4{
      background: url("../images/ajax-loader.gif");
      background-size: cover;
 }
+#success, #fail{
+    display: none;
+}
+
