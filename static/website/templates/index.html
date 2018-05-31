@@ -245,22 +245,36 @@
     <!-- -------------------------------- -->
     <!---------- container----------------- -->
     <div class="container-fluid bg-dark text-light">
+        <br>
         <div class="row">
-            <div class="col text-center">
 
-                <p class="text-center">Scilab is a trademark of Inria (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p>
-                <p class="float-left">
-                    <a href="https://fossee.in" target="blank">FOSSEE,
-                </a>
-                    <a href="https://iitb.ac.in" target="blank"> IIT Bombay
-                </a>
-                </p>
-                <span class="float-center">
-                <a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a>
-                </span>
-                <p class="float-right">
-                <a href="https://stats.fossee.in/awstats/awstats.pl?config=cloud.scilab.in" target="_blank">View Stats <i class="fa fa-bar-chart text-danger"></i></a></span>
-                </p>
+            <div class="col-4">
+                <a href="https://fossee.in" target="_blank"><img class="bg-white img-responsive" src="{% static 'website/images/fossee-logo.png' %}" alt="logo" style="width:100px;height: 45px;"></a>
+            </div>
+            <div class="col-4">
+                <a href="http://garudaindia.in" target="_blank"><img class="bg-white img-responsive mx-auto d-block" src="{% static 'website/images/garuda_logo.png' %}" alt="logo" style="width:100px;height: 45px;"></a>
+            </div>
+
+            <div class="col-4">
+                <a href="https://iitb.ac.in" target="_blank" class="float-right"><img class="bg-white img-responsive" src="{% static 'website/images/iitb-logo.png' %}" alt="logo" style="width:70px;height: 45px;"></a>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="text-center">Scilab is a trademark of <a href="https://www.inria.fr" target="_blank">Inria</a> (registered at the INPI for France and the rest of the World) and Scilab Enterprises is granted exclusive rights for Scilab Trademark.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <p class="float-left"><a href="#" id="disclaimer" data-toggle="modal" data-target="#disclaimer-text">Disclaimer</a></p>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-2"></div>
+            <div class="col-2"></div>
+            <div class="col-2"></div>
+            <div class="col-2">
+                <a href="https://stats.fossee.in/awstats/awstats.pl?config=cloud.scilab.in" class="float-right" target="_blank">View Stats <i class="fa fa-bar-chart text-danger"></i></a>
             </div>
         </div>
     </div>
@@ -461,9 +475,9 @@
         </div>
     </div>
     <!-- ---------- search modal end ----------------- -->
-      <div class="modal" id="bug_form_wrapper"> 
-{% include "bug-form.html" %}
-   </div>
+    <div class="modal" id="bug_form_wrapper">
+        {% include "bug-form.html" %}
+    </div>
     <!-- -plotbox wrapper ---------------------------------- -->
     <div class="modal" id="plotbox_wrapper">
         <div class="modal-dialog">
