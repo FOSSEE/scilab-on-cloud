@@ -8,7 +8,35 @@ function ajax_loader(key) {
     }
 }
 
-$(document).ready(function() {
+/**************************** math captcha function ***********************/
+
+var total;
+
+function getRandom(){
+    return Math.ceil(Math.random()* 20);
+}
+
+function createSum(){
+    var randomNum1 = getRandom(),
+    randomNum2 = getRandom();
+    total =randomNum1 + randomNum2;
+    $("#question" ).text( randomNum1 + " + " + randomNum2 + "=" );  
+    $("#ans").val('');
+    checkInput();
+}
+
+function checkInput(){
+    var input = $("#ans").val(), 
+    slideSpeed = 200,
+    hasInput = !!input, 
+    valid = hasInput && input == total;
+    $('#message').toggle(!hasInput);
+    $('input[type=submit]').prop('disabled', !valid);  
+    $('#success').toggle(valid);
+    $('#fail').toggle(hasInput && !valid);
+}
+/**************************** math captcha function end *******************/
+$(document.body).ready(function() {
     var editor = CodeMirror.fromTextArea(document.getElementById(
         "code"), {
         lineNumbers: true,
@@ -731,6 +759,14 @@ $(document).ready(function() {
                 $('#bug_form_wrapper').html(
                     data);
                 $("#bug_form_wrapper").modal('show');
+                /**************** math captcha for form ************************/
+                //create initial sum
+                createSum();
+                // On "reset button" click, generate new random sum
+                $('button[type=reset]').click(createSum);
+                // On user input, check value
+                $( "#ans" ).keyup(checkInput);
+/*********************************************************/
             }
         });
         e.preventDefault();
