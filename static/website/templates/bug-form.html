@@ -32,7 +32,12 @@
                             {{ form.email }}
                         </span>
                     </div>
-                        <input type="submit" id="bug-form-submit" class="btn btn-primary">
+                <p id="question" class="text-danger""></p><input id="ans" type="text">
+                <div id="message" class="text-danger">Please verify.</div>
+                <div id="success" class="text-success">Validation complete &#x263A;</div>
+                <div id="fail" class="text-danger">Validation failed &#x2639;</div>
+                <button type="reset" class="btn btn-primary" value="reset">Reset captcha</button>
+                <input type="submit" id="bug-form-submit" class="btn btn-primary float-right">
                     </form>
                 </div>
 
