@@ -40,4 +40,6 @@ div.form-inline label.col-md-4{
 .nav-link {
     margin-top: 0.5rem;!important
 }
-
+.CodeMirror {
+    min-height: 58vh;!important
+}
