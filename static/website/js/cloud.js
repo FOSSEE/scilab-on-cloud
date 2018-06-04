@@ -656,37 +656,32 @@ $(document.body).ready(function() {
                 result.setValue(data.output);
                 pp = baseurl + data.plot_path.slice(1);
                 url = pp;
-
-                console.log(exists);
                 if (data.plot_path) {
                     $.ajax({
-                        crossDomain: false,
                         type: "HEAD",
                         async: true,
                         url: pp,
                     }).done(function() {
-                        $plot = $("<img>");
-                        $plot.attr({
-                            src: data.plot_path,
-                            width: '100%'
-                        });
-                        $plotbox.html($plot);
-
-                        /* $plotbox_wrapper.lightbox_me({
-                             centered: true
-                         });*/
-                        $plotbox_wrapper.modal('show');
-                        var dt = $(
-                                "#examples option:selected"
-                            )
-                            .text();
-                        $("#plot_download").show();
-                        $("#plot_download").attr(
-                            "download", dt +
-                            '.png');
-                        $("#plot_download").attr(
-                            "href", data.plot_path
-                        );
+                            if( data.plot_path != 0){
+                            $plot = $("<img>");
+                            $plot.attr({
+                                src: data.plot_path,
+                                width: '100%'
+                            });
+                            $plotbox.html($plot);
+                            $plotbox_wrapper.modal('show');
+                            var dt = $(
+                                    "#examples option:selected"
+                                )
+                                .text();
+                            $("#plot_download").show();
+                            $("#plot_download").attr(
+                                "download", dt +
+                                '.png');
+                            $("#plot_download").attr(
+                                "href", data.plot_path
+                            );
+                        }
                     });
                 }
             });

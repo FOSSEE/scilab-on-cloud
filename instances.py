@@ -176,10 +176,17 @@ class ScilabInstance(object):
             self.count -= 1
             if(self.count == 0):
                 self.spawn_instance()
-        print (plot_path.replace(PROJECT_DIR, ''))
+        p_file_path = plot_path.replace(PROJECT_DIR, '')
+        plot_file_path = PROJECT_DIR + p_file_path
+        plot_path = os.path.isfile(plot_file_path)
+        plot_return = ""
+        if (plot_path == True):
+            plot_return = p_file_path
+        else:
+            plot_retrun = 0
         data = {
             'output': output,
-            'plot_path': plot_path.replace(PROJECT_DIR, '')
+            'plot_path': plot_return
         }
         now = datetime.now()
         log_file_name = now.strftime("%Y-%m-%d")
