@@ -638,6 +638,7 @@ $(document.body).ready(function() {
 
     var baseurl = window.location.origin + window.location.pathname;
     $(document).on("click", "#execute", function() {
+        if(editor.getValue() != ""){
         $("#execute-inner").html("Executing...");
         var send_data = {
             token: $(
@@ -685,6 +686,9 @@ $(document.body).ready(function() {
                     });
                 }
             });
+        }else{
+        alert("Write a scilab code for execution.");
+        }
     });
     /********************************************/
     /********************************************/
