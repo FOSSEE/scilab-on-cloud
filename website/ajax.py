@@ -175,7 +175,8 @@ def examples(request):
 
             examples = TextbookCompanionExample.objects.using('scilab')\
                 .filter(chapter_id=chapter_id).filter(cloud_err_status=0)\
-                .order_by('number')
+                .extra({'number_uint': "CAST(number as UNSIGNED)"})\
+                .order_by('number_uint')
             for obj in examples:
                 response = {
                     'id': obj.id,
