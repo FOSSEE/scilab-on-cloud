@@ -66,6 +66,8 @@ def subcategories(request):
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def books(request):
@@ -124,6 +126,8 @@ def books(request):
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def chapters(request):
@@ -156,7 +160,8 @@ def chapters(request):
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
-
+    else:
+        return redirect('/')
 
 def examples(request):
     context = {}
@@ -186,6 +191,8 @@ def examples(request):
                 response_dict.append(response)
             return HttpResponse(simplejson.dumps(response_dict),
                                 content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def revisions(request):
@@ -251,6 +258,8 @@ def code(request):
         # response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def contributor(request):
