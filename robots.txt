@@ -1,0 +1,37 @@
+#
+# robots.txt
+#
+# This file is to prevent the crawling and indexing of certain parts
+# of your site by web crawlers and spiders run by sites like Yahoo!
+# and Google. By telling these "robots" where not to go on your site,
+# you save bandwidth and server resources.
+#
+# This file will be ignored unless it is at the root of your host:
+# Used:    http://example.com/robots.txt
+# Ignored: http://example.com/site/robots.txt
+#
+# For more information about the robots.txt standard, see:
+# http://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Crawl-delay: 10
+# CSS, JS, Images
+# Allow:
+# Directories
+Disallow: /soc/
+Disallow: /static/
+Disallow: /website/
+# Files
+Disallow: /run.sh
+Disallow: /tornado_main.py
+Disallow: /instances.py
+Disallow: /requirements.txt
+# Paths (clean URLs)
+Disallow: /admin/
+Disallow: /get_code/
+Disallow: /get_books/
+Disallow: /get_chapters/
+Disallow: /get_examples/
+# Paths (no clean URLs)
+# Disallow: /?q=admin/
+
