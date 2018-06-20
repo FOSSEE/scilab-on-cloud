@@ -1,6 +1,7 @@
 import requests
 from urllib.parse import urljoin
 import json
+from hyper.contrib import HTTP20Adapter
 
 from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT,\
     TEMP_USER, MAIN_USER
@@ -24,7 +25,9 @@ def get_commits(file_path, main_repo=True):
         'path': file_path,
     }
 
-    r = requests.get(url, headers=headers, params=params)
+    requestsh2 = requests.Session() #New HTTP 2
+    requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
+    r = requestsh2.get(url, headers=headers, params=params) #New HTTP 2
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -49,7 +52,9 @@ def get_file(file_path, ref='master', main_repo=False):
         "ref": ref,
     }
 
-    r = requests.get(url, headers=headers, params=params)
+    requestsh2 = requests.Session() #New HTTP 2
+    requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
+    r = requestsh2.get(url, headers=headers, params=params) #New HTTP 2
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -77,7 +82,9 @@ def update_file(file_path,
     url = urljoin(base_url, owner +
                   '/Scilab-TBC-Uploads/contents/' + file_path)
 
-    file_r = requests.get(url, headers=headers)
+    requestsh2 = requests.Session() #New HTTP 2
+    requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
+    file_r = requestsh2.get(url, headers=headers) #New HTTP 2
     if file_r.status_code == requests.codes.ok:
         file_sha = json.loads(file_r.content)['sha']
         data = {
@@ -89,7 +96,10 @@ def update_file(file_path,
             "content": content,
             "sha": file_sha,
         }
-        r = requests.put(url, headers=headers, data=json.dumps(data))
+
+        requestsh2 = requests.Session() #New HTTP 2
+        requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
+        r = requestsh2.put(url, headers=headers, data=json.dumps(data)) #New HTTP 2
         if r.status_code == requests.codes.ok:
             return r.json()['commit']['sha']
     return None

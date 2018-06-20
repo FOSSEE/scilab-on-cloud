@@ -26,3 +26,4 @@ social-auth-app-django==2.1.0
 social-auth-core==1.7.0
 tornado==5.0.2
 urllib3==1.22
+hyper==0.7.0

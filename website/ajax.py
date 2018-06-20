@@ -224,8 +224,6 @@ def revisions(request):
 
 
 def code(request):
-    commits = {}
-    response_dict = []
     if request.is_ajax():
         commit_sha = request.GET.get('commit_sha')
         request.session['commit_sha'] = commit_sha
@@ -243,7 +241,8 @@ def code(request):
             .filter(example=example_id).count()
         exmple = TextbookCompanionExampleViews.objects.db_manager('scilab')\
             .raw(dedent("""\
-                    SELECT id, views_count FROM textbook_companion_example_views WHERE example_id=%s """), [example_id])
+            SELECT id, views_count FROM textbook_companion_example_views WHERE \
+            example_id=%s """), [example_id])
         review_url = "https://scilab.in/cloud_comments/" + str(example_id)
         # example_path = UPLOADS_PATH + '/' + file_path
 
