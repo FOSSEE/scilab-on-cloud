@@ -27,7 +27,7 @@ SECRET_KEY = 'r4p=y3qhkrewo&%3q&=x+jix)3c00p0sf03$7r_is5_ox$(eqe'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','10.101.201.4']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','10.101.201.4', '10.101.202.163']
 
 
 # Application definition
@@ -147,7 +147,7 @@ STATICFILES_DIRS = [
 ]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 60 # set just 60 seconds
+#SESSION_COOKIE_AGE = 60 # set just 60 seconds
 SESSION_SAVE_EVERY_REQUEST = True
 
 #Remove this in production
