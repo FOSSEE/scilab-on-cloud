@@ -148,7 +148,7 @@ STATICFILES_DIRS = [
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 #SESSION_COOKIE_AGE = 60 # set just 60 seconds
-SESSION_SAVE_EVERY_REQUEST = True
+#SESSION_SAVE_EVERY_REQUEST = True
 
 #Remove this in production
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
