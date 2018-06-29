@@ -22,7 +22,7 @@ from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionDependencyFiles,
                             TextbookCompanionPreferenceHits,
                             TextbookCompanionExampleViews)
-from soc.config import UPLOADS_PATH
+from soc.config import UPLOADS_PATH, GARUDA_SERVER
 from . import utils
 import base64
 from collections import OrderedDict
@@ -169,7 +169,7 @@ def index(request):
                 session_code = get_code(
                     request.session['filepath'], commit_sha)
                 context['code'] = session_code.decode('UTF-8')
-
+        context['garuda_server'] = GARUDA_SERVER
         template = loader.get_template('index.html')
         return HttpResponse(template.render(context, request))
     elif book_id:
@@ -202,6 +202,7 @@ def index(request):
             }
 
             template = loader.get_template('index.html')
+            context['garuda_server'] = GARUDA_SERVER
             return HttpResponse(template.render(context, request))
 
         books = get_books(books[0].sub_category)
@@ -226,6 +227,7 @@ def index(request):
             'book_id': int(book_id),
 
         }
+        context['garuda_server'] = GARUDA_SERVER
         template = loader.get_template('index.html')
         return HttpResponse(template.render(context, request))
     else:
@@ -238,6 +240,7 @@ def index(request):
                            """on Scilab on Cloud. You can download """\
                            """TBC example from www.scilab.in."""
             }
+            context['garuda_server'] = GARUDA_SERVER
             return render(request, 'website/templates/index.html', context)
 
         if eid:
@@ -351,7 +354,7 @@ def index(request):
 
             if not user.is_anonymous:
                 context['user'] = user
-
+            context['garuda_server'] = GARUDA_SERVER
             template = loader.get_template('index.html')
             return HttpResponse(template.render(context, request))
 
