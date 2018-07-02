@@ -254,10 +254,14 @@
             <div class="col-4">
                 <a href="https://fossee.in" target="_blank"><img class="bg-white img-responsive" src="{% static 'website/images/fossee-logo.png' %}" alt="logo" style="width:100px;height: 45px;"></a>
             </div>
+            {% if garuda_server == 1 %}
             <div class="col-4">
                 <a href="http://garudaindia.in" target="_blank"><img class="bg-white img-responsive mx-auto d-block" src="{% static 'website/images/garuda_logo.png' %}" alt="logo" style="width:100px;height: 45px;"></a>
             </div>
-
+            {% else %}
+            <div class="col-4">
+            </div>
+            {% endif %}
             <div class="col-4">
                 <a href="https://iitb.ac.in" target="_blank" class="float-right"><img class="bg-white img-responsive" src="{% static 'website/images/iitb-logo.png' %}" alt="logo" style="width:50px;height: 45px;"></a>
             </div>
