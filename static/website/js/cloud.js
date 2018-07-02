@@ -889,6 +889,7 @@ $(document.body).ready(function() {
     });
     /********************************************/
     $(document).on("click", "#search", function() {
+        ajax_loader(this);
         $("#relevant").html('');
         var search_string = jQuery.trim($("#search-input").val());
         if (search_string == '') {
@@ -907,7 +908,9 @@ $(document.body).ready(function() {
                         $("#relevant").append(
                             '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
                             ' (Author: ' + data[i].author + ')</a><hr>');
+                   
                     }
+                    ajax_loader("clear");
                 }
             }),
             $.ajax({
@@ -918,14 +921,15 @@ $(document.body).ready(function() {
                     search_string: search_string,
                 },
                 success: function(data) {
-
                     $("#popular").html('<h2>Popular</h2><hr>');
                     for (var i = 0; i < data.length; i++) {
                         $("#popular").append(
                             '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
                             ' (Author: ' + data[i].author + ')</a><hr>');
                     }
+                    ajax_loader("clear");
                 }
+                
             }),
             $.ajax({
                 url: 'search_book/recent/',
@@ -941,13 +945,13 @@ $(document.body).ready(function() {
                             '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
                             ' (Author: ' + data[i].author + ')</a><hr>');
                     }
+                    ajax_loader("clear");
                 }
             });
-
-
     });
 
     $(document).on("click", "#search_book", function(e) {
+        ajax_loader("#search");
         $("#popular").html('');
         $("#recent").html('');
         var search_string = 'popular';
@@ -969,6 +973,7 @@ $(document.body).ready(function() {
                             '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
                             ' (Author: ' + data[i].author + ')</a><hr>');
                     }
+                    ajax_loader("clear");
                 }
             }),
             $.ajax({
@@ -986,6 +991,7 @@ $(document.body).ready(function() {
                             '<a  href="?book_id=' + data[i].ids + '" class="">' + data[i].book +
                             ' (Author: ' + data[i].author + ')</a><hr>');
                     }
+                    ajax_loader("clear");
                 }
             });
         e.preventDefault();

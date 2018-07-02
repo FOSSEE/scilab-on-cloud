@@ -234,6 +234,7 @@ def code(request):
         review = ''
         review_url = ''
         example_id = request.session['example_id']
+        request.session.modified = True
         if not example_id:
             example_id = int(request.GET.get('example_id'))
         file_path = request.session['filepath']
@@ -243,6 +244,10 @@ def code(request):
             .raw(dedent("""\
             SELECT id, views_count FROM textbook_companion_example_views WHERE \
             example_id=%s """), [example_id])
+        if len(list(exmple)) == 0:
+            exc = 0
+        else:
+            exc = exmple[0].views_count
         review_url = "https://scilab.in/cloud_comments/" + str(example_id)
         # example_path = UPLOADS_PATH + '/' + file_path
 
@@ -252,7 +257,7 @@ def code(request):
             'code': code.decode('UTF-8'),
             'review': review,
             'review_url': review_url,
-            'exmple': exmple[0].views_count,
+            'exmple': exc,
         }
         # response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
