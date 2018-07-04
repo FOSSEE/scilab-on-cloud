@@ -210,7 +210,11 @@ def revisions(request):
 
         example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
             .get(example_id=example_id, filetype='S')
-
+        try:
+            example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
+                .get(example_id=example_id, filetype='S')
+        except TextbookCompanionExampleFiles.DoesNotExist:
+            return redirect('/')
         request.session['example_file_id'] = example_file.id
         request.session['filepath'] = example_file.filepath
 
