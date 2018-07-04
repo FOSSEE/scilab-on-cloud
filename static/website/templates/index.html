@@ -109,7 +109,7 @@
             <div id="books-wrapper" class="form-row form-group">
                 <label for="disabledInput" class="col-sm-2 col-form-label font-weight-bold">Book :</label>
                 <select id="books" class="form-control-sm col-sm-8">
-                    <option value="">Select Book </option>
+                    <option value="0">Select Book </option>
                     {% for book in books %} {% if book_id == book.id %}
                     <option value="{{ book.id }}" selected>{{ book.book }} (by {{ book.author }})</option>
                     {% else %}
@@ -121,7 +121,7 @@
             <div id="chapters-wrapper" class="form-row form-group">
                 <label for="disabledInput" class="col-sm-2 col-form-label font-weight-bold">Chapter :</label>
                 <select id="chapters" class="form-control-sm col-sm-8">
-                    <option value="">Select Chapter</option>
+                    <option value="0">Select Chapter</option>
                     {% for chapter in chapters %} {% if chapter_id == chapter.id %}
                     <option value="{{ chapter.id }}" selected>{{ chapter.number }} - {{ chapter.name }}</option>
                     {% else %}
