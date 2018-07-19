@@ -4,6 +4,8 @@ import os
 import re
 import time
 import sys
+import psutil
+
 
 from datetime import datetime
 from django.template.loader import render_to_string, get_template
@@ -69,6 +71,7 @@ class ScilabInstance(object):
             SCILAB_BIN += '/bin/scilab-adv-cli'
             new_instance = pexpect.spawn(SCILAB_BIN)
             self.count += 1
+            print ("scilab-adv-cli" in (p.name() for p in psutil.process_iter()), "scilab-adv-cli is running")
             try:
                 new_instance.expect('-->', timeout=30)
                 self.instances.append(new_instance)
@@ -158,7 +161,8 @@ class ScilabInstance(object):
         f.close()
 
         cmd = 'exec("' + file_path + '", 2);'
-
+        if(self.count < 1):
+            self.spawn_instance()
         active_instance = self.get_available_instance()
         active_instance.sendline(cmd)
 
@@ -172,8 +176,10 @@ class ScilabInstance(object):
             active_instance.before += 'Exception Occured: It seems that you \
             are running an infinite code'.encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
-            active_instance.close()
-            self.count -= 1
+
+            if(self.count > 1):
+                active_instance.close()
+                self.count -= 1
             if(self.count == 0):
                 self.spawn_instance()
         p_file_path = plot_path.replace(PROJECT_DIR, '')

@@ -290,9 +290,11 @@ def index(request):
                 books = get_books(books[0].sub_category)
                 maincat_id = books[0].category_id
                 subcat_id = books[0].sub_category
-                example_file = TextbookCompanionExampleFiles.objects\
-                    .using('scilab').get(example_id=eid, filetype='S')
-
+                try:
+                    example_file = TextbookCompanionExampleFiles.objects\
+                        .using('scilab').get(example_id=eid, filetype='S')
+                except TextbookCompanionExampleFiles.DoesNotExist:
+                    return redirect('/')
                 ex_views_count = TextbookCompanionExampleViews.objects\
                     .db_manager('scilab').raw(dedent("""\
                     SELECT id, views_count FROM\
