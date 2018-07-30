@@ -87,9 +87,9 @@
                 <select id="main_categories" class="form-control-sm col-sm-10">
                     <option value="0">Select Main Category</option>
                     {% for category in catg %} {% if maincat_id == category.category_id %}
-                    <option value="{{ category.category_id }}" selected>{{ category.maincategory }}</option>
+                    <option value="{{ category.category_id }}" selected>{{ forloop.counter }} - {{ category.maincategory }}</option>
                     {% else %}
-                    <option value="{{ category.category_id }}">{{ category.maincategory }}</option>
+                    <option value="{{ category.category_id }}">{{ forloop.counter }} - {{ category.maincategory }}</option>
                     {% endif %} {% endfor %}
                 </select>
             </div>
@@ -99,9 +99,9 @@
                 <select id="categories" class="form-control-sm col-sm-8">
                     <option value="0">Select Subcategory</option>
                     {% for category in subcatg %} {% if subcategory_id == category.subcategory_id %}
-                    <option value="{{ category.subcategory_id }}" selected>{{ category.subcategory }}</option>
+                    <option value="{{ category.subcategory_id }}" selected>{{ forloop.counter }} - {{ category.subcategory }}</option>
                     {% else %}
-                    <option value="{{ category.subcategory_id }}">{{ category.subcategory }}</option>
+                    <option value="{{ category.subcategory_id }}">{{ forloop.counter }} - {{ category.subcategory }}</option>
                     {% endif %} {% endfor %}
                 </select>
                 <a href="#" class="extra-link col-sm-2" id="contributor">+Contributor</a>
@@ -111,9 +111,9 @@
                 <select id="books" class="form-control-sm col-sm-8">
                     <option value="0">Select Book </option>
                     {% for book in books %} {% if book_id == book.id %}
-                    <option value="{{ book.id }}" selected>{{ book.book }} (by {{ book.author }})</option>
+                    <option value="{{ book.id }}" selected>{{ forloop.counter }} - {{ book.book }} (by {{ book.author }})</option>
                     {% else %}
-                    <option value="{{ book.id }}">{{ book.book }} (by {{ book.author }})</option>
+                    <option value="{{ book.id }}">{{ forloop.counter }} - {{ book.book }} (by {{ book.author }})</option>
                     {% endif %} {% endfor %}
                 </select>
                 <a href="#" class="extra-link col-sm-2" id="download-book">Download Book</a>
