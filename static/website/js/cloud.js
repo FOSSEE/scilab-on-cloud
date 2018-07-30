@@ -221,15 +221,17 @@ $(document.body).ready(function() {
                         $("#categories").html(
                             ' <option value="">Select Subcategory</option>'
                         );
+                        var j = 1;
                         for (var i = 0; i <
                             data.length; i++) {
                             $('#categories').append(
                                 '<option value="' +
                                 data[i].subcategory_id +
-                                '">' +
+                                '">' + j + ' - ' +
                                 data[i].subcategory +
                                 '</option>'
                             );
+                            j++;
                         }
                     }
                 });
@@ -286,12 +288,13 @@ $(document.body).ready(function() {
                     $("#books").html(
                         ' <option value="">Select Book</option>'
                     );
+                    var j = 1;
                     for (var i = 0; i <
                         data.length; i++) {
                         $('#books').append(
                             '<option value="' +
                             data[i].id +
-                            '">' +
+                            '">' + j + ' - '+
                             data[i].book +
                             ' (by ' +
                             data[i].author +
