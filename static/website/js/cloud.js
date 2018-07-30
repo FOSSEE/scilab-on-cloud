@@ -301,6 +301,7 @@ $(document.body).ready(function() {
                             ' )' +
                             '</option>'
                         );
+                        j++;
                     }
                 }
             });
