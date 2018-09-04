@@ -13,6 +13,28 @@ import tornado.wsgi
 import os
 import json as simplejson
 import django
+
+#Gist https://gist.githubusercontent.com/wonderbeyond/d38cd85243befe863cdde54b84505784/raw/ab78419248055333a6bf4a50022311cae9d6596c/graceful_shutdown_tornado_web_server.py
+
+import time
+import signal
+import logging
+from functools import partial
+
+import tornado.httpserver
+import tornado.ioloop
+import tornado.options
+import tornado.web
+
+from tornado.options import define, options
+
+MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
+
+pid = str(os.getpid())
+f = open(os.environ['SOC_PID'], 'w')
+f.write(pid)
+f.close()
+
 django.setup()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
 
@@ -30,6 +52,37 @@ define('port', type=int, default=8000)
 # Custom settings
 from soc.settings import PROJECT_DIR
 from django.core.wsgi import get_wsgi_application
+
+#Gist
+
+def sig_handler(server, sig, frame):
+    io_loop = tornado.ioloop.IOLoop.instance()
+
+    def stop_loop(deadline):
+        now = time.time()
+        #if now < deadline:
+        if now < deadline and (io_loop._callbacks or io_loop._timeouts):
+            logging.info('Waiting for next tick')
+            io_loop.add_timeout(now + 1, stop_loop, deadline)
+        else:
+            io_loop.stop()
+            logging.info('Shutdown finally')
+
+    def shutdown():
+        logging.info('Stopping Django DB connections...')
+        from django.db import connections
+        for conn in connections.all():
+            conn.close()
+        logging.info('Stopping http server')
+        server.stop()
+        logging.info('Will shutdown in %s seconds ...',
+                     MAX_WAIT_SECONDS_BEFORE_SHUTDOWN)
+        stop_loop(time.time() + MAX_WAIT_SECONDS_BEFORE_SHUTDOWN)
+
+    logging.warning('Caught signal: %s', sig)
+    io_loop.add_callback_from_signal(shutdown)
+
+#End Gist
 
 
 def run_as_nobody():
@@ -120,8 +173,20 @@ def main():
         ], debug=False)
     server = tornado.httpserver.HTTPServer(tornado_app)
     server.listen(options.port)
+#Gist
+
+    signal.signal(signal.SIGTERM, partial(sig_handler, server))
+    signal.signal(signal.SIGINT, partial(sig_handler, server))
+
+
+#End Gist
     tornado.ioloop.IOLoop.instance().start()
 
+#Gist
+
+    logging.info("Exit...")
+
+#End Gist
 
 if __name__ == '__main__':
     main()
