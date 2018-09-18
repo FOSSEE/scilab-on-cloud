@@ -32,6 +32,21 @@ Disallow: /get_code/
 Disallow: /get_books/
 Disallow: /get_chapters/
 Disallow: /get_examples/
-# Paths (no clean URLs)
-# Disallow: /?q=admin/
+Disallow: /get_contributor/
+Disallow: /get_bug_form/
+Disallow: /get_bug_form_submit/
+Disallow: /get_diff/
+Disallow: /get_revisions/
+Disallow: /submit-revision/
+Disallow: /search_book/
+Disallow: /search_book/popular/
+Disallow: /search_book/recent/
+Disallow: /get_subcategories/
+Disallow: /get_node/
+Disallow: /get_submit_revision_form/
+Disallow: /get_submit_revision_form_submit/
+Disallow: /review/get_review_revision/
+Disallow: /review/get_push_revision/
+Disallow: /review/get_remove_revision/
+Disallow: /review/
 
