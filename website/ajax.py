@@ -225,6 +225,8 @@ def revisions(request):
         response_dict.append(response)
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def code(request):
@@ -512,6 +514,8 @@ def diff(request):
     if request.is_ajax():
         diff_commit_sha = request.GET.get('diff_commit_sha')
         editor_code = request.GET.get('editor_code')
+    else:
+        return redirect('/')
     context = {}
     file_path = request.session['filepath']
     file = utils.get_file(file_path, diff_commit_sha, main_repo=True)
@@ -553,6 +557,8 @@ def review_revision(request):
         }
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def push_revision(request):
@@ -578,6 +584,8 @@ def push_revision(request):
 
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
+    else:
+        return redirect('/')
 
 
 def remove_revision(request):
