@@ -7,13 +7,14 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.core import serializers
 from django.template import loader
+from git import Repo
 
 
 # from django.http import HttpResponse, HttpResponseRedirect
 # from django.shortcuts import render, redirect
 from django.core.mail import EmailMultiAlternatives
 from django.template.context_processors import csrf
-# from django.utils.html import strip_tags
+# from django.html import strip_tags
 from django.template.loader import render_to_string, get_template
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
@@ -40,7 +41,7 @@ from website.dataentry import entry
 from website.forms import issues
 
 import base64
-from . import utils
+from website.utils import *
 
 
 def remove_from_session(request, keys):
@@ -196,6 +197,7 @@ def examples(request):
 
 
 def revisions(request):
+#    get_current_branch_name(repo_path)
     commits = {}
     response_dict = []
     if request.is_ajax():
@@ -218,16 +220,17 @@ def revisions(request):
         request.session['example_file_id'] = example_file.id
         request.session['filepath'] = example_file.filepath
 
-        commits = utils.get_commits(file_path=example_file.filepath)
-        response = {
-            'commits': commits,
-        }
-        response_dict.append(response)
-        return HttpResponse(simplejson.dumps(response),
+        commits = get_commits(file_path=example_file.filepath)
+        for obj in commits:
+            response = {
+              'commit_sha' : obj.hexsha,
+              'commit_message' : obj.message
+            }
+            response_dict.append(response)
+        return HttpResponse(simplejson.dumps(response_dict),
                             content_type='application/json')
     else:
         return redirect('/')
-
 
 def code(request):
     if request.is_ajax():
@@ -257,10 +260,9 @@ def code(request):
         review_url = "https://scilab.in/cloud_comments/" + str(example_id)
         # example_path = UPLOADS_PATH + '/' + file_path
 
-        file = utils.get_file(file_path, commit_sha, main_repo=True)
-        code = base64.b64decode(file['content'])
+        code = get_file(file_path, commit_sha, main_repo=True)
         response = {
-            'code': code.decode('UTF-8'),
+            'code': code,
             'review': review,
             'review_url': review_url,
             'exmple': exc,
@@ -479,7 +481,7 @@ def revision_form_submit(request):
 
             # push changes to temp repo
             # update_file returns True if the push is success.
-            commit_sha = utils.update_file(
+            commit_sha = update_file(
                 request.session['filepath'],
                 commit_message,
                 base64.b64encode(code),
@@ -518,10 +520,10 @@ def diff(request):
         return redirect('/')
     context = {}
     file_path = request.session['filepath']
-    file = utils.get_file(file_path, diff_commit_sha, main_repo=True)
-    code = base64.b64decode(file['content'])
+    #file = get_file(file_path, diff_commit_sha, main_repo=True)
+    code = get_file(file_path, diff_commit_sha, main_repo=True)
     response = {
-        'code2': code.decode('UTF-8'),
+        'code2': code,
     }
     return HttpResponse(simplejson.dumps(response),
                         content_type='application/json')
@@ -535,7 +537,7 @@ def review_revision(request):
         revision_id = request.GET.get('revision_id')
         revision = TextbookCompanionRevision.objects.using(
             'scilab').get(id=revision_id)
-        file = utils.get_file(revision.example_file.filepath,
+        file = get_file(revision.example_file.filepath,
                               revision.commit_sha, main_repo=False)
         code = base64.b64decode(file['content'])
 
@@ -544,7 +546,7 @@ def review_revision(request):
         example = revision.example_file.example
         chapter = example.chapter
         book = chapter.preference
-        category = utils.get_category(book.category)
+        category = get_category(book.category)
 
         response = {
             'code': code.decode('UTF-8'),
@@ -569,7 +571,7 @@ def push_revision(request):
         code = request.GET.get('code')
         revision = TextbookCompanionRevision.objects.using(
             'scilab').get(id=request.session['revision_id'])
-        utils.update_file(
+        update_file(
             revision.example_file.filepath,
             revision.commit_message,
             base64.b64encode(code.decode('UTF-8')),

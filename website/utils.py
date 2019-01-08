@@ -2,63 +2,30 @@ import requests
 from urllib.parse import urljoin
 import json
 from hyper.contrib import HTTP20Adapter
-
+from git import Repo
+from soc.config import MAIN_REPO
 from soc.config import GITHUB_ACCESS_TOKEN, GITHUB_ACCESS_TOKEN_SOCBOT,\
     TEMP_USER, MAIN_USER
 
 
 def get_commits(file_path, main_repo=True):
+    repo_path = MAIN_REPO + file_path
     """
     return: list of commits, which affected the files in filepath
     """
-    base_url = 'https://api.github.com/repos/'
-    access_token = GITHUB_ACCESS_TOKEN_SOCBOT if main_repo\
-        else GITHUB_ACCESS_TOKEN
-    owner = MAIN_USER if main_repo else TEMP_USER
-
-    headers = {
-        'Authorization': 'token %s' % access_token,
-        'Content-Type': 'application/json'}
-
-    url = urljoin(base_url, owner + '/Scilab-TBC-Uploads/commits')
-    params = {
-        'path': file_path,
-    }
-
-    requestsh2 = requests.Session() #New HTTP 2
-    requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
-    r = requestsh2.get(url, headers=headers, params=params) #New HTTP 2
-    if r.status_code == requests.codes.ok:
-        return r.json()
-    else:
-        return None
+    repo = Repo(repo_path , search_parent_directories=True)
+    commit_message = []
+    for commit in list(repo.iter_commits(paths =  file_path)):
+        commit_message.append(commit)
+    return commit_message
 
 
-def get_file(file_path, ref='master', main_repo=False):
+def get_file(file_path, commit_sha, main_repo=False):
 
-    base_url = 'https://api.github.com/repos/'
-    access_token = GITHUB_ACCESS_TOKEN_SOCBOT if main_repo\
-        else GITHUB_ACCESS_TOKEN
-    owner = MAIN_USER if main_repo else TEMP_USER
-
-    headers = {
-        'Authorization': 'token %s' % access_token,
-        'Content-Type': 'application/json'}
-
-    url = urljoin(base_url, owner +
-                  '/Scilab-TBC-Uploads/contents/' + file_path)
-
-    params = {
-        "ref": ref,
-    }
-
-    requestsh2 = requests.Session() #New HTTP 2
-    requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
-    r = requestsh2.get(url, headers=headers, params=params) #New HTTP 2
-    if r.status_code == requests.codes.ok:
-        return r.json()
-    else:
-        return None
+    repo_path = MAIN_REPO + file_path
+    repo = Repo(repo_path , search_parent_directories=True)
+    file_contents = repo.git.show('{}:{}'.format(commit_sha, file_path))
+    return file_contents
 
 
 def update_file(file_path,

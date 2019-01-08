@@ -487,12 +487,12 @@ $(document.body).ready(function() {
                     );
 
                     var i = 1;
-                    data.commits.forEach(
+                    data.forEach(
                         function(
                             item) {
                             $('#revisions').append(
-                                '<option value="' + item.sha + '"> ' +
-                                i + ' - ' + item.commit.message +
+                                '<option value="' + item.commit_sha + '"> ' +
+                                i + ' - ' + item.commit_message +
                                 '</option>'
                             );
                             i++;
@@ -501,12 +501,12 @@ $(document.body).ready(function() {
                         ' <option value="">Select a revision</option>'
                     );
                     var i = 1;
-                    data.commits.forEach(
+                    data.forEach(
                         function(
                             item) {
                             $('#revisions-diff').append(
-                                '<option value="' + item.sha + '"> ' +
-                                i + ' - ' + item.commit.message +
+                                '<option value="' + item.commit_sha + '"> ' +
+                                i + ' - ' + item.commit_message +
                                 '</option>'
                             );
                             i++;
