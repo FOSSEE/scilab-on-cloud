@@ -147,20 +147,20 @@
                 <label for="disabledInput" class="col-sm-2 col-form-label font-weight-bold">Revision: </label>
                 <select id="revisions" class="form-control-sm col-sm-3">
                     <option value="">Select a revision</option>
-                    {% for revision in revisions %} {% if revision.sha == commit_sha %}
-                    <option value="{{ revision.sha }}" selected>{{ forloop.counter }} - {{ revision.commit.message }}</option>
+                    {% for key, value in revisions %} {% if value == commit_sha %}
+                    <option value="{{ value }}" selected>{{ forloop.counter }} - {{key }}</option>
                     {% else %}
-                    <option value="{{ revision.sha }}">
-                        {{ forloop.counter }} - {{ revision.commit.message }}
+                    <option value="{{ revision.value }}">
+                        {{ forloop.counter }} - {{ key }}
                     </option>
                     {% endif %} {% endfor %}
                 </select>
                 <label for="disabledInput" class="col-sm-1 col-form-label font-weight-bold">Diff with: </label>
                 <select id="revisions-diff" class="form-control-sm col-sm-3">
                     <option value="">Select a revision</option>
-                    {% for revision in revisions %}
-                    <option value="{{ revision.sha }}">
-                        {{ forloop.counter }} - {{ revision.commit.message }}
+                    {% for key, value in revisions %}
+                    <option value="{{ revision.valuea }}">
+                        {{ forloop.counter }} - {{ key }}
                     </option>
                     {% endfor %}
                 </select>

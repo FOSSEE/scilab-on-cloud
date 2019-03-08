@@ -101,15 +101,13 @@ def get_revisions(example_id):
 
 def get_code(file_path, commit_sha):
     file = utils.get_file(file_path, commit_sha, main_repo=True)
-    code = base64.b64decode(file['content'])
-    return code
+    return file
 
 
 def index(request):
     context = {}
     book_id = request.GET.get('book_id')
     user = request.user
-
     # if not user.is_anonymous():
     #     social = user.social_auth.get(provider='google-oauth2')
     #     url = 'https://www.googleapis.com/plus/v1/people/me'
@@ -164,11 +162,11 @@ def index(request):
 
             if 'code' in request.session:
                 session_code = request.session['code']
-                context['code'] = session_code.decode('UTF-8')
+                context['code'] = session_code
             elif 'filepath' in request.session:
                 session_code = get_code(
                     request.session['filepath'], commit_sha)
-                context['code'] = session_code.decode('UTF-8')
+                context['code'] = session_code
         context['garuda_server'] = GARUDA_SERVER
         template = loader.get_template('index.html')
         return HttpResponse(template.render(context, request))
@@ -308,8 +306,8 @@ def index(request):
                 request.session['example_id'] = eid
                 request.session['example_file_id'] = example_file.id
                 request.session['filepath'] = example_file.filepath
-
                 revisions = get_revisions(eid)
+                context['revisions'] = get_revisions(example_id)
                 code = get_code(example_file.filepath, revisions[0]['sha'])
                 request.session['commit_sha'] = revisions[0]['sha']
 
@@ -348,7 +346,7 @@ def index(request):
                 'eid': eid,
                 'revisions': revisions,
                 'commit_sha': revisions[0]['sha'],
-                'code': code.decode('UTF-8'),
+                'code': code,
                 'ex_views_count': ex_views_count,
                 'review': review,
                 'review_url': review_url,

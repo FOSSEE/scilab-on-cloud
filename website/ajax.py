@@ -221,10 +221,10 @@ def revisions(request):
         request.session['filepath'] = example_file.filepath
 
         commits = get_commits(file_path=example_file.filepath)
-        for obj in commits:
+        for key, value in commits:
             response = {
-              'commit_sha' : obj.hexsha,
-              'commit_message' : obj.message
+              'commit_sha' : value,
+              'commit_message' : key
             }
             response_dict.append(response)
         return HttpResponse(simplejson.dumps(response_dict),

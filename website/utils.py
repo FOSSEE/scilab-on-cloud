@@ -15,8 +15,9 @@ def get_commits(file_path, main_repo=True):
     """
     repo = Repo(repo_path , search_parent_directories=True)
     commit_message = []
+    #print(list(repo.iter_commits(paths =  file_path)))
     for commit in list(repo.iter_commits(paths =  file_path)):
-        commit_message.append(commit)
+        commit_message.append((commit.message, commit.hexsha))
     return commit_message
 
 
