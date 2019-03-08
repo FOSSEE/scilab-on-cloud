@@ -164,6 +164,7 @@ def chapters(request):
     else:
         return redirect('/')
 
+
 def examples(request):
     context = {}
     response_dict = []
@@ -197,7 +198,7 @@ def examples(request):
 
 
 def revisions(request):
-#    get_current_branch_name(repo_path)
+    #    get_current_branch_name(repo_path)
     commits = {}
     response_dict = []
     if request.is_ajax():
@@ -223,14 +224,15 @@ def revisions(request):
         commits = get_commits(file_path=example_file.filepath)
         for key, value in commits:
             response = {
-              'commit_sha' : value,
-              'commit_message' : key
+                'commit_sha': value,
+                'commit_message': key
             }
             response_dict.append(response)
         return HttpResponse(simplejson.dumps(response_dict),
                             content_type='application/json')
     else:
         return redirect('/')
+
 
 def code(request):
     if request.is_ajax():
@@ -334,14 +336,15 @@ def bug_form(request):
         response = render_to_string('bug-form.html', context)
         return HttpResponse(simplejson.dumps(response),
                             content_type='application/json')
-        #return render(request, 'bug-form.html', response)
+        # return render(request, 'bug-form.html', response)
+
 
 def bug_form_submit(request):
     context = {}
     response_dict = []
     if request.method == 'POST':
         #form = request.POST.get('form')
-        form = BugForm(data= request.POST)
+        form = BugForm(data=request.POST)
         cat_id = request.POST.get('cat_id')
         book_id = request.POST.get('book_id')
         chapter_id = request.POST.get('chapter_id')
@@ -380,7 +383,7 @@ def bug_form_submit(request):
             'subcategory': subcategory,
             'error': error,
             'book': book_name,
-            'author':  book_author,
+            'author': book_author,
             'publisher': book_publisher,
             'chapter_name': chapter_name,
             'chapter_no': chapter_number,
@@ -417,9 +420,11 @@ def bug_form_submit(request):
         msg.send()
         response = "Thank you for your feedback"
         return HttpResponse(simplejson.dumps(response),
-                                content_type='application/json')
+                            content_type='application/json')
 
 # submit revision
+
+
 def revision_form(request):
 
     context = {}
@@ -538,7 +543,7 @@ def review_revision(request):
         revision = TextbookCompanionRevision.objects.using(
             'scilab').get(id=revision_id)
         file = get_file(revision.example_file.filepath,
-                              revision.commit_sha, main_repo=False)
+                        revision.commit_sha, main_repo=False)
         code = base64.b64decode(file['content'])
 
         request.session['revision_id'] = revision_id

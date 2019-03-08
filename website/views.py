@@ -28,6 +28,7 @@ import base64
 from collections import OrderedDict
 from django.db.models import Q
 
+
 def catg(cat_id, all_cat):
     if all_cat is False:
         category = TextbookCompanionCategoryList.objects.using('scilab')\
@@ -72,7 +73,7 @@ def get_books(category_id):
                         tcbm ON pe.id = tcbm.pref_id LEFT JOIN list_of_category
                         loc ON tcbm.main_category = loc.category_id WHERE
                         po.proposal_status = 3 AND pe.approval_status = 1
-                        AND pe.category>0 AND pe.id = tcbm.pref_id AND 
+                        AND pe.category>0 AND pe.id = tcbm.pref_id AND
                         pe.cloud_pref_err_status = 0 AND
                         tcbm.sub_category=%s""", [category_id])
     return books
@@ -194,8 +195,8 @@ def index(request):
             catg_all = catg(None, all_cat=True)
             context = {
                 'catg': catg_all,
-                'err_msg': """This TBC is not supported by Scilab on Cloud."""\
-                           """You can download TBC from www.scilab.in. You """\
+                'err_msg': """This TBC is not supported by Scilab on Cloud."""
+                           """You can download TBC from www.scilab.in. You """
                            """ are redirected to scilab on cloud home page."""
             }
 
@@ -234,8 +235,8 @@ def index(request):
         except ValueError:
             context = {
                 'catg': catg_all,
-                'err_msg': """This TBC example is not available """\
-                           """on Scilab on Cloud. You can download """\
+                'err_msg': """This TBC example is not available """
+                           """on Scilab on Cloud. You can download """
                            """TBC example from www.scilab.in."""
             }
             context['garuda_server'] = GARUDA_SERVER
@@ -313,12 +314,12 @@ def index(request):
 
             except IndexError:
                 categ_all = TextbookCompanionCategoryList.objects\
-                .using('scilab').filter(~Q(category_id=0))\
-                .order_by('maincategory')
+                    .using('scilab').filter(~Q(category_id=0))\
+                    .order_by('maincategory')
                 context = {
                     'catg': categ_all,
-                    'err_msg': """This TBC example is not available """\
-                               """on Scilab on Cloud. You can download """\
+                    'err_msg': """This TBC example is not available """
+                               """on Scilab on Cloud. You can download """
                                """TBC example from www.scilab.in."""
                 }
                 template = loader.get_template('index.html')
@@ -537,9 +538,10 @@ def update_view_count(request):
     return HttpResponse(simplejson.dumps(data),
                         content_type='application/json')
 
+
 def get_example_detail(eid):
     examples = TextbookCompanionExample.objects\
-                    .db_manager('scilab').raw("""
+        .db_manager('scilab').raw("""
                         SELECT id, id as example_id,
                             caption, number, chapter_id
                         FROM textbook_companion_example
@@ -579,14 +581,14 @@ def get_example_detail(eid):
             pe.cloud_pref_err_status = 0 AND
             pe.id=%s""", [preference_id])
     details = {
-        'book_name' : books[0].book,
-        'maincategory_name' : books[0].maincategory,
-        'subcategory_name' : books[0].subcategory,
-        'author_name' : books[0].author,
-        'publisher_name' : books[0].publisher,
-        'chapter_number' : chapters[0].number,
-        'chapter_name' : chapters[0].name,
-        'example_number' : examples[0].number,
-        'example_name' : examples[0].caption,
+        'book_name': books[0].book,
+        'maincategory_name': books[0].maincategory,
+        'subcategory_name': books[0].subcategory,
+        'author_name': books[0].author,
+        'publisher_name': books[0].publisher,
+        'chapter_number': chapters[0].number,
+        'chapter_name': chapters[0].name,
+        'example_number': examples[0].number,
+        'example_name': examples[0].caption,
     }
     return (details)

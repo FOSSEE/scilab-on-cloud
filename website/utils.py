@@ -13,10 +13,10 @@ def get_commits(file_path, main_repo=True):
     """
     return: list of commits, which affected the files in filepath
     """
-    repo = Repo(repo_path , search_parent_directories=True)
+    repo = Repo(repo_path, search_parent_directories=True)
     commit_message = []
     #print(list(repo.iter_commits(paths =  file_path)))
-    for commit in list(repo.iter_commits(paths =  file_path)):
+    for commit in list(repo.iter_commits(paths=file_path)):
         commit_message.append((commit.message, commit.hexsha))
     return commit_message
 
@@ -24,7 +24,7 @@ def get_commits(file_path, main_repo=True):
 def get_file(file_path, commit_sha, main_repo=False):
 
     repo_path = MAIN_REPO + file_path
-    repo = Repo(repo_path , search_parent_directories=True)
+    repo = Repo(repo_path, search_parent_directories=True)
     file_contents = repo.git.show('{}:{}'.format(commit_sha, file_path))
     return file_contents
 
@@ -50,9 +50,9 @@ def update_file(file_path,
     url = urljoin(base_url, owner +
                   '/Scilab-TBC-Uploads/contents/' + file_path)
 
-    requestsh2 = requests.Session() #New HTTP 2
-    requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
-    file_r = requestsh2.get(url, headers=headers) #New HTTP 2
+    requestsh2 = requests.Session()  # New HTTP 2
+    requestsh2.mount(url, HTTP20Adapter())  # New HTTP 2
+    file_r = requestsh2.get(url, headers=headers)  # New HTTP 2
     if file_r.status_code == requests.codes.ok:
         file_sha = json.loads(file_r.content)['sha']
         data = {
@@ -65,9 +65,12 @@ def update_file(file_path,
             "sha": file_sha,
         }
 
-        requestsh2 = requests.Session() #New HTTP 2
-        requestsh2.mount(url, HTTP20Adapter()) #New HTTP 2
-        r = requestsh2.put(url, headers=headers, data=json.dumps(data)) #New HTTP 2
+        requestsh2 = requests.Session()  # New HTTP 2
+        requestsh2.mount(url, HTTP20Adapter())  # New HTTP 2
+        r = requestsh2.put(
+            url,
+            headers=headers,
+            data=json.dumps(data))  # New HTTP 2
         if r.status_code == requests.codes.ok:
             return r.json()['commit']['sha']
     return None
