@@ -194,32 +194,32 @@ class ScilabInstance(object):
             'output': output,
             'plot_path': plot_return
         }
-        now = datetime.now()
-        log_file_name = now.strftime("%Y-%m-%d")
-        if book_id != 0 and chapter_id != 0 and example_id != 0:
-            book = TextbookCompanionPreference.objects.using('scilab')\
-                .filter(id=book_id)
-            chapter = TextbookCompanionChapter.objects.using('scilab')\
-                .filter(id=chapter_id)
-            example = TextbookCompanionExample.objects.using('scilab')\
-                .filter(id=example_id)
-            f = open(PROJECT_DIR + '/static/log/' +
-                     str(log_file_name) + '.txt', "a")
-            f.write("************************************" + "\n")
-            f.write(str(datetime.now()) + "\n")
-            f.write("------------------------------------" + "\n")
-            f.write("Book: {0} [Author: {1}]\n".format(
-                book[0].book, book[0].author))
-            f.write("Chapter: {0}\n".format(chapter[0].name))
-            f.write("Example: ({0}) {1}\n".format(
-                example[0].number, example[0].caption))
-            f.write("------------------------------------" + "\n")
-            f.write("Output" + "\n")
-            f.write("------------------------------------" + "\n")
-            f.write(output + "\n")
-            f.write("************************************" + "\n")
 
         if '!--error' in output:
+            now = datetime.now()
+            log_file_name = now.strftime("%Y-%m-%d")
+            if book_id != 0 and chapter_id != 0 and example_id != 0:
+                book = TextbookCompanionPreference.objects.using('scilab')\
+                    .filter(id=book_id)
+                chapter = TextbookCompanionChapter.objects.using('scilab')\
+                    .filter(id=chapter_id)
+                example = TextbookCompanionExample.objects.using('scilab')\
+                    .filter(id=example_id)
+                f = open(PROJECT_DIR + '/static/log/' +
+                         str(log_file_name) + '.txt', "a")
+                f.write("***************START****************" + "\n")
+                f.write(str(datetime.now()) + "\n")
+                f.write("------------------------------------" + "\n")
+                f.write("(ID: {2})Book: {0} [Author: {1}]\n".format(
+                    book[0].book, book[0].author, book_id))
+                f.write("Chapter: {0}\n".format(chapter[0].name))
+                f.write("Example: ({0}) {1}\n".format(
+                    example[0].number, example[0].caption))
+                f.write("------------------------------------" + "\n")
+                f.write("Output" + "\n")
+                f.write("------------------------------------" + "\n")
+                f.write(output + "\n")
+                f.write("****************END*****************" + "\n")
             context = {}
             if int(example_id) !=0:
                 context = get_example_detail(example_id)
