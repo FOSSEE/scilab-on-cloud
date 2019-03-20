@@ -30,4 +30,5 @@ urllib3==1.22
 hyper==0.7.0
 postgres==2.2.1
 psycopg2==2.7.5
+GitPython==2.1.10
 
