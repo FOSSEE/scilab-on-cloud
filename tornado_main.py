@@ -30,10 +30,10 @@ from tornado.options import define, options
 
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
 
-pid = str(os.getpid())
-f = open(os.environ['SOC_PID'], 'w')
-f.write(pid)
-f.close()
+#pid = str(os.getpid())
+#f = open(os.environ['SOC_PID'], 'w')
+#f.write(pid)
+#f.close()
 
 django.setup()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
@@ -61,7 +61,7 @@ def sig_handler(server, sig, frame):
     def stop_loop(deadline):
         now = time.time()
         #if now < deadline:
-        if now < deadline and (io_loop._callbacks or io_loop._timeouts):
+        if now < deadline :
             logging.info('Waiting for next tick')
             io_loop.add_timeout(now + 1, stop_loop, deadline)
         else:
@@ -173,6 +173,7 @@ def main():
         ], debug=False)
     server = tornado.httpserver.HTTPServer(tornado_app)
     server.listen(options.port)
+
 #Gist
 
     signal.signal(signal.SIGTERM, partial(sig_handler, server))
@@ -180,7 +181,12 @@ def main():
 
 
 #End Gist
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        server.start(0)
+        tornado.ioloop.IOLoop.instance().start()
+    # signal : CTRL + BREAK on windows or CTRL + C on linux
+    except KeyboardInterrupt:
+        tornado.ioloop.IOLoop.instance().stop()
 
 #Gist
 
