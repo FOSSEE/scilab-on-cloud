@@ -12,9 +12,20 @@ from django.template.loader import render_to_string, get_template
 from django.core.mail import EmailMultiAlternatives
 # importing the local variables
 from soc.settings import PROJECT_DIR
-from soc.config import (BIN, SCILAB_FLAGS, SCIMAX_LOADER, UPLOADS_PATH,
-                        SCILAB_3, SCILAB_4, SCILAB_5, SCILAB_6, FROM_EMAIL, TO_EMAIL,
-                        CC_EMAIL, BCC_EMAIL, SITE)
+from soc.config import (
+    BIN,
+    SCILAB_FLAGS,
+    SCIMAX_LOADER,
+    UPLOADS_PATH,
+    SCILAB_3,
+    SCILAB_4,
+    SCILAB_5,
+    SCILAB_6,
+    FROM_EMAIL,
+    TO_EMAIL,
+    CC_EMAIL,
+    BCC_EMAIL,
+    SITE)
 from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionSubCategoryList,
                             TextbookCompanionProposal,
@@ -65,18 +76,19 @@ class ScilabInstance(object):
 
     # spawning an instance
     def spawn_instance(self):
-        print('self count: ', self.count)
         if (self.count < self.maxsize):
             SCILAB_BIN = BIN + '/'
             SCILAB_BIN += SCILAB_6
             SCILAB_BIN += '/bin/scilab-adv-cli'
             new_instance = pexpect.spawn(SCILAB_BIN)
             self.count += 1
-            print ("scilab-adv-cli" in (p.name() for p in psutil.process_iter()), "scilab-adv-cli is running")
+            print ("scilab-adv-cli" in (p.name()
+                                        for p in psutil.process_iter()),
+                   "scilab-adv-cli is running")
             try:
                 new_instance.expect('-->', timeout=30)
                 self.instances.append(new_instance)
-            except:
+            except BaseException:
                 new_instance.close()
                 self.count -= 1
 
@@ -124,19 +136,23 @@ class ScilabInstance(object):
         plot_exists = False
 
         # Finding the plot and appending xs2jpg function
-        #p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
+        # p = re.compile(r'.*plot.*\(.*\).*\n|bode\(.*\)|evans\(.*\)')
         p = re.compile(
-            r'plot\(.*\)|plot2d.*\(.*\)|plot3d.*\(.*\)|bode\(.*\)|\bstem\(.*\)(\n|;)\b|evans\(.*\)|sgrid\(.*\)|plzr\(.*\)|hallchart\(.*\)|gainplot\(.*\)|nyquist\(.*\)|black\(.*\)|phaseplot\(.*\)|zgrid\(.*\)|show_margins\(.*\)|m_circle\(.*\)')
+            """r'plot\(.*\)|plot2d.*\(.*\)|plot3d.*\(.*\)"""
+            """|bode\(.*\)|\bstem\(.*\)(\n|;)\b|evans\(.*\)"""
+            """|sgrid\(.*\)|plzr\(.*\)|hallchart\(.*\)|gainplot\(.*\)"""
+            """|nyquist\(.*\)|black\(.*\)|phaseplot\(.*\)|zgrid\(.*\)"""
+            """|show_margins\(.*\)|m_circle\(.*\)'""")
 
         plot_path = ''
         ################################
-        #if p.search(code):
+        # if p.search(code):
         plot_exists = True
         code = code + '\n'
         current_time = time.time()
         plot_path = PROJECT_DIR + \
-                '/static/tmp/{0}.png'.format(str(current_time))
-            #code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
+            '/static/tmp/{0}.png'.format(str(current_time))
+        # code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
         ################################
         # Check whether to load scimax / maxima
         if 'syms' in code or 'Syms' in code:
@@ -152,7 +168,7 @@ class ScilabInstance(object):
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
-        if dependency_exists == True and book_id != 0 and chapter_id != 0 \
+        if dependency_exists and book_id != 0 and chapter_id != 0 \
                 and example_id != 0:
             f.write(
                 'cd("{0}/{1}/DEPENDENCIES/");\n'.format(UPLOADS_PATH, book_id)
@@ -166,7 +182,6 @@ class ScilabInstance(object):
         if(self.count < 1):
             self.spawn_instance()
         active_instance = self.get_available_instance()
-        print(active_instance,'ooooooooo')
         active_instance.sendline(cmd)
 
         try:
@@ -175,9 +190,11 @@ class ScilabInstance(object):
             output = self.trim(active_instance.before.decode('utf-8'))
             self.instances.append(active_instance)
 
-        except :
-            active_instance.before += """Exception Occured: It seems that """\
-            """you are running an infinite code""".encode('ascii')
+        except BaseException:
+            active_instance.before += """   Please try to execute again. """\
+                """Exception Occured: It seems that """\
+                """some system related issue occured or you are running an """\
+                """infinite code.""".encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
 
             if(self.count > 1):
@@ -189,7 +206,7 @@ class ScilabInstance(object):
         plot_file_path = PROJECT_DIR + p_file_path
         plot_path = os.path.isfile(plot_file_path)
         plot_return = ""
-        if (plot_path == True):
+        if (plot_path):
             plot_return = p_file_path
         else:
             plot_retrun = 0
@@ -224,7 +241,7 @@ class ScilabInstance(object):
 
         if '!--error' in output:
             context = {}
-            if int(example_id) !=0:
+            if int(example_id) != 0:
                 context = get_example_detail(example_id)
             context['example_id'] = int(example_id)
             context['code'] = code
@@ -232,7 +249,7 @@ class ScilabInstance(object):
             context['output'] = output
             subject = "[Scilab On Cloud] Error in scilab code"
             message = render_to_string('error_email.html',
-                      context)
+                                       context)
             from_email = FROM_EMAIL
             to_email = TO_EMAIL
             cc_email = CC_EMAIL
@@ -245,10 +262,9 @@ class ScilabInstance(object):
                 [TO_EMAIL],
                 bcc=[BCC_EMAIL],
                 cc=[CC_EMAIL]
-                )
+            )
             msg.content_subtype = "html"
-            #msg.send()
-            print (data)
+            # msg.send()
         return data
 
     def trim(self, output):

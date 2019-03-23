@@ -14,7 +14,7 @@ import os
 import json as simplejson
 import django
 
-#Gist https://gist.githubusercontent.com/wonderbeyond/d38cd85243befe863cdde54b84505784/raw/ab78419248055333a6bf4a50022311cae9d6596c/graceful_shutdown_tornado_web_server.py
+# Gist
 
 import time
 import signal
@@ -32,8 +32,8 @@ MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
 
 #pid = str(os.getpid())
 #f = open(os.environ['SOC_PID'], 'w')
-#f.write(pid)
-#f.close()
+# f.write(pid)
+# f.close()
 
 django.setup()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
@@ -53,15 +53,16 @@ define('port', type=int, default=8000)
 from soc.settings import PROJECT_DIR
 from django.core.wsgi import get_wsgi_application
 
-#Gist
+# Gist
+
 
 def sig_handler(server, sig, frame):
     io_loop = tornado.ioloop.IOLoop.instance()
 
     def stop_loop(deadline):
         now = time.time()
-        #if now < deadline:
-        if now < deadline :
+        # if now < deadline:
+        if now < deadline:
             logging.info('Waiting for next tick')
             io_loop.add_timeout(now + 1, stop_loop, deadline)
         else:
@@ -82,7 +83,7 @@ def sig_handler(server, sig, frame):
     logging.warning('Caught signal: %s', sig)
     io_loop.add_callback_from_signal(shutdown)
 
-#End Gist
+# End Gist
 
 
 def run_as_nobody():
@@ -150,8 +151,8 @@ class ExecutionHandler(tornado.web.RequestHandler):
 
         dependency_exists = TextbookCompanionExampleDependency.objects\
             .using('scilab').filter(example_id=example_id).exists()
-        print (example_id)
-        print (dependency_exists)
+        #print (example_id)
+        #print (dependency_exists)
         dependency_exists = entry(code, example_id, dependency_exists, book_id)
         data = yield executor.submit(scilab_executor.execute_code, code, token,
                                      book_id, dependency_exists, chapter_id,
@@ -174,13 +175,13 @@ def main():
     server = tornado.httpserver.HTTPServer(tornado_app)
     server.listen(options.port)
 
-#Gist
+# Gist
 
     signal.signal(signal.SIGTERM, partial(sig_handler, server))
     signal.signal(signal.SIGINT, partial(sig_handler, server))
 
 
-#End Gist
+# End Gist
     try:
         server.start(0)
         tornado.ioloop.IOLoop.instance().start()
@@ -188,11 +189,12 @@ def main():
     except KeyboardInterrupt:
         tornado.ioloop.IOLoop.instance().stop()
 
-#Gist
+# Gist
 
     logging.info("Exit...")
 
-#End Gist
+# End Gist
+
 
 if __name__ == '__main__':
     main()
