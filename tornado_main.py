@@ -30,10 +30,10 @@ from tornado.options import define, options
 
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
 
-#pid = str(os.getpid())
-#f = open(os.environ['SOC_PID'], 'w')
-# f.write(pid)
-# f.close()
+pid = str(os.getpid())
+f = open(os.environ['SOC_PID'], 'w')
+f.write(pid)
+f.close()
 
 django.setup()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
