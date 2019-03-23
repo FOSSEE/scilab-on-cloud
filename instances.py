@@ -65,6 +65,7 @@ class ScilabInstance(object):
 
     # spawning an instance
     def spawn_instance(self):
+        print('self count: ', self.count)
         if (self.count < self.maxsize):
             SCILAB_BIN = BIN + '/'
             SCILAB_BIN += SCILAB_6
@@ -82,9 +83,10 @@ class ScilabInstance(object):
     # killing some spawned instances
     def kill_instances(self, count):
         for i in range(count):
-            instance = self.instances.pop(0)
-            instance.close()
-            self.count -= 1
+            if count > 2:
+                instance = self.instances.pop(0)
+                instance.close()
+                self.count -= 1
 
     # returns an active_instancescilab instance. This will block till it gets an
     # active_instance.
@@ -164,6 +166,7 @@ class ScilabInstance(object):
         if(self.count < 1):
             self.spawn_instance()
         active_instance = self.get_available_instance()
+        print(active_instance,'ooooooooo')
         active_instance.sendline(cmd)
 
         try:
@@ -172,9 +175,9 @@ class ScilabInstance(object):
             output = self.trim(active_instance.before.decode('utf-8'))
             self.instances.append(active_instance)
 
-        except:
-            active_instance.before += 'Exception Occured: It seems that you \
-            are running an infinite code'.encode('ascii')
+        except :
+            active_instance.before += """Exception Occured: It seems that """\
+            """you are running an infinite code""".encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
 
             if(self.count > 1):
