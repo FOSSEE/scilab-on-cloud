@@ -80,6 +80,9 @@ DATABASES = {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.mysql',
         # Or path to database file if using sqlite3.
+	'OPTIONS': {
+            'sql_mode': 'traditional',
+        },
         'NAME': DB_NAME_DEFAULT,
         'USER': DB_USER_DEFAULT,
         'PASSWORD': DB_PASS_DEFAULT,
@@ -91,6 +94,9 @@ DATABASES = {
     'scilab': {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.db.backends.mysql',
+	'OPTIONS': {
+            'sql_mode': 'traditional',
+        },
         # Or path to database file if using sqlite3.
         'NAME': DB_NAME_SCILAB,
         'USER': DB_USER_SCILAB,
