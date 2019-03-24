@@ -5,6 +5,7 @@ import re
 import time
 import sys
 import psutil
+import threading
 
 
 from datetime import datetime
@@ -37,6 +38,8 @@ from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionExampleDependency,
                             TextbookCompanionDependencyFiles)
 from website.views import get_example_detail
+
+
 ''' An object of class ScilabInstance handles spawning and maintaining of
  multiple scilab instances.
 
@@ -86,24 +89,27 @@ class ScilabInstance(object):
                                         for p in psutil.process_iter()),
                    "scilab-adv-cli is running")
             try:
-                new_instance.expect('-->', timeout=30)
+                new_instance.expect('-->')
                 self.instances.append(new_instance)
+
             except BaseException:
                 new_instance.close()
                 self.count -= 1
+        return None
 
     # killing some spawned instances
     def kill_instances(self, count):
         for i in range(count):
-            if count > 2:
-                instance = self.instances.pop(0)
-                instance.close()
-                self.count -= 1
+
+            instance = self.instances.pop(0)
+            instance.close()
+            self.count -= 1
 
     # returns an active_instancescilab instance. This will block till it gets an
     # active_instance.
     def get_available_instance(self):
         if not self.instances and self.count < self.maxsize:
+
             self.spawn_instance()
         while not self.instances:
             pass
@@ -179,6 +185,7 @@ class ScilabInstance(object):
         f.close()
 
         cmd = 'exec("' + file_path + '", 2);'
+
         if(self.count < 1):
             self.spawn_instance()
         active_instance = self.get_available_instance()
