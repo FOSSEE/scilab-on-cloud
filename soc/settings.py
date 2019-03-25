@@ -22,12 +22,12 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__) + '/../')
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r4p=y3qhkrewo&%3q&=x+jix)3c00p0sf03$7r_is5_ox$(eqe'
+SECRET_KEY = 'Your app secret key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','10.101.201.4', '10.101.202.163']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','x.x.x.x']
 
 
 # Application definition
