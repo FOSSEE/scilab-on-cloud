@@ -190,14 +190,17 @@ def index(request):
                         pe.cloud_pref_err_status = 0 AND
                         pe.id=%s""", [book_id])
         books = list(books)
-
-        if len(books) == 0:
+        if not books:
             catg_all = catg(None, all_cat=True)
             context = {
                 'catg': catg_all,
-                'err_msg': """This TBC is not supported by Scilab on Cloud."""
-                           """You can download TBC from www.scilab.in. You """
-                           """ are redirected to scilab on cloud home page."""
+                'err_msg': """This TBC is not supported by Scilab on Cloud. """
+                           """We are working on it to make available for """
+                           """you as early as possible."""
+                           """You can download TBC from """
+                           """https://scilab.in/Completed_Books and execute """
+                           """on your local system. Now You are"""
+                           """ redirected to scilab on cloud home page."""
             }
 
             template = loader.get_template('index.html')
@@ -235,9 +238,14 @@ def index(request):
         except ValueError:
             context = {
                 'catg': catg_all,
-                'err_msg': """This TBC example is not available """
-                           """on Scilab on Cloud. You can download """
-                           """TBC example from www.scilab.in."""
+                'err_msg': """This TBC example is not supported by """
+                           """Scilab on Cloud. """
+                           """We are working on it to make available for """
+                           """you as early as possible."""
+                           """You can download TBC example from """
+                           """https://scilab.in/Completed_Books and execute """
+                           """on your local system. Now You are """
+                           """redirected to scilab on cloud home page."""
             }
             context['garuda_server'] = GARUDA_SERVER
             return render(request, 'website/templates/index.html', context)
@@ -318,9 +326,14 @@ def index(request):
                     .order_by('maincategory')
                 context = {
                     'catg': categ_all,
-                    'err_msg': """This TBC example is not available """
-                               """on Scilab on Cloud. You can download """
-                               """TBC example from www.scilab.in."""
+                    'err_msg': """This TBC example is not supported by """
+                    """Scilab on Cloud. """
+                    """We are working on it to make available for """
+                    """you as early as possible."""
+                    """You can download TBC example from """
+                    """https://scilab.in/Completed_Books and execute """
+                    """on your local system. Now you are """
+                    """redirected to scilab on cloud home page."""
                 }
                 template = loader.get_template('index.html')
                 return HttpResponse(template.render(context, request))
