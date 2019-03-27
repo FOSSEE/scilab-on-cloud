@@ -10,7 +10,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
-import os
+import os, sys
 import json as simplejson
 import django
 
@@ -173,14 +173,16 @@ def main():
         ], debug=False)
     server = tornado.httpserver.HTTPServer(tornado_app)
     server.listen(options.port)
-#Gist
-
-    signal.signal(signal.SIGTERM, partial(sig_handler, server))
-    signal.signal(signal.SIGINT, partial(sig_handler, server))
 
 
-#End Gist
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        #server.start(0)
+        tornado.ioloop.IOLoop.instance().start()
+    # signal : CTRL + BREAK on windows or CTRL + C on linux
+    except KeyboardInterrupt:
+        signal.signal(signal.SIGTERM, partial(sig_handler, server))
+        signal.signal(signal.SIGQUIT, partial(sig_handler, server))
+        sys.exit(0)
 
 #Gist
 
