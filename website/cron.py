@@ -25,7 +25,7 @@ class Cron(object):
     mail_attachment = base_path + '/static/log/' + log_file_name\
         + '.txt'
 
-    def log_exist(mail_attachment):
+    def log_exist(mail_attachment, log_file_name):
         if os.path.isfile(mail_attachment):
             mail_body = """<b>Some errors are found on scilab on cloud in """\
                 """TBC examples </b><br><br> Check for attachment"""
@@ -51,7 +51,7 @@ class Cron(object):
             email.send(fail_silently=True)
         else:
             return None
-    log_exist(mail_attachment)
+    log_exist(mail_attachment, log_file_name)
 
 
 Cron()
