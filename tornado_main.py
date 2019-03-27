@@ -10,7 +10,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
-import os
+import os, sys
 import json as simplejson
 import django
 
@@ -30,10 +30,10 @@ from tornado.options import define, options
 
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
 
-pid = str(os.getpid())
-f = open(os.environ['SOC_PID'], 'w')
-f.write(pid)
-f.close()
+#pid = str(os.getpid())
+#f = open(os.environ['SOC_PID'], 'w')
+#f.write(pid)
+#f.close()
 
 django.setup()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "soc.settings")
@@ -177,9 +177,6 @@ def main():
 
 # Gist
 
-    signal.signal(signal.SIGTERM, partial(sig_handler, server))
-    signal.signal(signal.SIGINT, partial(sig_handler, server))
-
 
 # End Gist
     try:
@@ -187,7 +184,9 @@ def main():
         tornado.ioloop.IOLoop.instance().start()
     # signal : CTRL + BREAK on windows or CTRL + C on linux
     except KeyboardInterrupt:
-        tornado.ioloop.IOLoop.instance().stop()
+        signal.signal(signal.SIGTERM, partial(sig_handler, server))
+        signal.signal(signal.SIGQUIT, partial(sig_handler, server))
+        sys.exit(0)
 
 # Gist
 
