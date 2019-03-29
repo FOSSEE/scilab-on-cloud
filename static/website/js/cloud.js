@@ -643,6 +643,7 @@ $(document.body).ready(function() {
     var baseurl = window.location.origin + window.location.pathname;
     $(document).on("click", "#execute", function() {
         if(editor.getValue() != ""){
+        ajax_loader(this);
         $("#execute-inner").html("Executing...");
         var send_data = {
             token: $(
@@ -658,6 +659,7 @@ $(document.body).ready(function() {
                 var exists;
                 $("#execute-inner").html(
                     "Execute");
+                ajax_loader('clear');
                 result.setValue(data.output);
                 pp = baseurl + data.plot_path.slice(1);
                 url = pp;
