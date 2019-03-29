@@ -199,7 +199,7 @@ def index(request):
                            """you as early as possible."""
                            """You can download TBC from """
                            """https://scilab.in/Completed_Books and execute """
-                           """on your local system. Now You are"""
+                           """on your local system. Now you are"""
                            """ redirected to scilab on cloud home page."""
             }
 
@@ -244,7 +244,7 @@ def index(request):
                            """you as early as possible."""
                            """You can download TBC example from """
                            """https://scilab.in/Completed_Books and execute """
-                           """on your local system. Now You are """
+                           """on your local system. Now you are """
                            """redirected to scilab on cloud home page."""
             }
             context['garuda_server'] = GARUDA_SERVER
