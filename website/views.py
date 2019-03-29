@@ -301,7 +301,23 @@ def index(request):
                     example_file = TextbookCompanionExampleFiles.objects\
                         .using('scilab').get(example_id=eid, filetype='S')
                 except TextbookCompanionExampleFiles.DoesNotExist:
-                    return redirect('/')
+                    #return redirect('/')
+                    categ_all = TextbookCompanionCategoryList.objects\
+                        .using('scilab').filter(~Q(category_id=0))\
+                        .order_by('maincategory')
+                    context = {
+                        'catg': categ_all,
+                        'err_msg': """This TBC example is not supported by """
+                        """Scilab on Cloud. """
+                        """We are working on it to make available for """
+                        """you as early as possible."""
+                        """You can download TBC example from """
+                        """https://scilab.in/Completed_Books and execute """
+                        """on your local system. Now you are """
+                        """redirected to scilab on cloud home page."""
+                    }
+                    template = loader.get_template('index.html')
+                    return HttpResponse(template.render(context, request))
                 ex_views_count = TextbookCompanionExampleViews.objects\
                     .db_manager('scilab').raw(dedent("""\
                     SELECT id, views_count FROM\
@@ -316,7 +332,7 @@ def index(request):
                 request.session['example_file_id'] = example_file.id
                 request.session['filepath'] = example_file.filepath
                 revisions = get_revisions(eid)
-                context['revisions'] = get_revisions(example_id)
+                context['revisions'] = revisions
                 code = get_code(example_file.filepath, revisions[0]['sha'])
                 request.session['commit_sha'] = revisions[0]['sha']
 
