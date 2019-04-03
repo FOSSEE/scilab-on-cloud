@@ -6,6 +6,8 @@ import time
 import sys
 import psutil
 import threading
+import uuid
+import signal
 
 
 from datetime import datetime
@@ -102,6 +104,7 @@ class ScilabInstance(object):
         for i in range(count):
 
             instance = self.instances.pop(0)
+            instance.kill(signal.SIGINT)
             instance.close()
             self.count -= 1
 
@@ -155,9 +158,9 @@ class ScilabInstance(object):
         # if p.search(code):
         plot_exists = True
         code = code + '\n'
-        current_time = time.time()
+        image_id = uuid.uuid4()
         plot_path = PROJECT_DIR + \
-            '/static/tmp/{0}.png'.format(str(current_time))
+            '/static/tmp/{0}.png'.format(str(image_id))
         # code += 'xs2jpg(gcf(), "{0}");\n'.format(plot_path)
         ################################
         # Check whether to load scimax / maxima
@@ -205,6 +208,7 @@ class ScilabInstance(object):
             output = self.trim(active_instance.before.decode('utf-8'))
 
             if(self.count > 1):
+                active_instance.kill(signal.SIGINT)
                 active_instance.close()
                 self.count -= 1
             if(self.count == 0):
