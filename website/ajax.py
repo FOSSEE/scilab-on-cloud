@@ -57,7 +57,8 @@ def subcategories(request):
         if maincategory_id:
             request.session['maincat_id'] = maincategory_id
             subcategory = TextbookCompanionSubCategoryList.objects\
-                .using('scilab').filter(maincategory_id=maincategory_id)
+                .using('scilab').filter(maincategory_id=maincategory_id)\
+                .order_by('subcategory')
 
             for obj in subcategory:
                 response = {

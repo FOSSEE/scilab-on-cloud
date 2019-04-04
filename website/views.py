@@ -216,7 +216,7 @@ def index(request):
         chapters = get_chapters(book_id)
         subcateg_all = TextbookCompanionSubCategoryList.objects\
             .using('scilab').filter(maincategory_id=maincat_id)\
-            .order_by('subcategory_id')
+            .order_by('subcategory')
         categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
             .filter(~Q(category_id=0)).order_by('maincategory')
         context = {
@@ -333,8 +333,8 @@ def index(request):
                 request.session['filepath'] = example_file.filepath
                 revisions = get_revisions(eid)
                 context['revisions'] = revisions
-                code = get_code(example_file.filepath, revisions[0]['sha'])
-                request.session['commit_sha'] = revisions[0]['sha']
+                code = get_code(example_file.filepath, revisions[0][1])
+                request.session['commit_sha'] = revisions[0][1]
 
             except IndexError:
                 categ_all = TextbookCompanionCategoryList.objects\
@@ -356,7 +356,7 @@ def index(request):
 
             subcateg_all = TextbookCompanionSubCategoryList.objects\
                 .using('scilab').filter(maincategory_id=maincat_id)\
-                .order_by('subcategory_id')
+                .order_by('subcategory')
             categ_all = TextbookCompanionCategoryList.objects.using('scilab')\
                 .filter(~Q(category_id=0)).order_by('maincategory')
             if len(list(ex_views_count)) == 0:
@@ -375,7 +375,7 @@ def index(request):
                 'examples': examples,
                 'eid': eid,
                 'revisions': revisions,
-                'commit_sha': revisions[0]['sha'],
+                'commit_sha': revisions[0][1],
                 'code': code,
                 'ex_views_count': ex_views_count,
                 'review': review,
