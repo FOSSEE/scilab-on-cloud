@@ -75,7 +75,7 @@ class ScilabInstance(object):
 
     # defining instance variables
     def __init__(self):
-        self.maxsize = 5
+        self.maxsize = 20
         self.instances = []
         self.count = 0
 
@@ -85,18 +85,19 @@ class ScilabInstance(object):
             SCILAB_BIN = BIN + '/'
             SCILAB_BIN += SCILAB_6
             SCILAB_BIN += '/bin/scilab-adv-cli'
-            new_instance = pexpect.spawn(SCILAB_BIN)
-            self.count += 1
-            print ("scilab-adv-cli" in (p.name()
+            while  (self.count < self.maxsize):
+                new_instance = pexpect.spawn(SCILAB_BIN)
+                self.count += 1
+                print ("scilab-adv-cli" in (p.name()
                                         for p in psutil.process_iter()),
-                   "scilab-adv-cli is running")
-            try:
-                new_instance.expect('-->')
-                self.instances.append(new_instance)
+                   "scilab-adv-cli is running ", self.count)
+                try:
+                    new_instance.expect('-->')
+                    self.instances.append(new_instance)
 
-            except BaseException:
-                new_instance.close()
-                self.count -= 1
+                except BaseException:
+                    new_instance.close()
+                    self.count -= 1
         return None
 
     # killing some spawned instances
@@ -207,7 +208,7 @@ class ScilabInstance(object):
                 """infinite code.""".encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
 
-            if(self.count > 1):
+            if(self.count > 10):
                 active_instance.kill(signal.SIGINT)
                 active_instance.close()
                 self.count -= 1

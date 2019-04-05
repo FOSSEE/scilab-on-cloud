@@ -97,8 +97,8 @@ def run_as_nobody():
 # request_count keeps track of the number of requests at hand, it is incremented
 # when post method is invoked and decremented before exiting post method in
 # class ExecutionHandler.
-DEFAULT_WORKERS = 5
-request_count = 1
+DEFAULT_WORKERS = 10000
+request_count = 10
 
 # ThreadPoolExecutor is an Executor subclass that uses a pool of threads to
 # execute
