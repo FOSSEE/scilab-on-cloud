@@ -28,7 +28,9 @@ from soc.config import (
     TO_EMAIL,
     CC_EMAIL,
     BCC_EMAIL,
-    SITE)
+    SITE,
+    MAX_SCILAB_INSTANCE,
+    MIN_SCILAB_INSTANCE)
 from website.models import (TextbookCompanionCategoryList, ScilabCloudComment,
                             TextbookCompanionSubCategoryList,
                             TextbookCompanionProposal,
@@ -75,7 +77,7 @@ class ScilabInstance(object):
 
     # defining instance variables
     def __init__(self):
-        self.maxsize = 20
+        self.maxsize = MAX_SCILAB_INSTANCE
         self.instances = []
         self.count = 0
 
@@ -85,7 +87,7 @@ class ScilabInstance(object):
             SCILAB_BIN = BIN + '/'
             SCILAB_BIN += SCILAB_6
             SCILAB_BIN += '/bin/scilab-adv-cli'
-            while  (self.count < self.maxsize):
+            while  (self.count < 11):
                 new_instance = pexpect.spawn(SCILAB_BIN)
                 self.count += 1
                 print ("scilab-adv-cli" in (p.name()
@@ -208,11 +210,11 @@ class ScilabInstance(object):
                 """infinite code.""".encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
 
-            if(self.count > 10):
-                active_instance.kill(signal.SIGINT)
-                active_instance.close()
-                self.count -= 1
-            if(self.count == 0):
+            #if(self.count > 10):
+            active_instance.kill(signal.SIGINT)
+            active_instance.close()
+            self.count -= 1
+            while(self.count < MIN_SCILAB_INSTANCE):
                 self.spawn_instance()
         p_file_path = plot_path.replace(PROJECT_DIR, '')
         plot_file_path = PROJECT_DIR + p_file_path
