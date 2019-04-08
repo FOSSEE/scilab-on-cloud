@@ -42,6 +42,7 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado import gen
 from website.models import (TextbookCompanionExampleDependency,
                             TextbookCompanionDependencyFiles)
+from soc.config import (DEFAULT_TORNADO_WORKERS, DEFAULT_REQUEST_COUNT)
 from website.dataentry import entry
 from instances import ScilabInstance
 import threading
@@ -120,6 +121,7 @@ scilab_executor.spawn_instance()
 
 
 def instance_manager():
+    print(scilab_executor.count ,"---", request_count)
     if(scilab_executor.count > request_count):
         scilab_executor.kill_instances(
             scilab_executor.count - request_count - 1)

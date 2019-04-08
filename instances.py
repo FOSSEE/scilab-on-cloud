@@ -118,6 +118,7 @@ class ScilabInstance(object):
 
             self.spawn_instance()
         while not self.instances:
+            print(self.instances.islive(),"--------------")
             pass
         return self.instances.pop(0)
 
