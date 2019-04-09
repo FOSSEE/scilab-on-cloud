@@ -78,6 +78,7 @@ class ScilabInstance(object):
     # defining instance variables
     def __init__(self):
         self.maxsize = MAX_SCILAB_INSTANCE
+        self.minsize = MIN_SCILAB_INSTANCE
         self.instances = []
         self.count = 0
 
@@ -87,7 +88,7 @@ class ScilabInstance(object):
             SCILAB_BIN = BIN + '/'
             SCILAB_BIN += SCILAB_6
             SCILAB_BIN += '/bin/scilab-adv-cli'
-            while  (self.count < 11):
+            while  (self.count <= self.minsize):
                 new_instance = pexpect.spawn(SCILAB_BIN)
                 self.count += 1
                 print ("scilab-adv-cli" in (p.name()
@@ -105,7 +106,6 @@ class ScilabInstance(object):
     # killing some spawned instances
     def kill_instances(self, count):
         for i in range(count):
-
             instance = self.instances.pop(0)
             instance.kill(signal.SIGINT)
             instance.close()
