@@ -10,6 +10,7 @@ import uuid
 import signal
 
 
+from django.db import close_old_connections
 from datetime import datetime
 from django.template.loader import render_to_string, get_template
 from django.core.mail import EmailMultiAlternatives
@@ -229,57 +230,7 @@ class ScilabInstance(object):
             'output': output,
             'plot_path': plot_return
         }
-        now = datetime.now()
-        log_file_name = now.strftime("%Y-%m-%d")
-        if book_id != 0 and chapter_id != 0 and example_id != 0:
-            book = TextbookCompanionPreference.objects.using('scilab')\
-                .filter(id=book_id)
-            chapter = TextbookCompanionChapter.objects.using('scilab')\
-                .filter(id=chapter_id)
-            example = TextbookCompanionExample.objects.using('scilab')\
-                .filter(id=example_id)
-            f = open(PROJECT_DIR + '/static/log/' +
-                     str(log_file_name) + '.txt', "a")
-            f.write("************************************" + "\n")
-            f.write(str(datetime.now()) + "\n")
-            f.write("------------------------------------" + "\n")
-            f.write("Book: {0} [Author: {1}]\n".format(
-                book[0].book, book[0].author))
-            f.write("Chapter: {0}\n".format(chapter[0].name))
-            f.write("Example: ({0}) {1}\n".format(
-                example[0].number, example[0].caption))
-            f.write("------------------------------------" + "\n")
-            f.write("Output" + "\n")
-            f.write("------------------------------------" + "\n")
-            f.write(output + "\n")
-            f.write("************************************" + "\n")
 
-        if '!--error' in output:
-            context = {}
-            if int(example_id) != 0:
-                context = get_example_detail(example_id)
-            context['example_id'] = int(example_id)
-            context['code'] = code
-            context['site_name'] = SITE
-            context['output'] = output
-            subject = "[Scilab On Cloud] Error in scilab code"
-            message = render_to_string('error_email.html',
-                                       context)
-            from_email = FROM_EMAIL
-            to_email = TO_EMAIL
-            cc_email = CC_EMAIL
-            bcc_email = BCC_EMAIL
-            # Send Emails to, cc, bcc
-            msg = EmailMultiAlternatives(
-                subject,
-                message,
-                FROM_EMAIL,
-                [TO_EMAIL],
-                bcc=[BCC_EMAIL],
-                cc=[CC_EMAIL]
-            )
-            msg.content_subtype = "html"
-            # msg.send()
         return data
 
     def trim(self, output):

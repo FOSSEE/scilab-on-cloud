@@ -21,12 +21,6 @@ import signal
 import logging
 from functools import partial
 
-import tornado.httpserver
-import tornado.ioloop
-import tornado.options
-import tornado.web
-
-from tornado.options import define, options
 
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 3
 
@@ -47,6 +41,10 @@ from website.dataentry import entry
 from instances import ScilabInstance
 import threading
 import pwd
+from django import db
+db.connections.close_all()
+from django.db import close_old_connections
+
 
 define('port', type=int, default=8000)
 
@@ -141,8 +139,9 @@ class ExecutionHandler(tornado.web.RequestHandler):
     @gen.coroutine
     def post(self):
         global request_count
-        request_count += 1
 
+        request_count += 1
+        close_old_connections()
         token = self.request.arguments['token'][0]
         token = token.decode('UTF-8')
         code = self.request.arguments['code'][0]
@@ -153,12 +152,15 @@ class ExecutionHandler(tornado.web.RequestHandler):
 
         dependency_exists = TextbookCompanionExampleDependency.objects\
             .using('scilab').filter(example_id=example_id).exists()
+        close_old_connections()
         #print (example_id)
         #print (dependency_exists)
         dependency_exists = entry(code, example_id, dependency_exists, book_id)
+        close_old_connections()
         data = yield executor.submit(scilab_executor.execute_code, code, token,
                                      book_id, dependency_exists, chapter_id,
                                      example_id)
+        close_old_connections()
         self.write(data)
         request_count -= 1
 
