@@ -89,12 +89,12 @@ class ScilabInstance(object):
             SCILAB_BIN = BIN + '/'
             SCILAB_BIN += SCILAB_6
             SCILAB_BIN += '/bin/scilab-adv-cli'
-            while  (self.count <= self.minsize):
+            while (self.count <= self.minsize):
                 new_instance = pexpect.spawn(SCILAB_BIN)
                 self.count += 1
                 print ("scilab-adv-cli" in (p.name()
-                                        for p in psutil.process_iter()),
-                   "scilab-adv-cli is running ", self.count)
+                                            for p in psutil.process_iter()),
+                       "scilab-adv-cli is running ", self.count)
                 try:
                     new_instance.expect('-->')
                     self.instances.append(new_instance)
@@ -119,7 +119,6 @@ class ScilabInstance(object):
 
             self.spawn_instance()
         while not self.instances:
-            print(self.instances.islive(),"--------------")
             pass
         return self.instances.pop(0)
 
@@ -177,7 +176,7 @@ class ScilabInstance(object):
 
         # traps even syntax errors eg: endfunton
         f = open(file_path, "w")
-        #if add_clear:
+        # if add_clear:
         f.write('clear;\n')
         f.write('close();\n')
         f.write('driver("PNG");\n')
@@ -213,7 +212,7 @@ class ScilabInstance(object):
                 """infinite code.""".encode('ascii')
             output = self.trim(active_instance.before.decode('utf-8'))
 
-            #if(self.count > 10):
+            # if(self.count > 10):
             active_instance.kill(signal.SIGINT)
             active_instance.close()
             self.count -= 1
@@ -231,6 +230,22 @@ class ScilabInstance(object):
             'output': output,
             'plot_path': plot_return
         }
+
+        log_file_name = token
+        now = datetime.now()
+        if example_id == 0:
+            example_id = "User entered code"
+        f = open(PROJECT_DIR + '/static/log/' +
+                 str(log_file_name) + '.txt', "a")
+        write_log = ("************************************" + "\n" +
+                     str(datetime.now()) + "\n"
+                     "------------------------------------" + "\n" +
+                     "Example ID: {0}\n".format(example_id) +
+                     "------------------------------------" + "\n" +
+                     "Output" + "\n" +
+                     "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + "\n" +
+                     output + "\n")
+        f.write(write_log)
 
         return data
 
