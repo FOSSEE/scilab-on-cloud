@@ -179,6 +179,7 @@ class ScilabInstance(object):
         # if add_clear:
         f.write('clear;\n')
         f.write('close();\n')
+        f.write('format("v",10)\n')
         f.write('driver("PNG");\n')
         f.write('xinit("{0}");\n'.format(plot_path))
         f.write('mode(2);\n')
