@@ -288,6 +288,10 @@ $(document.body).ready(function() {
                     $("#books").html(
                         ' <option value="">Select Book</option>'
                     );
+                    if(data.length ==0){
+                        alert("No book available in this subcategory");
+                        $("#contributor").hide();
+                    }
                     var j = 1;
                     for (var i = 0; i <
                         data.length; i++) {
@@ -356,6 +360,9 @@ $(document.body).ready(function() {
                     $("#chapters").html(
                         ' <option value="">Select Chapter</option>'
                     );
+                    if(data.length ==0){
+                        alert("Chapter is not available from this book for scilab on cloud, Please try another book/chapter");
+                    }
                     for (var i = 0; i <
                         data.length; i++) {
                         $('#chapters').append(
@@ -416,6 +423,9 @@ $(document.body).ready(function() {
                     $("#examples").html(
                         ' <option value="">Select Example</option>'
                     );
+                    if(data.length ==0){
+                        alert("Example is not available from this chapter for scilab on cloud, Please try another book/chapter/example");
+                    }
                     for (var i = 0; i <
                         data.length; i++) {
                         $('#examples').append(
