@@ -161,3 +161,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
+
+SESSION_COOKIE_PATH = '/;HttpOnly'
