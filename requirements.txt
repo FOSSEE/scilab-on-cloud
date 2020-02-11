@@ -2,7 +2,7 @@ backports.ssl-match-hostname==3.5.0.1
 certifi==2018.4.16
 chardet==3.0.4
 defusedxml==0.5.0
-Django==2.0.5
+Django==2.2.10
 django-dajax==0.9.2
 django-dajaxice==0.7
 futures==3.1.1
