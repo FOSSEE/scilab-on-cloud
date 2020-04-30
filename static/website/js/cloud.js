@@ -142,6 +142,7 @@ $(document.body).ready(function() {
         $("#diff-wrapper").hide();
         $("#contributor").hide();
         $("#databox-wrapper").hide();
+        $("#xcos-example").hide();
     }
     if ($("#categories").val() == 0) {
         $("#books-wrapper").hide();
@@ -152,6 +153,7 @@ $(document.body).ready(function() {
         $("#diff-wrapper").hide();
         $("#contributor").hide();
         $("#databox-wrapper").hide();
+        $("#xcos-example").hide();
     }
     if ($("#books").val() == 0) {
         $("#chapters-wrapper").hide();
@@ -161,6 +163,7 @@ $(document.body).ready(function() {
         $("#diff-wrapper").hide();
         $("#contributor").hide();
         $("#databox-wrapper").hide();
+        $("#xcos-example").hide();
     } else {
         $("#download-book").show();
         $("#contributor").show();
@@ -170,6 +173,7 @@ $(document.body).ready(function() {
         $("#revisions-wrapper").hide();
         $("#diff-wrapper").hide();
         $("#download-chapter").hide();
+        $("#xcos-example").hide();
     } else {
         $("#download-chapter").show();
     }
@@ -178,6 +182,7 @@ $(document.body).ready(function() {
         $("#diff-wrapper").hide();
         $("#download-example").hide();
         $("#databox-wrapper").hide();
+        $("#xcos-example").hide();
     } else {
         $("#download-example").show();
     }
@@ -207,6 +212,7 @@ $(document.body).ready(function() {
                 $("#review-link").hide();
                 $("#contributor").hide();
                 $("#databox-wrapper").hide();
+                $("#xcos-example").hide();
                 $.ajax({
                     url: 'get_subcategories/',
                     dataType: 'JSON',
@@ -250,6 +256,7 @@ $(document.body).ready(function() {
                 $("#download-book").hide();
                 $("#diff-wrapper").hide();
                 $("#databox-wrapper").hide();
+                $("#xcos-example").hide();
             }
         });
     /*******************************************/
@@ -274,6 +281,7 @@ $(document.body).ready(function() {
             $("#download-book").hide();
             $("#submit-revision").hide();
             $("#review-link").hide();
+            $("#xcos-example").hide();
             $.ajax({
                 url: 'get_books/',
                 dataType: 'JSON',
@@ -322,6 +330,7 @@ $(document.body).ready(function() {
             $("#download-book").hide();
             $("#diff-wrapper").hide();
             $("#contributor").hide();
+            $("#xcos-example").hide();
         }
     });
     /*******************************************/
@@ -346,6 +355,7 @@ $(document.body).ready(function() {
             $("#download-chapter").hide();
             $("#submit-revision").hide();
             $("#review-link").hide();
+            $("#xcos-example").hide();
             $.ajax({
                 url: 'get_chapters/',
                 dataType: 'JSON',
@@ -390,6 +400,7 @@ $(document.body).ready(function() {
             $("#contributor").hide();
             $("#review-link").hide();
             $("#diff-wrapper").hide();
+            $("#xcos-example").hide();
         }
     });
     /*******************************************/
@@ -411,6 +422,7 @@ $(document.body).ready(function() {
             $("#revisions-wrapper").hide();
             $("#download-example").hide();
             $("#review-link").hide();
+            $("#xcos-example").hide();
             $.ajax({
                 url: 'get_examples/',
                 dataType: 'JSON',
@@ -451,6 +463,7 @@ $(document.body).ready(function() {
             $("#submit-revision").hide();
             $("#review-link").hide();
             $("#diff-wrapper").hide();
+            $("#xcos-example").hide();
         }
     });
     /*******************************************/
@@ -549,6 +562,33 @@ $(document.body).ready(function() {
                             ajax_loader("clear");
                         }
                     });
+                    $.ajax({
+                        url: 'get_xcos_example/',
+                            dataType: 'JSON',
+                            type: 'GET',
+                            data: {
+                                example_id: example_id,
+                                },
+                        success: function(data) {
+                            if($.trim(data)){
+                                $('#xcos-example-file').html("");
+                                var i = 1;
+                                data.forEach(
+                                function(
+                                    item) {
+                                    $('#xcos-example-file').append(
+                                        '<a href="https://xcos.scilab.in/open?efid=' + item.id + '" target="_blank">' +
+                                        i + ' - ' + item.filename +
+                                        '</a>'
+                                    );
+                                    i++;
+                                });
+                                $('#xcos-example').show();
+                            }else{
+                                $('#xcos-example').hide();
+                            }
+                        }
+                    });
                 }
             });
         } else {
@@ -561,6 +601,7 @@ $(document.body).ready(function() {
             result.setValue("");
             $("#diff-wrapper").hide();
             $("#databox-wrapper").hide();
+            $("#xcos-example").hide();
         }
     });
     /********************************************/

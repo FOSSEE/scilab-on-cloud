@@ -234,6 +234,27 @@ def revisions(request):
     else:
         return redirect('/')
 
+def xcos_examples(request):
+    context = {}
+    response_dict = []
+    if request.is_ajax():
+        example_id = int(request.GET.get('example_id'))
+        request.session['example_id'] = example_id
+
+        xcos_example_file = TextbookCompanionExampleFiles.objects.using('scilab')\
+            .filter(example_id=example_id).filter(xcos_cloud_example_file_error_status=0)\
+            .filter(filetype='X')
+         #   .get(example_id=example_id, filetype='X')
+        for obj in xcos_example_file:
+            response = {
+                    'id': obj.id,
+                    'filename': obj.filename,
+            }
+            response_dict.append(response)
+        return HttpResponse(simplejson.dumps(response_dict),
+                            content_type='application/json')
+    else:
+        return redirect('/')
 
 def code(request):
     if request.is_ajax():
