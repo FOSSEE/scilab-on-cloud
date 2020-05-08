@@ -132,7 +132,11 @@ $(document.body).ready(function() {
     $("#plot_download").hide();
     $("#diff-wrapper").hide();
     $("#databox-wrapper").hide();
-    $("#xcos-example").hide();
+    if ( xcos == 0){
+        $("#xcos-example").hide();
+    }else{
+        $("#xcos-example").show();
+    }
     if ($("#main_categories").val() == 0) {
         $("#category-wrapper").hide();
         $("#books-wrapper").hide();
