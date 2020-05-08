@@ -132,6 +132,7 @@ $(document.body).ready(function() {
     $("#plot_download").hide();
     $("#diff-wrapper").hide();
     $("#databox-wrapper").hide();
+    $("#xcos-example").hide();
     if ($("#main_categories").val() == 0) {
         $("#category-wrapper").hide();
         $("#books-wrapper").hide();
@@ -578,8 +579,8 @@ $(document.body).ready(function() {
                                     item) {
                                     $('#xcos-example-file').append(
                                         '<a href="https://xcos.scilab.in/open?efid=' + item.id + '" target="_blank">' +
-                                        i + ' - ' + item.filename +
-                                        '</a>'
+                                        i + ') ' + item.filename +
+                                        '</a><br>'
                                     );
                                     i++;
                                 });

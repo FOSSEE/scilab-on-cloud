@@ -99,6 +99,13 @@ def get_revisions(example_id):
     commits = utils.get_commits(file_path=example_file.filepath)
     return commits
 
+def get_xcos_example(example_id):
+    xcos_examples = TextbookCompanionExampleFiles.objects.using('scilab')\
+            .filter(example_id=example_id).filter(xcos_cloud_example_file_error_status=0)\
+            .filter(filetype='X')
+    if not xcos_examples:
+        xcos_examples = 0
+    return xcos_examples
 
 def get_code(file_path, commit_sha):
     file = utils.get_file(file_path, commit_sha, main_repo=True)
@@ -156,6 +163,7 @@ def index(request):
             review_url = "http://scilab.in/cloud_comments/" + str(example_id)
             context['review'] = review
             context['review_url'] = review_url
+            context['xcos_examples'] = get_xcos_example(example_id)
 
         if 'commit_sha' in request.session:
             commit_sha = request.session['commit_sha']

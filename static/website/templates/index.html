@@ -167,10 +167,26 @@
                     {% endfor %}
                 </select>
             </div>
-            <div id="xcos-example" class="form-row form-group">
+                {% if xcos_examples != 0 %}
+                <div id="xcos-example" class="form-row form-group">
                 <label for="disabledInput" class="col-sm-4 font-weight-bold">Xcos diagrams available for this example:</label>
-                <span id="xcos-example-file"></span>
-            </div>
+                    <span id="xcos-example-file">
+                    {% for xcos_example in xcos_examples %}
+                        {% if xcos_example.id %}
+                        <a href="https://xcos.scilab.in/open?efid={{ xcos_example.id }}" target="_blank">{{forloop.counter}}) {{ xcos_example.filename }} </a><br>
+                        {% endif %}
+                    {% endfor %}
+                    </span>
+                </div>
+                {% else %}
+                    <div id="xcos-example" class="form-row form-group">
+                    <label for="disabledInput" class="col-sm-4 font-weight-bold">Xcos diagrams available for this example:</label>
+                    <span id="xcos-example-file"></span>
+                    </div>
+                {% endif %}
+
+
+
 
         </form>
         <!-- -------------------------------------------------------------------------------------- -->
