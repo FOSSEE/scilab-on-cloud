@@ -151,6 +151,7 @@ class TextbookCompanionExampleFiles(models.Model):
     filetype = models.CharField(max_length=1)
     caption = models.CharField(max_length=100)
     timestamp = models.IntegerField()
+    xcos_cloud_example_file_error_status = models.IntegerField(default='0')
 
     class Meta:
         db_table = 'textbook_companion_example_files'
